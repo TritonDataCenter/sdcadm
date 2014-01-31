@@ -1,0 +1,7 @@
+- make check
+- build and publish to /trent.mick/public/tmp/sdcadm for now
+- install from a tarball build (which'll be on /usbkey), shar?
+- rsync-to
+- self-update, optionally from a tarball
+- aside: type="other" support to imgapi, then publish to there
+- sdcadm versions: table of current component versions

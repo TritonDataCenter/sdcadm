@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# Rsync the master in this working copy to the install on the given HN.
+#
+
+#set -o xtrace
+set -o errexit
+
+TOP=$(cd $(dirname $0)/../; pwd)
+NODE=$1
+
+if [[ -z "$IMGAPI_ZONE" ]]; then
+    IMGAPI_ZONE=$(ssh $NODE "/opt/smartdc/bin/sdc-vmapi /vms" 2>/dev/null \
+        | json -H -c 'this.tags && this.tags.smartdc_role === "imgapi"' \
+            -c 'this.state === "running"' 0.uuid)
+fi
+echo "IMGAPI_ZONE: $IMGAPI_ZONE"
+
+extraOpts=
+if [[ $(uname -s) != "SunOS" ]]; then
+    extraOpts="--exclude *.node --exclude build"
+else
+    # Clean node_modules everytime.
+    ssh $NODE rm -rf /zones/$IMGAPI_ZONE/root/opt/smartdc/imgapi/node_modules
+fi
+
+rsync -av ${TOP}/ \
+    $NODE:/zones/$IMGAPI_ZONE/root/opt/smartdc/imgapi/ \
+    $extraOpts \
+    --include "test/*.zfs.bz2" \
+    --exclude "*.zfs.bz2" \
+    --exclude .git/ \
+    --exclude /etc/imgapi.config.json \
+    --exclude /deps/ \
+    --exclude /doc/ \
+    --exclude /tools/ \
+    --exclude /tmp/
+rsync -av ${TOP}/tools/seed-packages/ \
+    $NODE:/zones/$IMGAPI_ZONE/root/opt/smartdc/imgapi/tools/seed-packages/
+rsync -av ${TOP}/tools/prepare-image/ \
+    $NODE:/zones/$IMGAPI_ZONE/root/opt/smartdc/imgapi/tools/prepare-image/
+
+state=$(ssh ${NODE} svcs -z ${IMGAPI_ZONE} -H -o state imgapi)
+if [[ "$state" == "maintenance" ]]; then
+    ssh ${NODE} svcadm -z ${IMGAPI_ZONE} clear imgapi
+else
+    ssh ${NODE} svcadm -z ${IMGAPI_ZONE} restart imgapi
+fi
+ssh ${NODE} svcadm -z ${IMGAPI_ZONE} restart config-agent
