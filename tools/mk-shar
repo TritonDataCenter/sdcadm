@@ -1,0 +1,116 @@
+#!/bin/bash
+#
+# Copyright (c) 2014, Joyent, Inc. All rights reserved.
+#
+# Make a shar for installing/upgrading sdcadm.
+#
+
+if [[ -n "$TRACE" ]]; then
+    export PS4='[\D{%FT%TZ}] ${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+    set -o xtrace
+fi
+set -o errexit
+set -o pipefail
+
+
+TOP=$(cd $(dirname $0)/../ >/dev/null; pwd)
+BUILD=$TOP/build/shar-image
+
+if [[ -z "$TIMESTAMP" ]]; then
+    TIMESTAMP=$(date -u "+%Y%m%dT%H%M%SZ")
+fi
+# Need GNU awk for multi-char arg to "-F".
+AWK=$((which gawk 2>/dev/null | grep -v "^no ") || which awk)
+GITDESCRIBE=g$(git describe --all --long --dirty | ${AWK} -F'-g' '{print $NF}')
+
+VERSION=$(json -f $TOP/package.json version)
+NAME=sdcadm
+OUT=$TOP/$NAME-$VERSION-$TIMESTAMP-$GITDESCRIBE.sh
+
+
+#---- support stuff
+
+function fatal
+{
+    echo "$0: fatal error: $*" >&2
+    exit 1
+}
+
+function errexit
+{
+    [[ $1 -ne 0 ]] || exit 0
+    fatal "error exit status $1"
+}
+
+
+#---- mainline
+
+trap 'errexit $?' EXIT
+
+rm -rf $BUILD
+mkdir $BUILD
+cp -PR \
+    $TOP/bin \
+    $TOP/lib \
+    $TOP/etc \
+    $TOP/node_modules \
+    $TOP/tools/install-sdcadm.sh \
+    $BUILD
+cp -PR \
+    $TOP/build/node \
+    $BUILD/node
+# Add a stamp file to know exactly what build we have.
+echo "$VERSION-$TIMESTAMP-$GITDESCRIBE" >$BUILD/etc/buildstamp
+
+TMP=/var/tmp/$NAME
+
+(cat <<__EOF__
+#!/bin/sh
+#
+# This shar will install/upgrade "sdcadm" on a SmartDataCenter headnode GZ.
+#
+function fatal {
+    echo "\$0: error: \$*" >&2
+    exit 3
+}
+[[ "\$(zonename)" == "global" ]] || fatal "not running in global zone"
+[[ "\$(sysinfo | json "Boot Parameters.headnode")" == "true" ]] \
+    || fatal "not running on the headnode"
+
+echo "Extracting sdcadm $VERSION-$TIMESTAMP-$GITDESCRIBE to $TMP."
+
+if [ \`pwd\` != '$TMP' ]; then
+    rm -rf $TMP
+    mkdir -p $TMP
+    cd $TMP
+fi
+
+__EOF__
+)> $OUT
+
+# The 'grep -v ^echo...' is to drop unwanted shar output like this:
+#   echo c - bin
+#   echo x - buildstamp
+#   echo c - etc
+#   ...
+(cd $BUILD && shar $(find . -print) | grep -v '^echo [a-z] - ' | grep -v '^exit'; cat <<EOF
+
+if [[ -n "\$TRACE" ]]; then
+    export PS4='[\D{%FT%TZ}] \${BASH_SOURCE}:\${LINENO}: \${FUNCNAME[0]:+\${FUNCNAME[0]}(): }'
+    set -o xtrace
+fi
+set -o errexit
+set -o pipefail
+
+echo "Upgrading to sdcadm $VERSION."
+bash ./install-sdcadm.sh
+
+cd /var/tmp
+rm -rf $TMP
+
+echo "Upgraded sdcadm successfully."
+exit 0
+EOF
+)>> $OUT
+
+echo created $OUT

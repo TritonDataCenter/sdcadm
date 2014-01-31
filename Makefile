@@ -89,14 +89,26 @@ release: all
 	(cd $(RELSTAGEDIR) && $(TAR) -jcf $(TOP)/$(RELEASE_TARBALL) root site)
 	@rm -rf $(RELSTAGEDIR)
 
+#.PHONY: publish
+#publish: release
+#	@if [[ -z "$(BITS_DIR)" ]]; then \
+#		@echo "error: 'BITS_DIR' must be set for 'publish' target"; \
+#		exit 1; \
+#	fi
+#	mkdir -p $(BITS_DIR)/$(NAME)
+#	cp $(TOP)/$(RELEASE_TARBALL) $(BITS_DIR)/$(NAME)/$(RELEASE_TARBALL)
+
+#XXX
+.PHONY: shar
+shar:
+	./tools/mk-shar
+
+#XXX
 .PHONY: publish
-publish: release
-	@if [[ -z "$(BITS_DIR)" ]]; then \
-		@echo "error: 'BITS_DIR' must be set for 'publish' target"; \
-		exit 1; \
-	fi
-	mkdir -p $(BITS_DIR)/$(NAME)
-	cp $(TOP)/$(RELEASE_TARBALL) $(BITS_DIR)/$(NAME)/$(RELEASE_TARBALL)
+publish:
+	ssh $(PUBLISH_HOST) mkdir -p $(PUBLISH_RDIR)
+	scp `ls centos-guest-tools-for-smartos-$(VERSION)-*.sh | tail -1` \
+		$(PUBLISH_LOC)/centos-guest-tools-for-smartos-$(VERSION).sh
 
 .PHONY: dumpvar
 dumpvar:
