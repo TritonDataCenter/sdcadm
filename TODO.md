@@ -1,4 +1,5 @@
 - build and publish to /trent.mick/public/tmp/sdcadm for now
+- v0.10.25
 - install from a tarball build (which'll be on /usbkey), shar?
 - self-update, optionally from a tarball
 - aside: type="other" support to imgapi, then publish to there

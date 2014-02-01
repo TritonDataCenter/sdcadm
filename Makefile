@@ -15,11 +15,9 @@ JSL_CONF_NODE	 = tools/jsl.node.conf
 JSL_FILES_NODE	 = $(JS_FILES)
 JSSTYLE_FILES	 = $(JS_FILES)
 JSSTYLE_FLAGS	 = -f tools/jsstyle.conf
-NODEUNIT	:= ./node_modules/.bin/nodeunit
 CLEAN_FILES += ./node_modules ./sdcadm-*.sh ./build/shar-image
 
-# XXX TODO: get new sdcnode for this v0.10.25
-NODE_PREBUILT_VERSION=v0.10.21
+NODE_PREBUILT_VERSION=v0.10.25
 ifeq ($(shell uname -s),SunOS)
 	NODE_PREBUILT_TAG=gz
 	NODE_PREBUILT_IMAGE=01b2c898-945f-11e1-a523-af1afbe22822
@@ -38,20 +36,19 @@ endif
 # Targets
 #
 .PHONY: all
-all: | $(NODEUNIT)
+all:
 	$(NPM) install
 
-$(NODEUNIT): | $(NPM_EXEC)
-	$(NPM) install
+.PHONY: shar
+shar:
+	./tools/mk-shar -o sdcadm-$(STAMP).sh -s $(STAMP)
 
 .PHONY: test
-test: | $(NODEUNIT)
+test:
 	./test/runtests
 
 .PHONY: release
 release: all shar
-#XXX
-#release: all shar
 
 .PHONY: publish
 publish: release
@@ -61,10 +58,6 @@ publish: release
 	fi
 	mkdir -p $(BITS_DIR)/$(NAME)
 	cp $(TOP)/sdcadm-$(STAMP).sh $(BITS_DIR)/$(NAME)/sdcadm-$(STAMP).sh
-
-.PHONY: shar
-shar:
-	./tools/mk-shar -o sdcadm-$(STAMP).sh
 
 .PHONY: dumpvar
 dumpvar:

@@ -16,11 +16,9 @@ set -o pipefail
 TOP=$(cd $(dirname $0)/../ >/dev/null; pwd)
 BUILD=$TOP/build/shar-image
 
-if [[ -z "$TIMESTAMP" ]]; then
-    TIMESTAMP=$(date -u "+%Y%m%dT%H%M%SZ")
-fi
 NAME=sdcadm
-OUT=$TOP/$NAME-$TIMESTAMP.sh
+STAMP=$(json -f $TOP/package.json version)-$(date -u "+%Y%m%dT%H%M%SZ")
+
 
 
 #---- support stuff
@@ -38,13 +36,17 @@ function errexit
 }
 
 
+
 #---- mainline
 
 # Process arguments.
-while getopts "o:" c; do
+while getopts "o:s:" c; do
     case "$c" in
     o)
         OUT=$OPTARG
+        ;;
+    s)
+        STAMP=$OPTARG
         ;;
     *)
         usage "illegal option -- $OPTARG"
@@ -52,6 +54,8 @@ while getopts "o:" c; do
         ;;
     esac
 done
+[[ -n "$OUT" ]] || OUT=$TOP/$NAME-$STAMP.sh
+
 shift $((OPTIND - 1))
 
 trap 'errexit $?' EXIT
@@ -76,7 +80,7 @@ rm -rf $BUILD/node/share
 
 # Add a stamp file to know exactly what build we have.
 mkdir -p $BUILD/etc
-echo "$VERSION-$TIMESTAMP-$GITDESCRIBE" >$BUILD/etc/buildstamp
+echo "$STAMP" >$BUILD/etc/buildstamp
 
 TMP=/var/tmp/$NAME
 
@@ -93,7 +97,7 @@ function fatal {
 [[ "\$(sysinfo | json "Boot Parameters.headnode")" == "true" ]] \
     || fatal "not running on the headnode"
 
-echo "Extracting sdcadm $VERSION-$TIMESTAMP-$GITDESCRIBE to $TMP."
+echo "Extracting sdcadm $STAMP to $TMP."
 
 if [ \`pwd\` != '$TMP' ]; then
     rm -rf $TMP
@@ -130,7 +134,7 @@ fi
 set -o errexit
 set -o pipefail
 
-echo "Upgrading to sdcadm $VERSION."
+echo "Upgrading to sdcadm $STAMP."
 bash ./install-sdcadm.sh
 
 cd /var/tmp
