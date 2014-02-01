@@ -81,5 +81,6 @@ if [[ -d $DESTDIR ]]; then
     mv $OLDDIR $ARCHIVEDIR/sdcadm
 
     # Only retain the latest 5.
-    ls -1 $(dirname $ARCHIVEDIR) | sort -r | tail +6 | xargs -n1 rm -rf
+    (cd $(dirname $ARCHIVEDIR) && ls -1 | sort -r | tail +6 \
+        | xargs -n1 rm -rf)
 fi
