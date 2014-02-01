@@ -19,13 +19,8 @@ BUILD=$TOP/build/shar-image
 if [[ -z "$TIMESTAMP" ]]; then
     TIMESTAMP=$(date -u "+%Y%m%dT%H%M%SZ")
 fi
-# Need GNU awk for multi-char arg to "-F".
-AWK=$((which gawk 2>/dev/null | grep -v "^no ") || which awk)
-GITDESCRIBE=g$(git describe --all --long --dirty | ${AWK} -F'-g' '{print $NF}')
-
-VERSION=$(json -f $TOP/package.json version)
 NAME=sdcadm
-OUT=$TOP/$NAME-$VERSION-$TIMESTAMP-$GITDESCRIBE.sh
+OUT=$TOP/$NAME-$TIMESTAMP.sh
 
 
 #---- support stuff
@@ -44,6 +39,20 @@ function errexit
 
 
 #---- mainline
+
+# Process arguments.
+while getopts "o:" c; do
+    case "$c" in
+    o)
+        OUT=$OPTARG
+        ;;
+    *)
+        usage "illegal option -- $OPTARG"
+        exit 1
+        ;;
+    esac
+done
+shift $((OPTIND - 1))
 
 trap 'errexit $?' EXIT
 

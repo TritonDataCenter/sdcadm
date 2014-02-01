@@ -33,10 +33,6 @@ else
 	include ./tools/mk/Makefile.node.defs
 endif
 
-RELEASE_TARBALL	:= $(NAME)-pkg-$(STAMP).tar.bz2
-RELSTAGEDIR       := /tmp/$(STAMP)
-
-
 
 #
 # Targets
@@ -53,60 +49,22 @@ test: | $(NODEUNIT)
 	./test/runtests
 
 .PHONY: release
-release: all
-	@echo "Building $(RELEASE_TARBALL)"
-	XXX
-	mkdir -p $(RELSTAGEDIR)/root/opt/smartdc/$(NAME)
-	mkdir -p $(RELSTAGEDIR)/site
-	touch $(RELSTAGEDIR)/site/.do-not-delete-me
-	mkdir -p $(RELSTAGEDIR)/root
-	cp -r \
-		$(TOP)/bin \
-		$(TOP)/main.js \
-		$(TOP)/lib \
-		$(TOP)/etc \
-		$(TOP)/node_modules \
-		$(TOP)/package.json \
-		$(TOP)/sapi_manifests \
-		$(TOP)/smf \
-		$(TOP)/test \
-		$(RELSTAGEDIR)/root/opt/smartdc/$(NAME)
-	mkdir -p $(RELSTAGEDIR)/root/opt/smartdc/$(NAME)/tools
-	cp -r \
-		$(TOP)/tools/seed-packages \
-		$(TOP)/tools/prepare-image \
-		$(TOP)/tools/get-image-dataset-guid.sh \
-		$(RELSTAGEDIR)/root/opt/smartdc/$(NAME)/tools/
-	mkdir -p $(RELSTAGEDIR)/root/opt/smartdc/boot
-	cp -R $(TOP)/deps/sdc-scripts/* $(RELSTAGEDIR)/root/opt/smartdc/boot/
-	cp -R $(TOP)/boot/* $(RELSTAGEDIR)/root/opt/smartdc/boot/
-	mkdir -p $(RELSTAGEDIR)/root/opt/smartdc/$(NAME)/build
-	cp -r \
-		$(TOP)/build/node \
-		$(TOP)/build/public-docs \
-		$(RELSTAGEDIR)/root/opt/smartdc/$(NAME)/build
-	(cd $(RELSTAGEDIR) && $(TAR) -jcf $(TOP)/$(RELEASE_TARBALL) root site)
-	@rm -rf $(RELSTAGEDIR)
+release: all shar
+#XXX
+#release: all shar
 
-#.PHONY: publish
-#publish: release
-#	@if [[ -z "$(BITS_DIR)" ]]; then \
-#		@echo "error: 'BITS_DIR' must be set for 'publish' target"; \
-#		exit 1; \
-#	fi
-#	mkdir -p $(BITS_DIR)/$(NAME)
-#	cp $(TOP)/$(RELEASE_TARBALL) $(BITS_DIR)/$(NAME)/$(RELEASE_TARBALL)
+.PHONY: publish
+publish: release
+	@if [[ -z "$(BITS_DIR)" ]]; then \
+		@echo "error: 'BITS_DIR' must be set for 'publish' target"; \
+		exit 1; \
+	fi
+	mkdir -p $(BITS_DIR)/$(NAME)
+	cp $(TOP)/sdcadm-$(STAMP).sh $(BITS_DIR)/$(NAME)/sdcadm-$(STAMP).sh
 
 .PHONY: shar
 shar:
-	./tools/mk-shar
-
-#XXX
-.PHONY: publish
-publish:
-	ssh $(PUBLISH_HOST) mkdir -p $(PUBLISH_RDIR)
-	scp `ls centos-guest-tools-for-smartos-$(VERSION)-*.sh | tail -1` \
-		$(PUBLISH_LOC)/centos-guest-tools-for-smartos-$(VERSION).sh
+	./tools/mk-shar -o sdcadm-$(STAMP).sh
 
 .PHONY: dumpvar
 dumpvar:
