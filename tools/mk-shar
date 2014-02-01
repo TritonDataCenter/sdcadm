@@ -48,18 +48,25 @@ function errexit
 trap 'errexit $?' EXIT
 
 rm -rf $BUILD
-mkdir $BUILD
+mkdir -p $BUILD
 cp -PR \
     $TOP/bin \
     $TOP/lib \
-    $TOP/etc \
     $TOP/node_modules \
     $TOP/tools/install-sdcadm.sh \
+    $TOP/package.json \
     $BUILD
 cp -PR \
     $TOP/build/node \
     $BUILD/node
+
+# Trim out cruft for smaller package.
+rm -rf $BUILD/node/bin/npm
+rm -rf $BUILD/node/lib/node_modules/npm
+rm -rf $BUILD/node/share
+
 # Add a stamp file to know exactly what build we have.
+mkdir -p $BUILD/etc
 echo "$VERSION-$TIMESTAMP-$GITDESCRIBE" >$BUILD/etc/buildstamp
 
 TMP=/var/tmp/$NAME
@@ -85,18 +92,30 @@ if [ \`pwd\` != '$TMP' ]; then
     cd $TMP
 fi
 
+#
+# The GZ where we will be unsharing does not have md5sum that the shar
+# uses to verify contents.
+#
+mkdir -p $TMP/.temp_bin
+export PATH=$TMP/.temp_bin:\$PATH
+cat > $TMP/.temp_bin/md5sum << 'EOFTOOL'
 __EOF__
 )> $OUT
 
-# The 'grep -v ^echo...' is to drop unwanted shar output like this:
-#   echo c - bin
-#   echo x - buildstamp
-#   echo c - etc
-#   ...
-(cd $BUILD && shar $(find . -print) | grep -v '^echo [a-z] - ' | grep -v '^exit'; cat <<EOF
+cat ./tools/md5sum-for-smartos-gz >>$OUT
+(cat <<__EOF2__
+EOFTOOL
+
+chmod +x $TMP/.temp_bin/md5sum
+
+__EOF2__
+)>>$OUT
+
+
+(cd $BUILD && shar -Q $(ls) | grep -v '^exit'; cat <<EOF
 
 if [[ -n "\$TRACE" ]]; then
-    export PS4='[\D{%FT%TZ}] \${BASH_SOURCE}:\${LINENO}: \${FUNCNAME[0]:+\${FUNCNAME[0]}(): }'
+    export PS4="[\D{%FT%TZ}] \${BASH_SOURCE}:\${LINENO}: \${FUNCNAME[0]:+\${FUNCNAME[0]}(): }"
     set -o xtrace
 fi
 set -o errexit

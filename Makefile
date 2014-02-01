@@ -16,13 +16,12 @@ JSL_FILES_NODE	 = $(JS_FILES)
 JSSTYLE_FILES	 = $(JS_FILES)
 JSSTYLE_FLAGS	 = -f tools/jsstyle.conf
 NODEUNIT	:= ./node_modules/.bin/nodeunit
-CLEAN_FILES += ./node_modules
+CLEAN_FILES += ./node_modules ./sdcadm-*.sh ./build/shar-image
 
-NODE_PREBUILT_VERSION=v0.10.25
+# XXX TODO: get new sdcnode for this v0.10.25
+NODE_PREBUILT_VERSION=v0.10.21
 ifeq ($(shell uname -s),SunOS)
 	NODE_PREBUILT_TAG=gz
-	# Allow building on a SmartOS image other than smartos-1.6.3.
-	#XXX necessary?
 	NODE_PREBUILT_IMAGE=01b2c898-945f-11e1-a523-af1afbe22822
 endif
 
@@ -98,7 +97,6 @@ release: all
 #	mkdir -p $(BITS_DIR)/$(NAME)
 #	cp $(TOP)/$(RELEASE_TARBALL) $(BITS_DIR)/$(NAME)/$(RELEASE_TARBALL)
 
-#XXX
 .PHONY: shar
 shar:
 	./tools/mk-shar

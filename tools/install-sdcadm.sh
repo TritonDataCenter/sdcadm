@@ -18,9 +18,9 @@ set -o errexit
 set -o pipefail
 
 
-DSTDIR=/opt/smartdc/sdcadm
-NEWDIR=$DSTDIR.new
-OLDDIR=$DSTDIR.old
+DESTDIR=/opt/smartdc/sdcadm
+NEWDIR=$DESTDIR.new
+OLDDIR=$DESTDIR.old
 ARCHIVEDIR=/var/db/sdcadm/self-updates/$(date +%Y%m%dT%H%M%SZ)
 
 
@@ -37,9 +37,9 @@ function restore_old_on_error
     [[ $1 -ne 0 ]] || exit 0
 
     if [[ -d $OLDDIR ]]; then
-        echo "$0: restoring $DSTDIR from $OLDDIR"
-        rm -rf $DSTDIR
-        mv $OLDDIR $DSTDIR
+        echo "$0: restoring $DESTDIR from $OLDDIR"
+        rm -rf $DESTDIR
+        mv $OLDDIR $DESTDIR
     fi
 
     fatal "$0: error exit status $1" >&2
@@ -59,9 +59,9 @@ function restore_old_on_error
 
 trap 'restore_old_on_error $?' EXIT
 
-
 cp -PR ./ $NEWDIR
-rm $NEWDIR/install-sdcadm.sh
+rm -f $NEWDIR/install-sdcadm.sh
+rm -rf $NEWDIR/.temp_bin
 
 # Move the old out of the way, swap in the new.
 if [[ -d $DESTDIR ]]; then
@@ -78,5 +78,8 @@ ln -s $DESTDIR/bin/sdcadm /opt/smartdc/bin/sdcadm
 # know that it will be on the same mount/device as the DESTDIR.
 if [[ -d $DESTDIR ]]; then
     mkdir -p $ARCHIVEDIR
-    mv $OLDDIR $ARCHIVEDIR
+    mv $OLDDIR $ARCHIVEDIR/sdcadm
+
+    # Only retain the latest 5.
+    ls -1 $(dirname ARCHIVEDIR) | sort -r | tail +6 | xargs -n1 rm -rf
 fi
