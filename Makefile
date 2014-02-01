@@ -36,7 +36,7 @@ endif
 # Targets
 #
 .PHONY: all
-all:
+all: | $(NPM_EXEC)
 	$(NPM) install
 
 .PHONY: shar
