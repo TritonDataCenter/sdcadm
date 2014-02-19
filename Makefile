@@ -20,7 +20,7 @@ CLEAN_FILES += ./node_modules ./sdcadm-*.sh ./build/shar-image
 NODE_PREBUILT_VERSION=v0.10.25
 ifeq ($(shell uname -s),SunOS)
 	NODE_PREBUILT_TAG=gz
-	NODE_PREBUILT_IMAGE=01b2c898-945f-11e1-a523-af1afbe22822
+	NODE_PREBUILT_IMAGE=fd2cc906-8938-11e3-beab-4359c665ac99
 endif
 
 
