@@ -19,6 +19,10 @@ else
     ssh $NODE rm -rf $BASEDIR/node_modules
 fi
 
-for f in bin lib node_modules package.json; do
-    rsync -av ${TOP}/$f $NODE:$BASEDIR/$f $extraOpts
+for name in bin lib node_modules package.json; do
+    if [[ -d ${TOP}/$name ]]; then
+        rsync -av ${TOP}/$name/ $NODE:$BASEDIR/$name/ $extraOpts
+    else
+        rsync -av ${TOP}/$name $NODE:$BASEDIR/$name $extraOpts
+    fi
 done
