@@ -15,9 +15,9 @@ JSL_CONF_NODE	 = tools/jsl.node.conf
 JSL_FILES_NODE	 = $(JS_FILES)
 JSSTYLE_FILES	 = $(JS_FILES)
 JSSTYLE_FLAGS	 = -f tools/jsstyle.conf
-CLEAN_FILES += ./node_modules ./sdcadm-*.sh ./build/shar-image
+CLEAN_FILES += ./node_modules ./build/sdcadm-*.sh ./build/sdcadm-*.imgmanifest ./build/shar-image
 
-NODE_PREBUILT_VERSION=v0.10.25
+NODE_PREBUILT_VERSION=v0.10.26
 ifeq ($(shell uname -s),SunOS)
 	NODE_PREBUILT_TAG=gz
 	# sdc-smartos/1.6.3
@@ -38,11 +38,11 @@ endif
 #
 .PHONY: all
 all: | $(NPM_EXEC)
-	$(NPM) install
+	MAKE_OVERRIDES='CTFCONVERT=/bin/true CTFMERGE=/bin/true' $(NPM) install
 
 .PHONY: shar
 shar:
-	./tools/mk-shar -o sdcadm-$(STAMP).sh -s $(STAMP)
+	./tools/mk-shar -o $(TOP)/build -s $(STAMP)
 
 .PHONY: test
 test:
@@ -58,7 +58,10 @@ publish: release
 		exit 1; \
 	fi
 	mkdir -p $(BITS_DIR)/$(NAME)
-	cp $(TOP)/sdcadm-$(STAMP).sh $(BITS_DIR)/$(NAME)/sdcadm-$(STAMP).sh
+	cp \
+		$(TOP)/build/sdcadm-$(STAMP).sh \
+		$(TOP)/build/sdcadm-$(STAMP).imgmanifest \
+		$(BITS_DIR)/$(NAME)/
 
 .PHONY: dumpvar
 dumpvar:
@@ -77,4 +80,3 @@ else
 endif
 include ./tools/mk/Makefile.targ
 
-sdc-scripts: deps/sdc-scripts/.git

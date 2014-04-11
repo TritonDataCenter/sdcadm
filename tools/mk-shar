@@ -14,11 +14,11 @@ set -o pipefail
 
 
 TOP=$(cd $(dirname $0)/../ >/dev/null; pwd)
-BUILD=$TOP/build/shar-image
+PROTO=$TOP/build/shar-image
 
 NAME=sdcadm
-STAMP=$(json -f $TOP/package.json version)-$(date -u "+%Y%m%dT%H%M%SZ")
-
+VERSION=$(json -f $TOP/package.json version)
+STAMP=$VERSION-$(date -u "+%Y%m%dT%H%M%SZ")
 
 
 #---- support stuff
@@ -43,7 +43,7 @@ function errexit
 while getopts "o:s:" c; do
     case "$c" in
     o)
-        OUT=$OPTARG
+        OUTDIR=$OPTARG
         ;;
     s)
         STAMP=$OPTARG
@@ -54,33 +54,39 @@ while getopts "o:s:" c; do
         ;;
     esac
 done
-[[ -n "$OUT" ]] || OUT=$TOP/$NAME-$STAMP.sh
+[[ -n "$OUTDIR" ]] || OUTDIR=$TOP/build
+mkdir -p $OUTDIR
+OUTSHAR=$OUTDIR/$NAME-$STAMP.sh
+OUTMANIFEST=$OUTDIR/$NAME-$STAMP.imgmanifest
 
 shift $((OPTIND - 1))
 
 trap 'errexit $?' EXIT
 
-rm -rf $BUILD
-mkdir -p $BUILD
+rm -rf $PROTO
+mkdir -p $PROTO
 cp -PR \
     $TOP/bin \
     $TOP/lib \
+    $TOP/etc \
     $TOP/node_modules \
     $TOP/tools/install-sdcadm.sh \
     $TOP/package.json \
-    $BUILD
+    $PROTO
 cp -PR \
     $TOP/build/node \
-    $BUILD/node
+    $PROTO/node
 
 # Trim out cruft for smaller package.
-rm -rf $BUILD/node/bin/npm
-rm -rf $BUILD/node/lib/node_modules/npm
-rm -rf $BUILD/node/share
+rm -rf $PROTO/node/bin/npm
+rm -rf $PROTO/node/lib/node_modules/npm
+rm -rf $PROTO/node/share
+# TODO: more to trim here:
+#   find . -name test | xargs du -sk | awk '{print $1}' |  paste -sd+ | bc  # 1056
 
 # Add a stamp file to know exactly what build we have.
-mkdir -p $BUILD/etc
-echo "$STAMP" >$BUILD/etc/buildstamp
+mkdir -p $PROTO/etc
+echo "$STAMP" >$PROTO/etc/buildstamp
 
 TMP=/var/tmp/$NAME
 
@@ -113,19 +119,19 @@ mkdir -p $TMP/.temp_bin
 export PATH=$TMP/.temp_bin:\$PATH
 cat > $TMP/.temp_bin/md5sum << 'EOFTOOL'
 __EOF__
-)> $OUT
+)> $OUTSHAR
 
-cat ./tools/md5sum-for-smartos-gz >>$OUT
+cat ./tools/md5sum-for-smartos-gz >>$OUTSHAR
 (cat <<__EOF2__
 EOFTOOL
 
 chmod +x $TMP/.temp_bin/md5sum
 
 __EOF2__
-)>>$OUT
+)>>$OUTSHAR
 
 
-(cd $BUILD && shar -Q $(ls) | grep -v '^exit'; cat <<EOF
+(cd $PROTO && shar -Q $(ls) | grep -v '^exit'; cat <<EOF
 
 if [[ -n "\$TRACE" ]]; then
     export PS4="[\D{%FT%TZ}] \${BASH_SOURCE}:\${LINENO}: \${FUNCNAME[0]:+\${FUNCNAME[0]}(): }"
@@ -143,6 +149,27 @@ rm -rf $TMP
 echo "Upgraded sdcadm successfully."
 exit 0
 EOF
-)>> $OUT
+)>> $OUTSHAR
 
-echo created $OUT
+echo created $OUTSHAR
+
+cat <<EOM >$OUTMANIFEST
+{
+    "v": 2,
+    "uuid": "$(uuid)",
+    "owner": "00000000-0000-0000-0000-000000000000",
+    "name": "sdcadm"
+    "version": "$VERSION",
+    "description": "Administer SmartDataCenter standups",
+    "disabled": false,
+    "public": false,
+    "type": "other",
+    "os": "other",
+    "tags": {
+        "smartdc_service": "true",
+        "buildstamp": "$STAMP"
+    }
+}
+EOM
+echo created $OUTMANIFEST
+

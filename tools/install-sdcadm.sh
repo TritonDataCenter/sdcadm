@@ -2,12 +2,8 @@
 #
 # Copyright (c) 2014, Joyent, Inc. All rights reserved.
 #
-# Install/upgrade sdcadm on this headnode GZ.
-#
-# - install to /opt/smartdc/sdcadm.new
-# - mv the old one out of the way (if necessary)
-# - mv /opt/smartdc/sdcadm.new /opt/smartdc/sdcadm
-# - linkup /opt/smartdc/bin/sdcadm
+# This is the script included in sdcadm tarballs to handle
+# the sdcadm install/upgrade on a headnode GZ.
 #
 
 if [[ -n "$TRACE" ]]; then
@@ -21,7 +17,8 @@ set -o pipefail
 DESTDIR=/opt/smartdc/sdcadm
 NEWDIR=$DESTDIR.new
 OLDDIR=$DESTDIR.old
-ARCHIVEDIR=/var/db/sdcadm/self-updates/$(date +%Y%m%dT%H%M%SZ)
+ARCHIVEDIR=/var/sdcadm/self-updates/$(date +%Y%m%dT%H%M%SZ)
+CONFIG_PATH=/var/sdcadm/sdcadm.conf
 
 
 #---- support stuff
@@ -60,8 +57,19 @@ function restore_old_on_error
 trap 'restore_old_on_error $?' EXIT
 
 cp -PR ./ $NEWDIR
-rm -f $NEWDIR/install-sdcadm.sh
+rm $NEWDIR/install-sdcadm.sh
 rm -rf $NEWDIR/.temp_bin
+
+# Archive the old sdcadm for possible rollback.
+if [[ -d $DESTDIR ]]; then
+    mkdir -p $ARCHIVEDIR
+    echo "Archiving $(cat $DESTDIR/etc/buildstamp)"
+    cp -PR $DESTDIR $ARCHIVEDIR/sdcadm
+
+    # Only retain the latest 5.
+    (cd $(dirname $ARCHIVEDIR) && ls -1 | sort -r | tail +6 \
+        | xargs -n1 rm -rf)
+fi
 
 # Move the old out of the way, swap in the new.
 if [[ -d $DESTDIR ]]; then
@@ -73,14 +81,17 @@ mv $NEWDIR $DESTDIR
 rm -f /opt/smartdc/bin/sdcadm
 ln -s $DESTDIR/bin/sdcadm /opt/smartdc/bin/sdcadm
 
-# Move old sdcadm to /var/db/sdcadm/self-updates/$timestamp for later
-# possible rollback. We bother at all with the OLDDIR because at least we
-# know that it will be on the same mount/device as the DESTDIR.
-if [[ -d $DESTDIR ]]; then
-    mkdir -p $ARCHIVEDIR
-    mv $OLDDIR $ARCHIVEDIR/sdcadm
-
-    # Only retain the latest 5.
-    (cd $(dirname $ARCHIVEDIR) && ls -1 | sort -r | tail +6 \
-        | xargs -n1 rm -rf)
+# Add `serverUuid` to the config (better than having this
+# done on every `sdcadm` invocation later).
+if [[ -f $CONFIG_PATH ]]; then
+    mkdir -p $(dirname $CONFIG_PATH)
+    echo '{}' >$CONFIG_PATH
 fi
+SERVER_UUID=$(sysinfo | json UUID)
+json -f $CONFIG_PATH -e "this.serverUuid = '$SERVER_UUID'" >$CONFIG_PATH.new
+mv $CONFIG_PATH.new $CONFIG_PATH
+
+[[ -d $OLDDIR ]] && rm -rf $OLDDIR
+
+echo "Successfully upgraded to sdcadm $(cat $DESTDIR/etc/buildstamp)"
+exit 0
