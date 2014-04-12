@@ -158,7 +158,7 @@ cat <<EOM >$OUTMANIFEST
     "v": 2,
     "uuid": "$(uuid)",
     "owner": "00000000-0000-0000-0000-000000000000",
-    "name": "sdcadm"
+    "name": "sdcadm",
     "version": "$VERSION",
     "description": "Administer SmartDataCenter standups",
     "disabled": false,
