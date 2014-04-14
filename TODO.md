@@ -119,6 +119,9 @@ Then call:
 
     sdcadm update path/to/dir
 
+That "upgrade" package *could* just be the boot tarball. It has all the bits,
+and that is one less build file.
+
 
 # sdcadm update
 

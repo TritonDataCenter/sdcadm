@@ -1,14 +1,10 @@
-#!/usr/node/bin/node
-/*
- * Copyright (c) 2014 Joyent Inc. All rights reserved.
- *
- * sdcadm - administer an SDC standup
- */
-
-var p = console.log;
-var cmdln = require('cmdln');
-var CLI = require('../lib/cli');
-
-if (require.main === module) {
-    cmdln.main(CLI, process.arg, {showCode: true});
-}
+#!/bin/bash
+# Copyright (c) 2014 Joyent Inc. All rights reserved.
+# sdcadm - administer an SDC standup
+TOP=$(cd $(dirname $0)/../; pwd)
+if [[ -x "$TOP/build/node/bin/node" ]]; then
+    # Dev layout.
+    $TOP/build/node/bin/node $TOP/lib/cli.js "$@"
+else
+    /opt/smartdc/sdcadm/node/bin/node /opt/smartdc/sdcadm/lib/cli.js "$@"
+fi
