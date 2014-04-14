@@ -91,7 +91,7 @@ echo "$STAMP" >$PROTO/etc/buildstamp
 TMP=/var/tmp/$NAME
 
 (cat <<__EOF__
-#!/bin/sh
+#!/bin/bash
 #
 # This shar will install/upgrade "sdcadm" on a SmartDataCenter headnode GZ.
 #

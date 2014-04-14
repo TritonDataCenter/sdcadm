@@ -28,7 +28,7 @@ OLDDIR=$DESTDIR.old
 if [[ -n "$SDCADM_LOGDIR" ]]; then
     LOGDIR=$SDCADM_LOGDIR
     TRIM_LOGDIRS=false
-    if [[ -n "$(echo $LOGDIR | egrep ('^\/var\/sdcadm\/self-updates\/.' || true))" ]]; then
+    if [[ -n "$(echo $LOGDIR | (egrep '^\/var\/sdcadm\/self-updates\/.' || true))" ]]; then
         # Be defensive and only allow trimming of `dirname $LOGDIR` if it is
         # where we expect it to be.
         TRIM_LOGDIRS=true
@@ -85,7 +85,7 @@ rm -rf $NEWDIR/.temp_bin
 cp ./package.json $LOGDIR/package.json
 cp ./etc/buildstamp $LOGDIR/buildstamp
 if [[ -d $DESTDIR ]]; then
-    echo "Archiving $(cat $DESTDIR/etc/buildstamp)"
+    echo "Archiving $(cat $DESTDIR/etc/buildstamp) to $LOGDIR/sdcadm.old"
     cp -PR $DESTDIR $LOGDIR/sdcadm.old
 fi
 
