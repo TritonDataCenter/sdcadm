@@ -5,6 +5,14 @@
 # This is the script included in sdcadm tarballs to handle
 # the sdcadm install/upgrade on a headnode GZ.
 #
+# Usage:
+#   install-sdcadm.sh    # in the extracted shar dir
+#
+# Environment:
+#   SDCADM_LOGDIR=<path to an existing dir>
+#           If not provided, then details, including rollback info, will be
+#           put in "/var/sdcadm/self-updates/YYYYMMDDTHHMMSSZ".
+#
 
 if [[ -n "$TRACE" ]]; then
     export PS4='[\D{%FT%TZ}] ${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
@@ -17,7 +25,19 @@ set -o pipefail
 DESTDIR=/opt/smartdc/sdcadm
 NEWDIR=$DESTDIR.new
 OLDDIR=$DESTDIR.old
-ARCHIVEDIR=/var/sdcadm/self-updates/$(date +%Y%m%dT%H%M%SZ)
+if [[ -n "$SDCADM_LOGDIR" ]]; then
+    LOGDIR=$SDCADM_LOGDIR
+    TRIM_LOGDIRS=false
+    if [[ -n "$(echo $LOGDIR | grep ('^\/var\/sdcadm\/self-updates\/\w' || true))" ]]; then
+        # Be defensive and only allow trimming of `dirname $LOGDIR` if it is
+        # where we expect it to be.
+        TRIM_LOGDIRS=true
+    fi
+else
+    LOGDIR=/var/sdcadm/self-updates/$(date +%Y%m%dT%H%M%SZ)
+    mkdir -p $LOGDIR
+    TRIM_LOGDIRS=true
+fi
 CONFIG_PATH=/var/sdcadm/sdcadm.conf
 
 
@@ -50,6 +70,7 @@ function restore_old_on_error
 [[ "$(sysinfo | json "Boot Parameters.headnode")" == "true" ]] \
     || fatal "not running on the headnode"
 [[ -f "./etc/buildstamp" ]] || fatal "missing './etc/buildstamp'"
+[[ -d "$LOGDIR" ]] || fatal "'$LOGDIR' does not exist"
 
 [[ -d $OLDDIR ]] && rm -rf $OLDDIR
 [[ -d $NEWDIR ]] && rm -rf $NEWDIR
@@ -60,14 +81,17 @@ cp -PR ./ $NEWDIR
 rm $NEWDIR/install-sdcadm.sh
 rm -rf $NEWDIR/.temp_bin
 
-# Archive the old sdcadm for possible rollback.
+# Archive the old sdcadm for possible rollback and log other details.
+cp ./package.json $LOGDIR/package.json
+cp ./etc/buildstamp $LOGDIR/buildstamp
 if [[ -d $DESTDIR ]]; then
-    mkdir -p $ARCHIVEDIR
     echo "Archiving $(cat $DESTDIR/etc/buildstamp)"
-    cp -PR $DESTDIR $ARCHIVEDIR/sdcadm
+    cp -PR $DESTDIR $LOGDIR/sdcadm.old
+fi
 
-    # Only retain the latest 5.
-    (cd $(dirname $ARCHIVEDIR) && ls -1 | sort -r | tail +6 \
+if [[ "$TRIM_LOGDIRS" == "true" ]]; then
+    # Only retain the latest 5 log dirs.
+    (cd $(dirname $LOGDIR) && ls -1d ????????T??????Z | sort -r | tail +6 \
         | xargs -n1 rm -rf)
 fi
 
