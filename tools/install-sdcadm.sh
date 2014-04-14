@@ -28,7 +28,7 @@ OLDDIR=$DESTDIR.old
 if [[ -n "$SDCADM_LOGDIR" ]]; then
     LOGDIR=$SDCADM_LOGDIR
     TRIM_LOGDIRS=false
-    if [[ -n "$(echo $LOGDIR | grep ('^\/var\/sdcadm\/self-updates\/\w' || true))" ]]; then
+    if [[ -n "$(echo $LOGDIR | egrep ('^\/var\/sdcadm\/self-updates\/.' || true))" ]]; then
         # Be defensive and only allow trimming of `dirname $LOGDIR` if it is
         # where we expect it to be.
         TRIM_LOGDIRS=true
