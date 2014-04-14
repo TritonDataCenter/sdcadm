@@ -83,7 +83,7 @@ ln -s $DESTDIR/bin/sdcadm /opt/smartdc/bin/sdcadm
 
 # Add `serverUuid` to the config (better than having this
 # done on every `sdcadm` invocation later).
-if [[ -f $CONFIG_PATH ]]; then
+if [[ ! -f $CONFIG_PATH ]]; then
     mkdir -p $(dirname $CONFIG_PATH)
     echo '{}' >$CONFIG_PATH
 fi
