@@ -140,13 +140,13 @@ fi
 set -o errexit
 set -o pipefail
 
-echo "Upgrading to sdcadm $STAMP."
+echo "Installing sdcadm $STAMP."
 bash ./install-sdcadm.sh
 
 cd /var/tmp
 rm -rf $TMP
 
-echo "Upgraded sdcadm successfully."
+echo "Installed sdcadm successfully."
 exit 0
 EOF
 )>> $OUTSHAR

@@ -132,11 +132,16 @@ and that is one less build file.
             "provisioner": "UUID",
             ...
         }
-    sdcadm update COMPONENT [COMPONENT ...]
-        Where 'COMPONENT' is just the name, e.g. 'cnapi', for the latest
+    sdcadm update SERVICE [SERVICE ...]
+        Where 'SERVICE' is just the name, e.g. 'cnapi', for the latest
         available. Or 'cnapi:1.2.3' for that version (or latest of that ver
         if multiple images with that ver). Or 'cnapi:UUID' for a specific
         cnapi. Or just 'UUID' because that in unambiguous.
+    sdcadm update COMPONENT [COMPONENT ...]
+        Where 'COMPONENT' is a specific component (per `sdcadm versions`),
+        e.g. 'cnapi0'.  Not sure if upgrades of just single instances of a
+        service should be allowed? Useful for e.g. testing interactions and
+        perhaps for dev. Perhaps for upgrading agents on a single CN.
     sdcadm update
         Upgrade all of the latest components.
     sdcadm update TICKET
