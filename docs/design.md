@@ -5,6 +5,11 @@ markdown2linkpatternsfile: link-patterns.txt
 apisections:
 ---
 
+# sdcadm design
+
+`sdcadm`, a CLI to handle SDC updates.
+
+
 # sdcadm instances
 
 Lists all SDC instances (core zones, agent deployments, etc.). Example:
