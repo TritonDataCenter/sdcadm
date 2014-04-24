@@ -1,77 +1,48 @@
-- install from a tarball build (which'll be on /usbkey), shar?
-- self-update, optionally from a tarball
-    - Determine if GZ external access is a design requirement. For now assume
-      GZ external access. Later can go through the 'sdc' zone.
-    -
-- aside: type="other" support to imgapi, then publish to there
-- sdcadm versions: table of current component versions
-- update:
-    Q: if we self-update automatically all the time as part of upgrade then
-        a broken sdcadm release breaks *every SDC installation*
-        What's the recovery from that?
-        The flip side: how do we ensure that sdcadm is upgraded before a
-        given upgrade? Answer: add a dep... but to *every* component?
-        That's a pain.
+Here-in random TODOs and scratchpad notes for sdcadm.
+
+# TODO
+
+- basic design and 'sdcadm update SERVICE' first stab
+
+- get full logging in place (with log rollup and rotation a la vm logs)
+
+- sdcadm history (and having updates adding to this history file)
+  /var/sdcadm/history   # rotate this?
+
+- a way to list available updates (with changelog support)
+  Perhaps use this under the hood:
+        update-imgadm changes $from-image-uuid $to-image-uuid
+  Ideas:
+        sdcadm avail              # show all avail images for all services
+  Should that just show the latest? Let's run with that. ^^^ is just a list
+  of latest image for each service then.
+        sdcadm avail dapi imgapi  # for just that service(s)
+
+  List the changes for these images compared to the current earliest (e.g.
+  to the earlier version if have two images for teh same service in play)
+        sdcadm avail -c|--changes
+
+  If you have different images for, say, dapi0 and dapi1, then might want
+  changes relative to a particular one:
+        sdcadm avail -c dapi0    # i.e. can use ALIAS there (or UUID)
+
+  Getting particular change logs:
+        sdcadm changes dapi0 dapi1  # list changes between two current dapi's using diff images
+        sdcadm changes $imageUuidFrom $imageUuidTo
+
 - trim out stuff in node_modules in the sdcadm shar (e.g. large ldapjs
   and restify bits that we don't need)
 
-# upgrade lock
-
-    After gathering info and before downloads and making changes, an upgrade
-    must get the upgrade "lock". Because we are potentially multi-process here
-    we can't use "flock" (jclulow's module for this, "node-locker"?).
-
-    TODO: If exec keeps the PID, perhaps we *can* use flock. Try it.
-
-    Here is the proposed scheme:
-
-    - get a $timestamp (YYYYMMDDTHHMMSSZ) for this upgrade
-    - Attempt to create /var/db/sdcadm/upgrades/inprogress (content should
-      be the $timestamp). If that fails because it exists, then there is an
-      upgrade in progress (details in that $timestamp dir) *or* there is a
-      stale lock from a broken upgrade. It is considered stale if
-
-        1. /var/db/sdcadm/upgrades/$inprogressTimestamp/pid doesn't contain
-            the PID of a running process; *and*
-        2. is more than 30s old.
-
-      The latter condition is to allowed a time gap for a new master process
-      in an in-progress upgrade to write its PID.
-    - If breaking an inprogress lock, then remove the inprogress file and
-      the stale "pid" file. And retry previous step.
-
-    TODO: Does our "new master process" stuff via kexec change the PID? I
-    suspect not. If not, then don't need the "30s old" condition or the
-    "pid" file re-writing.
+- perhaps 'sdcadm setup --ha' for help setting up recommended numbers of
+  extra instances. Dunno.
+  Want some command(s) to help with the post-headnode-setup steps to make this
+  thing real. Adding cloudapi, external nics, etc.
 
 
-# sdcadm self-update
+# self-update with upgrade of other components
 
-TODO: Fix install-sdcadm.sh to craete the rollback copy *before* upgrading.
-    And to take an envvar or switch for the rollback copy dir
-    ($SDCADM_UPGRADE_DIR/sdcadm.old).
-
-self-update:
-
-    sdcadm.selfUpdate()
-
-    - find the latest/version to which to update
-    - get an "upgrade lock" (see above)
-    - download it to $SDCADM_UPGRADE_DIR
-    - https://github.com/jprichardson/node-kexec to actually replace with a
-      created upgrade bash script and run the bash script
-
-    SDCADM_UPGRADE_DIR=/var/db/sdcadm/upgrades/$timestamp
-    echo $$ >$SDCADM_UPGRADE_DIR/pid  # mark self as the new master for this upgrade
-    set -e
-    cd /var/tmp/sdcadm-$$
-    sh ./sdcadm-install.sh
-    # TODO: make all clean up in an 'trap exit' handler.
-    # Release upgrade lock.
-    rm /var/db/sdcadm/upgrades/inprogress
-    rm /var/db/sdcadm/upgrades/$timestamp/pid
-
-self-update with upgrade of other components:
+This isn't currently supported in the first pass. Some thoughts
+on how this could work.
 
     # $SDCADM_UPGRADE_DIR/upgrade.json was written out
 
@@ -83,79 +54,80 @@ self-update with upgrade of other components:
     # use the current inprogress upgrade.
     SDCADM_UPGRADE_TIMESTAMP=... exec sdcadm upgrade
 
-rollback of self-update with upgrade of other components:
 
-    - `sdcadm rollback` shows details on the last upgrade, gets confirmation,
-      ensures have the images, agents, etc. available to which to rollback
+# do we need to support no external access from GZ?
 
-    ??? START HERE
-    - Need the record of upgrade somewhere. Can't use flock because of kexec
-      new process.
-        /var/db/sdcadm/upgrades/inprogress -> $timestamp
-        /var/db/sdcadm/upgrades/$timestamp/
-            pid    # PID of the current master process for the upgrade
-
-            If 5 minutes old then consider it stale? Upgrades can take way
-            longer. So 5 minutes is hard.
+Do we need to route all external traffic via the 'sdc' zone? Currently
+we are assuming can reach out from the GZ where 'sdcadm' is running.
 
 
 
+# node vs server vs hostname vs host
+
+We are inconsistent: sdc-server, CNAPI, /servers, 'cn' and 'host' in manta-adm,
+'server' in sdcadm, 'node' in sdc-oneachnode.
+'server_uuid' in VMAPI, vmadm, SAPI, etc.
+
+-n: sdc-oneachnode
+-H HOSTNAME: sdcadm
+-s SERVER: sdcadm
 
 
 
+# sdcadm cn
 
-# Think about airgap upgrade process
+A la manta-adm cn: https://mail.google.com/mail/u/1/?ui=2#inbox/1456beddc1c484a0
 
-Have 'smartdatacenter-upgrade-$version.tgz' releases that are all the
-components to be upgraded:
-
-    CHANGES.md
-    README.md
-    cnapi-$ver.zfs.gz
-    cnapi-$ver.manifest
-    ... agents, sdcadm, platform, ...
-
-Then call:
-
-    sdcadm update path/to/dir
-
-That "upgrade" package *could* just be the boot tarball. It has all the bits,
-and that is one less build file.
+Also s/server/cn/ in terminology elsewhere. Hrm, it seems to be "cn" or "server_uuid". Not sure.
+Also s/hostname/host/ apparently in manta-adm. Or just have it as a shortcut name?
 
 
-# sdcadm update
+# image versioning
 
-    sdcadm update DIR
-    sdcadm update UPGRADE-JSON-FILE
-        {
-            "cnapi": "UUID",
-            "provisioner": "UUID",
-            ...
-        }
-    sdcadm update SERVICE [SERVICE ...]
-        Where 'SERVICE' is just the name, e.g. 'cnapi', for the latest
-        available. Or 'cnapi:1.2.3' for that version (or latest of that ver
-        if multiple images with that ver). Or 'cnapi:UUID' for a specific
-        cnapi. Or just 'UUID' because that in unambiguous.
-    sdcadm update COMPONENT [COMPONENT ...]
-        Where 'COMPONENT' is a specific component (per `sdcadm versions`),
-        e.g. 'cnapi0'.  Not sure if upgrades of just single instances of a
-        service should be allowed? Useful for e.g. testing interactions and
-        perhaps for dev. Perhaps for upgrading agents on a single CN.
-    sdcadm update
-        Upgrade all of the latest components.
-    sdcadm update TICKET
-        RFE. If we can have a *best guess* at component upgrades required for a
-        given TICKET. Only if this would seem super useful. Would require
-        a separate public service that exposes this from analyzing all Jira
-        tickets for commits (or commits to repos mentioning that ticket), plus
-        open status of ticket, plus optional addition metadata. Seems too
-        loosey goosey to be confidence inspiring.
+- go another round on including 'BRANCH/' prefix with dap?
+...
 
-1. Get a UpgradeRecord with all details: size of downloads, update procedure
-   (which implies impact), estimate of maint time.
-2. Present overview and confirmation.
-3. sdcadm self-update? Figure out how the post-run works for re-started 'sdcadm'
-   after self-update.
-4. Run the update procedure.
+
+# hard to handle upgrade issues
+
+TODO: figure out how to deal with these later
+
+Q: What does manta-adm do for that kind of thing? For config requirement
+changes during upgrade. E.g. a new muskie requires that its SAPI service
+have metadata.MUSKIE_FOO? Just don't do that?
+E.g. adding a config var like "region_name".
+E.g. changing the spec for memcaps for zones
+E.g. cleaning out sdcpackage entries from UFDS
+E.g. migrations (e.g. imgapi migrations)
+
+
+# add 'sdc-foundation' service/package
+
+For changes to the service data themselves we need a image/version of
+sdc-foundation (or whatever). Perhaps that could be the 'sdc' zone. It
+would map well. If not, then we'd need a separate "instance" to capture
+that config version.
+
+Which is just config changes, invariants. It holds the sapi configs (or the
+code to calculate them).
+
+
+
+# HN setup, CN setup
+
+Say headnode.sh calls 'sdcadm setup' for most of the work (at least the
+installation of agents and core zone creation). After setup you have
+SAPI setup in full mode with /instances that match reality.
+
+When setting up a CN, what about agents? Currently they just pull the shar
+from assets zone IP (given in boot params). I don't know that we'd want
+control for installing agents on a new CN to come from a central authority,
+do we? If not, then either want /instances (for agents at least) to be
+reflection of reality rather than explicitly added entries. **Let's run with
+/instances being a reflection of reality (i.e. what 'sdcadm insts' does now).**
+
+Ideally I'd like CN boot to be given an imgapi DNS (perhaps inferred from
+node.config) and a set of agent UUIDs to download and install, if that is
+possible. Then we don't need the shar. Agents "images" would be put in
+/usbkey/datasets [sic] and loaded into imgapi along with the others.
 
