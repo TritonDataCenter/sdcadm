@@ -8,7 +8,8 @@
 # Vars, Tools, Files, Flags
 #
 NAME		:= sdcadm
-DOC_FILES	 = index.restdown
+DOC_FILES	 = index.md design.md
+RESTDOWN_EXT := .md
 JS_FILES	:= bin/sdcadm \
 	$(shell find lib -name '*.js' | grep -v '/tmp/')
 JSL_CONF_NODE	 = tools/jsl.node.conf
