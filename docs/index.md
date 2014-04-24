@@ -8,3 +8,5 @@ apisections:
 # sdcadm
 
 TODO
+
+For now see [the design doc](./design.html).
