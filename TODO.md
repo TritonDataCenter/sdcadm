@@ -39,6 +39,33 @@ Here-in random TODOs and scratchpad notes for sdcadm.
   thing real. Adding cloudapi, external nics, etc.
 
 
+# SAPI + agents notes
+
+From discussion with jclulow.
+
+- new ur: spec'd HTTP websocket API to go into base smartos, backfill
+  installer for unupgraded platforms, move to talking to it
+- CN setup moves to installing a sdc-agent that is the controller for
+  handling update/state/drain, etc. of all the other agents.
+  (note: "agent" here isn't necessarily just running services, but any
+  blob of software that needs to be installed on a node.)
+- sdc-agent heartbeats into CNAPI with agent data (a la VMs in VMAPI)
+  Then CNAPI grows a ListAgents, GetAgent, etc.
+- /instances from the real VMs, *including* instance.metadata being
+  vm.customer_metadata
+- add services to SAPI for the agents, and SAPI GetInstances includes
+  agent info from CNAPI's ListAgents (for now from ServerList sysinfo)
+
+    SAPI agent instances:
+        GET /instances/$server_uuid/$service_name
+    e.g.:
+        GET /instances/c5ecfd70-e496-2c46-a18b-b295c9d2644e/provisioner
+
+- for consistency have instance-level metadata for agents, where the authority
+  for that data is the moray info in CNAPI for that agent.
+- config-agent in GZ, whether a subset of the sdc-agent or separate
+
+
 # self-update with upgrade of other components
 
 This isn't currently supported in the first pass. Some thoughts
