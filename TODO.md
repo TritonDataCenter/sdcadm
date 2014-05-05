@@ -3,6 +3,9 @@ Here-in random TODOs and scratchpad notes for sdcadm.
 # TODO
 
 - basic design and 'sdcadm update SERVICE' first stab
+  Fix all 'XXX's before removing the 'WARNING' in do_update.
+
+- log serializers needs to the restify client_req/res for API clients
 
 - get full logging in place (with log rollup and rotation a la vm logs)
 
@@ -38,6 +41,11 @@ Here-in random TODOs and scratchpad notes for sdcadm.
   Want some command(s) to help with the post-headnode-setup steps to make this
   thing real. Adding cloudapi, external nics, etc.
 
+# Design Qs
+
+- Currently the usage of IMGAPI AdminImportRemoteImage to import update images
+  requires the imgapi zone to have an external NIC. Do we want to require that?
+  The DownloadImages procedure should have an option for this.
 
 # SAPI + agents notes
 
