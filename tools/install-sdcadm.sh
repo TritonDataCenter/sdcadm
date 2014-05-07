@@ -105,6 +105,16 @@ mv $NEWDIR $DESTDIR
 rm -f /opt/smartdc/bin/sdcadm
 ln -s $DESTDIR/bin/sdcadm /opt/smartdc/bin/sdcadm
 
+# Setup log rotation.
+logadm -w sdcadm_logs \
+    -b '/opt/smartdc/sdcadm/tools/rotate-logs.sh -i /var/log/sdcadm/logs/ /var/log/sdcadm/sdcadm.log' \
+    -t '/var/log/sdcadm/sdcadm_$nodename_%FT%H:%M:%S.log' \
+    -C 168 -S 1g -p 1h \
+    /var/log/sdcadm/sdcadm.log
+# Even though our '-b cmd' creates this file, logadm rotation will not rotate
+# if the file doesn't exist.
+touch /var/log/sdcadm/sdcadm.log
+
 # Add `serverUuid` to the config (better than having this
 # done on every `sdcadm` invocation later).
 if [[ ! -f $CONFIG_PATH ]]; then
