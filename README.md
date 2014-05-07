@@ -20,6 +20,12 @@ handling SDC upgrades (and possibly other SDC setup duties).
     cd sdcadm
     git submodule update --init
     make all
+    ./bin/sdcadm help
+
+Pushing local clone changes to a COAL HN for quicker dev cycle:
+
+    # ... make edits ...
+    ./tools/rsync-to root@10.99.99.7
 
 
 # Testing

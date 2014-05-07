@@ -2,15 +2,17 @@ Here-in random TODOs and scratchpad notes for sdcadm.
 
 # TODO
 
+- 'sdcadm update -I' to preload images and exit
+
+- 'sdcadm update SERVICES...' i.e. multiple services
+
 - basic design and 'sdcadm update SERVICE' first stab
   Fix all 'XXX's before removing the 'WARNING' in do_update.
 
-- log serializers needs to the restify client_req/res for API clients
-
-- get full logging in place (with log rollup and rotation a la vm logs)
-
 - sdcadm history (and having updates adding to this history file)
   /var/sdcadm/history   # rotate this?
+
+- ... sync this file with the roadmap
 
 - a way to list available updates (with changelog support)
   Perhaps use this under the hood:
