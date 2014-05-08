@@ -76,6 +76,8 @@ cp -PR \
 cp -PR \
     $TOP/build/node \
     $PROTO/node
+mkdir -p $PROTO/tools
+cp -P $TOP/tools/rotate-logs.sh $PROTO/tools/
 
 # Trim out cruft for smaller package.
 rm -rf $PROTO/node/bin/npm
