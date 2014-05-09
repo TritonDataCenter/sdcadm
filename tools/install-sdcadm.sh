@@ -105,15 +105,6 @@ mv $NEWDIR $DESTDIR
 rm -f /opt/smartdc/bin/sdcadm
 ln -s $DESTDIR/bin/sdcadm /opt/smartdc/bin/sdcadm
 
-# Setup log rotation.
-logadm -w sdcadm_logs \
-    -b '/opt/smartdc/sdcadm/tools/rotate-logs.sh -i /var/log/sdcadm/logs/ /var/log/sdcadm/sdcadm.log' \
-    -t '/var/log/sdcadm/sdcadm_$nodename_%FT%H:%M:%S.log' \
-    -C 168 -S 1g -p 1h \
-    /var/log/sdcadm/sdcadm.log
-# Even though our '-b cmd' creates this file, logadm rotation will not rotate
-# if the file doesn't exist.
-touch /var/log/sdcadm/sdcadm.log
 
 # Add `serverUuid` to the config (better than having this
 # done on every `sdcadm` invocation later).
@@ -124,6 +115,11 @@ fi
 SERVER_UUID=$(sysinfo | json UUID)
 json -f $CONFIG_PATH -e "this.serverUuid = '$SERVER_UUID'" >$CONFIG_PATH.new
 mv $CONFIG_PATH.new $CONFIG_PATH
+
+# Import the sdcadm-setup service and gracefully start it.
+echo "Importing and starting sdcadm-setup service"
+cp $DESTDIR/smf/manifests/sdcadm-setup.xml /var/svc/manifest/site/sdcadm-setup.xml
+svccfg import /var/svc/manifest/site/sdcadm-setup.xml
 
 [[ -d $OLDDIR ]] && rm -rf $OLDDIR
 

@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# Copyright 2014 Joyent, Inc.  All rights reserved.
+#
+# "sdcadm-setup" service for restoring sdcadm GZ settings on server reboot.
+#
+
+set -o xtrace
+
+. /lib/svc/share/smf_include.sh
+
+# Setup log rotation.
+logadm -w sdcadm_logs \
+    -b '/opt/smartdc/sdcadm/tools/rotate-logs.sh -i /var/log/sdcadm/logs/ /var/log/sdcadm/sdcadm.log' \
+    -t '/var/log/sdcadm/sdcadm_$nodename_%FT%H:%M:%S.log' \
+    -C 168 -S 1g -p 1h \
+    /var/log/sdcadm/sdcadm.log
+
+# Even though our '-b cmd' creates this file, logadm rotation will not rotate
+# if the file doesn't exist.
+touch /var/log/sdcadm/sdcadm.log
+
+exit $SMF_EXIT_OK
