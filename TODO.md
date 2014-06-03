@@ -1,10 +1,19 @@
 Here-in random TODOs and scratchpad notes for sdcadm.
 
+# Curr
+
+TODO: Also no log output in "logDir" there! Therre *is* a trace log in
+/var/log/sdcadm/logs/*   Not sure best answer because *expect* log file
+at "log dir".
+    rename wrkDir? rollbackDir? journalDir?
+
+
+
 # TODO
 
-- 'sdcadm update -I' to preload images and exit
-
 - 'sdcadm update SERVICES...' i.e. multiple services
+
+- basic sdcadm test suite
 
 - basic design and 'sdcadm update SERVICE' first stab
   Fix all 'XXX's before removing the 'WARNING' in do_update.
