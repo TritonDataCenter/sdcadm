@@ -9,7 +9,7 @@
 #   install-sdcadm.sh    # in the extracted shar dir
 #
 # Environment:
-#   SDCADM_LOGDIR=<path to an existing dir>
+#   SDCADM_WRKDIR=<path to an existing dir>
 #           If not provided, then details, including rollback info, will be
 #           put in "/var/sdcadm/self-updates/YYYYMMDDTHHMMSSZ".
 #
@@ -25,18 +25,18 @@ set -o pipefail
 DESTDIR=/opt/smartdc/sdcadm
 NEWDIR=$DESTDIR.new
 OLDDIR=$DESTDIR.old
-if [[ -n "$SDCADM_LOGDIR" ]]; then
-    LOGDIR=$SDCADM_LOGDIR
-    TRIM_LOGDIRS=false
-    if [[ -n "$(echo $LOGDIR | (egrep '^\/var\/sdcadm\/self-updates\/.' || true))" ]]; then
-        # Be defensive and only allow trimming of `dirname $LOGDIR` if it is
+if [[ -n "$SDCADM_WRKDIR" ]]; then
+    WRKDIR=$SDCADM_WRKDIR
+    TRIM_WRKDIRS=false
+    if [[ -n "$(echo $WRKDIR | (egrep '^\/var\/sdcadm\/self-updates\/.' || true))" ]]; then
+        # Be defensive and only allow trimming of `dirname $WRKDIR` if it is
         # where we expect it to be.
-        TRIM_LOGDIRS=true
+        TRIM_WRKDIRS=true
     fi
 else
-    LOGDIR=/var/sdcadm/self-updates/$(date +%Y%m%dT%H%M%SZ)
-    mkdir -p $LOGDIR
-    TRIM_LOGDIRS=true
+    WRKDIR=/var/sdcadm/self-updates/$(date +%Y%m%dT%H%M%SZ)
+    mkdir -p $WRKDIR
+    TRIM_WRKDIRS=true
 fi
 CONFIG_PATH=/var/sdcadm/sdcadm.conf
 
@@ -70,7 +70,7 @@ function restore_old_on_error
 [[ "$(sysinfo | json "Boot Parameters.headnode")" == "true" ]] \
     || fatal "not running on the headnode"
 [[ -f "./etc/buildstamp" ]] || fatal "missing './etc/buildstamp'"
-[[ -d "$LOGDIR" ]] || fatal "'$LOGDIR' does not exist"
+[[ -d "$WRKDIR" ]] || fatal "'$WRKDIR' does not exist"
 
 [[ -d $OLDDIR ]] && rm -rf $OLDDIR
 [[ -d $NEWDIR ]] && rm -rf $NEWDIR
@@ -82,16 +82,16 @@ rm $NEWDIR/install-sdcadm.sh
 rm -rf $NEWDIR/.temp_bin
 
 # Archive the old sdcadm for possible rollback and log other details.
-cp ./package.json $LOGDIR/package.json
-cp ./etc/buildstamp $LOGDIR/buildstamp
+cp ./package.json $WRKDIR/package.json
+cp ./etc/buildstamp $WRKDIR/buildstamp
 if [[ -d $DESTDIR ]]; then
-    echo "Archiving $(cat $DESTDIR/etc/buildstamp) to $LOGDIR/sdcadm.old"
-    cp -PR $DESTDIR $LOGDIR/sdcadm.old
+    echo "Archiving $(cat $DESTDIR/etc/buildstamp) to $WRKDIR/sdcadm.old"
+    cp -PR $DESTDIR $WRKDIR/sdcadm.old
 fi
 
-if [[ "$TRIM_LOGDIRS" == "true" ]]; then
-    # Only retain the latest 5 log dirs.
-    (cd $(dirname $LOGDIR) && ls -1d ????????T??????Z | sort -r | tail +6 \
+if [[ "$TRIM_WRKDIRS" == "true" ]]; then
+    # Only retain the latest 5 work dirs.
+    (cd $(dirname $WRKDIR) && ls -1d ????????T??????Z | sort -r | tail +6 \
         | xargs -n1 rm -rf)
 fi
 

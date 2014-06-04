@@ -1,5 +1,10 @@
 # sdcadm Changelog
 
+# 1.2.0
+
+- Change shar self-installer input envvar from SDCADM_LOGDIR to SDCADM_WRKDIR.
+- 'sdcadm update -I ...'
+
 # 1.1.0
 
 - First stab at `sdcadm update SERVICE`. Currently limited to most of the stateless
