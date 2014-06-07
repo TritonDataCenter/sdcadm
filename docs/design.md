@@ -81,6 +81,7 @@ Calling forms:
         e.g. 'cnapi0'.  Not sure if upgrades of just single instances of a
         service should be allowed? Useful for e.g. testing interactions and
         perhaps for dev. Perhaps for upgrading agents on a single CN.
+    ... upgrade-spec ... | sdcadm update
     sdcadm update -f <./local-upgrade-file.json>
         Upgrade a set of services (or instances) per a simple changes JSON
         format. This mirrors the "upgrade-images" file in current
@@ -98,7 +99,7 @@ Calling forms:
                 "service": "dapi",
                 "image": "11f2be78-fc8c-e556-bc01-ecdbc3fb4e66"
             }' | sdcadm update
-    sdcadm update
+    sdcadm update -a|--all
         Update all services to the latest available image.
     sdcadm update --plan <path>
         Update everything in SDC to match this plan file. Could be useful

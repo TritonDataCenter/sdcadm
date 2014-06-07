@@ -3,6 +3,8 @@ Here-in random TODOs and scratchpad notes for sdcadm.
 
 # TODO
 
+- correct "already up to date" if already on latest image
+
 - 'sdcadm update SERVICES...' i.e. multiple services
 
 - basic sdcadm test suite
