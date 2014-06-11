@@ -1,5 +1,14 @@
 # sdcadm Changelog
 
+# 1.2.1
+
+- 'sdcadm update' will correctly do nothing (saying "Up-to-date") if the given
+  services are already at the latest candidate image. It also now properly
+  excludes images published earlier than the currently used image as update
+  candidates.
+
+- 'sdcadm update <svc>@<version>' and other calling forms
+
 # 1.2.0
 
 - Change shar self-installer input envvar from SDCADM_LOGDIR to SDCADM_WRKDIR.

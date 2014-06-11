@@ -12,6 +12,9 @@ Here-in random TODOs and scratchpad notes for sdcadm.
 - basic design and 'sdcadm update SERVICE' first stab
   Fix all 'XXX's before removing the 'WARNING' in do_update.
 
+- sdcadm update -a|--all
+  sdcadm update -f update-spec.json
+
 - sdcadm history (and having updates adding to this history file)
   /var/sdcadm/history   # rotate this?
 
