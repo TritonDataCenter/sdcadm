@@ -3,13 +3,6 @@ Here-in random TODOs and scratchpad notes for sdcadm.
 
 # TODO
 
-- switch other usages to tabula
-
-- sdcadm insts -I  # group by images
-
-- `sdcadm inst` changes a la `sdcadm svcs` to have JSON (and field names)
-  more closely match `sdc-sapi /instances`.
-
 - basic design and 'sdcadm update SERVICE' first stab
   Fix all 'XXX's before removing the 'WARNING' in do_update.
 
