@@ -3,7 +3,9 @@ Here-in random TODOs and scratchpad notes for sdcadm.
 
 # TODO
 
-- sdcadm images     # list active images, number of insts
+- switch other usages to tabula
+
+- sdcadm insts -I  # group by images
 
 - `sdcadm inst` changes a la `sdcadm svcs` to have JSON (and field names)
   more closely match `sdc-sapi /instances`.

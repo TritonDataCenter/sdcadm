@@ -5,6 +5,8 @@
 - `sdcadm svcs` lists one service per row, JSON is mostly from SAPI's
   ListServices.
 
+- `sdcadm insts -I` to group by (service, image) unique pairs
+
 
 # 1.2.1
 
