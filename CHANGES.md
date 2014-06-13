@@ -1,5 +1,11 @@
 # sdcadm Changelog
 
+# 1.2.2
+
+- `sdcadm svcs` lists one service per row, JSON is mostly from SAPI's
+  ListServices.
+
+
 # 1.2.1
 
 - 'sdcadm update' will correctly do nothing (saying "Up-to-date") if the given

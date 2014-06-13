@@ -3,14 +3,15 @@ Here-in random TODOs and scratchpad notes for sdcadm.
 
 # TODO
 
-- correct "already up to date" if already on latest image
+- sdcadm images     # list active images, number of insts
 
-- 'sdcadm update SERVICES...' i.e. multiple services
-
-- basic sdcadm test suite
+- `sdcadm inst` changes a la `sdcadm svcs` to have JSON (and field names)
+  more closely match `sdc-sapi /instances`.
 
 - basic design and 'sdcadm update SERVICE' first stab
   Fix all 'XXX's before removing the 'WARNING' in do_update.
+
+- basic sdcadm test suite
 
 - sdcadm update -a|--all
   sdcadm update -f update-spec.json
@@ -43,6 +44,11 @@ Here-in random TODOs and scratchpad notes for sdcadm.
 
 - trim out stuff in node_modules in the sdcadm shar (e.g. large ldapjs
   and restify bits that we don't need)
+
+- for migration: `sdcadm svcs` listing:
+        metadata.sdcMigratedRev,
+        collected current max sdcMigrationRev of deployed instance images
+
 
 - perhaps 'sdcadm setup --ha' for help setting up recommended numbers of
   extra instances. Dunno.
