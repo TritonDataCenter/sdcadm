@@ -41,6 +41,8 @@ Here-in random TODOs and scratchpad notes for sdcadm.
   translate to a `'allowNoopOrDowngrade':true` or similar, which
   'determineProcedures' will handle.
 
+- SdcAdm.getCandidateImages needs server-size `published_at>=...` filtering.
+
 - a way to list available updates (with changelog support)
   Perhaps use this under the hood:
         update-imgadm changes $from-image-uuid $to-image-uuid
@@ -61,6 +63,9 @@ Here-in random TODOs and scratchpad notes for sdcadm.
   Getting particular change logs:
         sdcadm changes dapi0 dapi1  # list changes between two current dapi's using diff images
         sdcadm changes $imageUuidFrom $imageUuidTo
+
+- conformance tests as *part of sdcadm*? Then sdcadm can run them (or a fast
+  subset) as a sanity check after each update perhaps.
 
 - trim out stuff in node_modules in the sdcadm shar (e.g. large ldapjs
   and restify bits that we don't need)
