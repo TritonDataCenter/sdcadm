@@ -2,6 +2,9 @@
 
 # 1.2.2
 
+- `config.vmMinPlatform` guard for minimum platform supported for core
+  VM updates.
+
 - `sdcadm svcs` lists one service per row, JSON is mostly from SAPI's
   ListServices.
 
