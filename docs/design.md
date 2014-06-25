@@ -96,7 +96,7 @@ Calling forms:
             }
         Can also pass in this payload on stdin, e.g.:
             echo '{
-                "service": "dapi",
+                "service": "cnapi",
                 "image": "11f2be78-fc8c-e556-bc01-ecdbc3fb4e66"
             }' | sdcadm update
     sdcadm update -a|--all
@@ -161,14 +161,14 @@ command lists the history a la `zpool history`.
 
 Update a service (all instances):
 
-    sdcadm update dapi
-    sdcadm update dapi -i 11f2be78-fc8c-e556-bc01-ecdbc3fb4e66
+    sdcadm update cnapi
+    sdcadm update cnapi -i 11f2be78-fc8c-e556-bc01-ecdbc3fb4e66
 
 which is a shortcut for:
 
-    # Upgrade all instances in the 'dapi' service to the given image.
+    # Upgrade all instances in the 'cnapi' service to the given image.
     echo '{
-        "service": "dapi",
+        "service": "cnapi",
         "image": "11f2be78-fc8c-e556-bc01-ecdbc3fb4e66"
     }' | sdcadm update
 
@@ -193,27 +193,27 @@ which is a shortcut for:
         "image": "11f2be78-fc8c-e556-bc01-ecdbc3fb4e66"
     }' | sdcadm update
 
-Add a new dapi instance:
+Add a new cnapi instance:
 
     $ echo '{
         "create": true,
         "image": "11f2be78-fc8c-e556-bc01-ecdbc3fb4e66",
     }' | sdcadm update
-    sdcadm update: error (SomeCodeXXX): must specify 'server' (or 'hostname') for a new instance
+    sdcadm update: error (SomeCode): must specify 'server' (or 'hostname') for a new instance
 
     $ echo '{
         "create": true,
         "image": "11f2be78-fc8c-e556-bc01-ecdbc3fb4e66",
         "hostname": "headnode"
     }' | sdcadm update
-    Provision new instance: $uuid (dapi1, service 'dapi', image $image_uuid, server $server_uuid)
+    Provision new instance: $uuid (dapi1, service 'cnapi', image $image_uuid, server $server_uuid)
 
     # Or the same to 'sdcadm create' (tho the 'create': true is implied there)
     $ echo '{
         "image": "11f2be78-fc8c-e556-bc01-ecdbc3fb4e66",
         "hostname": "headnode"
     }' | sdcadm update
-    Create new zone: $uuid (dapi1, service 'dapi', image $image_uuid, server $server_uuid)
+    Create new zone: $uuid (dapi1, service 'cnapi', image $image_uuid, server $server_uuid)
 
     # Create cloudapi
     sdcadm create cloudapi -s $server_uuid
@@ -250,5 +250,3 @@ Aside:
   'sdc-foundation' cases.
   **Note:** Not sure this applies here. 'sdc-foundation' is
   "do these changes for this upgrade, else the upgrade failed".
-
-

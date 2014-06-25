@@ -1,5 +1,6 @@
 {
     "updatesServerUrl": "https://updates.joyent.com",
+    "vmMinPlatform": "20130606T000000Z",
     "imgNameFromSvcName": {
         "imgapi": "imgapi",
         "dhcpd": "dhcpd",
