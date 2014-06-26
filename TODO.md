@@ -3,8 +3,7 @@ Here-in random TODOs and scratchpad notes for sdcadm.
 
 # TODO
 
-- basic design and 'sdcadm update SERVICE' first stab
-  Fix all 'XXX's before removing the 'WARNING' in do_update.
+- ... sync this file with the roadmap
 
 - basic sdcadm test suite
 
@@ -12,12 +11,10 @@ Here-in random TODOs and scratchpad notes for sdcadm.
   sdcadm update -f update-spec.json
 
 - sdcadm history (and having updates adding to this history file)
-  /var/sdcadm/history   # rotate this?
+  /var/sdcadm/history   # rotate this? -> moray
 
 - extra procedure on update: `sdc-amonadm update` (library equivalent) procedure
   after instance changes
-
-- ... sync this file with the roadmap
 
 - Allow no-op updates (same image) and downgrades with a "force" flag
   Want the confirmation to break out instances meaningfully, e.g.:
