@@ -10,8 +10,7 @@
 NAME		:= sdcadm
 DOC_FILES	 = index.md design.md
 RESTDOWN_EXT := .md
-JS_FILES	:= bin/sdcadm \
-	$(shell find lib -name '*.js' | grep -v '/tmp/')
+JS_FILES	:= $(shell find lib -name '*.js' | grep -v '/tmp/')
 JSL_CONF_NODE	 = tools/jsl.node.conf
 JSL_FILES_NODE	 = $(JS_FILES)
 JSSTYLE_FILES	 = $(JS_FILES)
