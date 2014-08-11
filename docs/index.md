@@ -16,6 +16,9 @@ instances (e.g. cloudapi), making services HA, etc.
 
 In active development, very incomplete. See the [sdc-update project
 plan](https://mo.joyent.com/docs/engdoc/master/roadmap/projects/sdc-update.html).
+The current SDC upgrade process is still via the [incr-upgrade
+scripts](https://mo.joyent.com/usb-headnode/blob/master/incr-upgrade-scripts/README.md),
+which `sdcadm` intends to replace.
 
 
 # Commands
