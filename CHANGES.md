@@ -1,8 +1,10 @@
 # sdcadm Changelog
 
-# 1.2.4
+# 1.2.5
 
 - TOOLS-581 a self-update that finds no updates should not create a /var/sdcadm/self-updates dir
+
+# 1.2.4
 
 - Add 'sdcadm check-config'.
 
