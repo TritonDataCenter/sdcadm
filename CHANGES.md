@@ -1,5 +1,12 @@
 # sdcadm Changelog
 
+# 1.2.4
+
+- Add 'sdcadm check-config'.
+
+- Add 'sdcadm experimental ...'  where experimental commands will hang
+  until fully integrated into the planned upgrade process.
+
 # 1.2.3
 
 - Save old user-script to 'sdcadm update' work dir for possible rollback.
