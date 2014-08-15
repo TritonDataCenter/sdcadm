@@ -2,6 +2,8 @@
 
 # 1.2.4
 
+- TOOLS-581 a self-update that finds no updates should not create a /var/sdcadm/self-updates dir
+
 - Add 'sdcadm check-config'.
 
 - Add 'sdcadm experimental ...'  where experimental commands will hang
