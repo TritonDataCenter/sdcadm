@@ -1,5 +1,9 @@
 # sdcadm Changelog
 
+# 1.3.0
+
+- Add --force-rabbitmq flag and prevent updating of RabbitMQ if flag not used.
+
 # 1.2.5
 
 - TOOLS-582 correct bug in self-update that would break when multiple build
