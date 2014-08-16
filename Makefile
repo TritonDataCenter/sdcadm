@@ -71,6 +71,15 @@ dumpvar:
 	fi
 	@echo "$(VAR) is '$($(VAR))'"
 
+# Ensure all version-carrying files have the same version.
+.PHONY: check-version
+check-version:
+	@echo version is: $(shell cat package.json | json version)
+	[[ `cat package.json | json version` == `grep '^## ' CHANGES.md | head -1 | awk '{print $$2}'` ]]
+	@echo Version check ok.
+
+check:: check-version
+
 
 include ./tools/mk/Makefile.deps
 ifeq ($(shell uname -s),SunOS)
