@@ -1,5 +1,12 @@
 Here-in random TODOs and scratchpad notes for sdcadm.
 
+# now
+
+- logCb -> better name; add support for format. Name: `print`
+
+- add 'login' ability to each zone (a la manta-login) ... could use that
+  for 'up-check' for each service
+
 
 # TODO
 

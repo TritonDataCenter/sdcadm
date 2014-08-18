@@ -21,7 +21,8 @@
     "strsplit": "1.0.0",
     "tabula": "1.2.2",
     "vasync": "1.4.3",
-    "verror": "1.3.7"
+    "verror": "1.3.7",
+    "wf-client": "git+ssh://git@git.joyent.com:wf-client.git#9bcb3a0ebec7cd5b4052acaacde8fd6e3e2dfcf9"
   },
   "engines": {
     "node": ">=0.10"
