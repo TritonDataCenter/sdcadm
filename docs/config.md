@@ -1,13 +1,13 @@
 ---
 title: sdc configuration variables
-markdown2extras: wiki-tables, code-friendly, cuddled-lists, link-patterns
+markdown2extras: wiki-tables, code-friendly, cuddled-lists, link-patterns, footnotes
 markdown2linkpatternsfile: link-patterns.txt
-apisections:
+apisections: SDC Config
 ---
 
 # SDC Config
 
-There are many places where SDC configuration variables are defined, due to
+There are many places where SDC configuration variables are defined due to
 different reasons, including backwards compatibility, SDC setup process
 requirements, ...
 
@@ -21,9 +21,9 @@ taking as *"desired configuration"* the `metadata` values given to the `sdc`
 application in `SAPI`, and comparing them with the *"real"* values in the
 system.
 
-## Packages:
+## Packages
 
-Variables with name from `pkg_1` to `pkg_$n` where `$n=11` right now. These are
+Variables with name from `pkg_1` to `pkg_$n` where `$n=11` right now ([^1]). These are
 just the SDC Packages used to create the different core zones. The packages
 are added to PAPI during the first `papi` VM setup process.
 
@@ -31,6 +31,43 @@ Additionally, the values matching the pattern `${SERVICE_NAME}_pkg` are used
 as packages for the creation of the VMs associated with such services;
 (see `usb-headnode.git:/scripts/build-payload.js`).
 
+
+## Headnode general configuration and setup
+
+There are some variables used either during headnode setup process or to
+configure Headnode global zone:
+
+- `install_agents` [^1]: Should or not install agents during HN setup?
+- `initial_script` [^1]: Relative path, within USB key directory, to the headnode
+  setup script
+- `utc_offset` [^1]: String containing the numeric value for the headnode UTC
+  offset, (default `"0"`).
+- `agents_root` [^1]: Absolute path to agents directory.
+- `zonetracker_database_path` [^1]: Absolute path to zonetracker SQLite DB file.
+- `root_authorized_keys_file`[^1]: The name of the file to be used as SSH
+  authorized keys source for `root` account.
+- `coal`: Is the current setup a COAL setup?
+- `swap`: SWAP of the Headnode, expressed as percentage of available disk
+  space.
+- `compute_node_swap`: SWAP of the Compute Nodes, expressed as percentage of
+  available disk space.
+- `default_rack_name`: Name of the default rack.
+- `default_rack_size`: Default size for racks
+- `default_server_role`: Default role for CNs
+- `default_package_sizes`: Comma separated list of default RAM size for packages.
+
+## Email notification settings
+
+These settings are used by all services in your cloud for email messages
+
+- `mail_to`
+- `mail_from`
+
+## Service Bundles API
+
+The URL to upload service bundles, with the required user name and password.
+Usually, these variables shouldn't be modified at all: `sbapi_url`,
+`sbapi_http_user`, `sbapi_http_pass`.
 
 ## Datacenter details
 
@@ -80,12 +117,59 @@ configuration values required for the correct operation of the UFDS service:
   the admin user and, among others, are used by the `sdc-healthcheck` utility
   to check what's the status for CloudAPI.
 
+
+## Smart Login
+
+- `capi_client_url`: URL of the CAPI service required by Smart Login
+
+## Network configuration
+
+`admin_nic` is the nic `admin_ip` will be connected to for headnode zones:
+
+- `admin_nic`
+- `admin_ip`
+- `admin_netmask`
+- `admin_network`
+
+`external_nic` is the nic `external_ip` will be connected to for headnode zones:
+
+- `external_nic`
+- `external_ip`
+- `external_gateway`
+- `external_netmask`
+- `external_network`
+- `external_provisionable_start`: The IPv4 address of the first provisionable
+  IP on the external network
+- `external_provisionable_end`: The IPv4 address of the last provisionable
+  IP on the external network
+- `headnode_default_gateway`
+
+- `binder_resolver_ips`: comma separated list of reserved IPs for binder instances
+- `dns_resolvers`: comma separated list of DNS resolvers
+- `dns_domain`: Domain to be used to create instance hostnames
+
+## DHCP settings for compute nodes on the admin network
+
+- `dhcp_range_start`
+- `dhcp_range_end`
+- `dhcp_lease_time`
+
+## /etc/shadow config
+
+- `root_shadow`: entry from /etc/shadow for root 
+- `admin_shadow`: entry from /etc/shadow for the admin user
+
+## NTP settings
+- `ntp_hosts`: Comma separated list of NTP hosts for the Headnode
+- `compute_node_ntp_hosts`: Comma separated list of NTP hosts for the Compute
+  nodes.
+
 ## Service VMs details
 
 For every VM used to run one or more of the `SDC` services, we have a set of
 common variables sharing a common naming pattern:
 
-- `${SERVICE_NAME}_root_pw`
+- `${SERVICE_NAME}_root_pw` 
 - `${SERVICE_NAME}_admin_ips`
 - `${SERVICE_NAME}_domain`
 
@@ -100,3 +184,19 @@ created, a new IP value was added to these variables but nowadays, these are
 nevermore added and this value remains set to the original value it was
 initially set when created the DC, which may or not match with the first VM
 running the service (usually with alias `${SERVICE_NAME}0`).
+
+Additionally, there's also an entry with name `${UPPERCASE_SERVICE_NAME}_SERVICE`
+for most of the services, with similar contents to `${SERVICE_NAME}_domain`.
+
+## TODO (Review Required)
+
+- Shouldn't we choose between `${SERVICE_NAME}_domain` and
+  `${UPPERCASE_SERVICE_NAME}_SERVICE`?.
+- Why cloudapi's `cloudapi_domain` is missing and `sdcsso_domain` is not?
+- Why `assets_pkg` and `sapi_pkg` are then only remaining `*_pkg` variables?
+- Are the following variables still in use?: `install_agents`, `initial_script`,
+  `utc_offset`, `agents_root`,`zonetracker_database_path`.
+- Why is `adminui_workers` a top level metadata value (SDC) instead of being
+  just an `adminui` service value?.
+
+[^1]: Variables not included into `/mnt/usbkey/config` file.
