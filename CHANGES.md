@@ -1,5 +1,10 @@
 # sdcadm Changelog
 
+## 1.3.1
+
+- Add `sdcadm experimental dc-maint` for starting and stopping DC maintenance
+  mode (i.e. putting cloudapi in readonly mode).
+
 ## 1.3.0
 
 - Add --force-rabbitmq flag and prevent updating of RabbitMQ if flag not used.
