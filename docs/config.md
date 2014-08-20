@@ -32,7 +32,7 @@ as packages for the creation of the VMs associated with such services;
 (see `usb-headnode.git:/scripts/build-payload.js`).
 
 
-## Headnode general configuration and setup
+## Headnode general config and setup
 
 There are some variables used either during headnode setup process or to
 configure Headnode global zone:
@@ -68,6 +68,13 @@ These settings are used by all services in your cloud for email messages
 The URL to upload service bundles, with the required user name and password.
 Usually, these variables shouldn't be modified at all: `sbapi_url`,
 `sbapi_http_user`, `sbapi_http_pass`.
+
+
+## Datasets API
+
+The URL to retrieve public Images, including the required user and password.
+In general, it shouldn't be modified: `dsapi_url`, `dsapi_http_user`,
+`dsapi_http_pass`.
 
 ## Datacenter details
 
@@ -188,6 +195,29 @@ running the service (usually with alias `${SERVICE_NAME}0`).
 Additionally, there's also an entry with name `${UPPERCASE_SERVICE_NAME}_SERVICE`
 for most of the services, with similar contents to `${SERVICE_NAME}_domain`.
 
+Finally, `cnapi`, `fwapi` and `napi` also set the variable
+`${SERVICE_NAME}_client_url` pointing to the URL of their respective HTTP servers.
+
+
+## Other settings:
+
+- `adminui_help_url`: AdminUI documentation
+- `dhcpd_dhcp_server`
+- `dbconn_retry_after`
+- `dbconn_num_attempts`
+- `napi_mac_prefix`
+- `phonehome_automatic`
+- `show_setup_timers`
+- `serialize_setup`
+- `config_inc_dir` [^1]: Full path to config directory. (Usually `/usbkey/config.inc`).
+- `ZK_SERVERS` [^1]: Zookeeper servers
+- `manatee_shard` [^1]: Which manatee shard should use (`sdc`).
+- `sapi-url` [^1]: URL to SAPI
+- `assets-ip` [^1]: Admin IP of the assets VM
+- `SDC_PRIVATE_KEY` [^1]: Private SSH key for the SDC setup
+- `SDC_PUBLIC_KEY` [^1]: Public SSH key for the SDC setup
+- `SDC_KEY_ID` [^1]: Fingerprint of the SSH key for the SDC setup
+
 ## TODO (Review Required)
 
 - Shouldn't we choose between `${SERVICE_NAME}_domain` and
@@ -198,5 +228,7 @@ for most of the services, with similar contents to `${SERVICE_NAME}_domain`.
   `utc_offset`, `agents_root`,`zonetracker_database_path`.
 - Why is `adminui_workers` a top level metadata value (SDC) instead of being
   just an `adminui` service value?.
+- Is any of the `${SERVICE_NAME}_client_url` other than `capi_client_url` used
+  anywhere?.
 
 [^1]: Variables not included into `/mnt/usbkey/config` file.
