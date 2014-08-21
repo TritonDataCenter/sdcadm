@@ -1,8 +1,7 @@
 # sdcadm
 
-- Repository: <git@git.joyent.com:sdcadm.git>, <https://mo.joyent.com/sdcadm>
-- Who: Trent Mick
-- API Docs: <https://mo.joyent.com/docs/sdcadm>
+- Repository: <git@git.joyent.com:sdcadm.git>
+- Docs: <https://mo.joyent.com/docs/sdcadm>
 - XMPP/Jabber: <mib@groupchat.joyent.com>
 - Tickets/bugs: <https://devhub.joyent.com/jira/browse/TOOLS>
 - CI builds: <https://jenkins.joyent.us/job/sdcadm>
@@ -19,15 +18,19 @@ handling SDC upgrades (and possibly other SDC setup duties).
     git clone git@git.joyent.com:sdcadm.git
     cd sdcadm
     git submodule update --init
-    make all
-    ./bin/sdcadm help
+    make all    # note that this fails to install some
 
-Pushing local clone changes to a COAL HN for quicker dev cycle:
+Pushing working copy changes to a COAL HN for quicker dev cycle:
 
-    # ... make edits ...
-    ./tools/rsync-to root@10.99.99.7
+    [on-my-mac]$ vi    # make edits
+    [on-my-mac]$ ./tools/rsync-to root@10.99.99.7
+    [on-my-mac]$ ssh coal
+
+    [root@headnode (coal) ~]# sdcadm ...     # test your changes
 
 
 # Testing
 
-TODO
+TODO. There is no current test suite. The current best is that `sdcadm update
+...` is run hourly on the
+[nightly](https://mo.joyent.com/docs/globe-theatre/master/) standup.

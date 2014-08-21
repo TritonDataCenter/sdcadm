@@ -9,6 +9,9 @@
 - `sdcadm update` can now update imgapi, limited to a single imgapi
   instance on the headnode.
 
+- Add `sdcadm experimental update-other` temporary grabbag of SDC update
+  steps.
+
 ## 1.3.1
 
 - Add `sdcadm experimental dc-maint` for starting and stopping DC maintenance
