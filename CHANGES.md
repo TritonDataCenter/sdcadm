@@ -1,5 +1,14 @@
 # sdcadm Changelog
 
+## 1.3.2
+
+- Add `sdcadm update --force-same-image ...` to be able to for an
+  update/reprovision of an instance using the same image. Usually that
+  would be a no-op.
+
+- `sdcadm update` can now update imgapi, limited to a single imgapi
+  instance on the headnode.
+
 ## 1.3.1
 
 - Add `sdcadm experimental dc-maint` for starting and stopping DC maintenance
