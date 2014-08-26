@@ -38,5 +38,28 @@
         "heartbeater": "heartbeater",
         "smartlogin": "smartlogin",
         "zonetracker": "zonetracker"
+    },
+    "svcMinImages": {
+        "binder": "20140731T211135Z",
+        "mahi": "20140618T020241Z",
+        "imgapi": "20140619T081912Z",
+        "amon": "20140618T014459Z",
+        "amonredis": "20140528T053251Z",
+        "dhcpd": "20140618T034923Z",
+        "fwapi": "20140618T014938Z",
+        "papi": "20140618T113529Z",
+        "redis": "20140618T035133Z",
+        "ca": "20140618T013643Z",
+        "sapi": "20140618T034916Z",
+        "workflow": "20140702T155100Z",
+        "cnapi": "20140710T224122Z",
+        "napi": "20140710T172945Z",
+        "vmapi": "20140710T171616Z",
+        "moray": "20140710T181209Z",
+        "adminui": "20140718T210958Z",
+        "manatee": "20140721T221128Z",
+        "sdc": "20140725T191132Z",
+        "cloudapi": "20140731T175858Z",
+        "ufds": "20140728T173339Z"
     }
 }
