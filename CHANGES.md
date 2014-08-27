@@ -1,5 +1,10 @@
 # sdcadm Changelog
 
+## 1.4.0
+
+- Add `sdcadm check-health`. It pings over HTTP instances which support that,
+  and for the rest it checks that the SMF services are online.
+
 ## 1.3.2
 
 - Add `sdcadm update --force-same-image ...` to be able to for an
