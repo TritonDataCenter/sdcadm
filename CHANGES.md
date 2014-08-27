@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.3.4
+
+- Add `sdcadm check-health`. It pings over HTTP instances which support that,
+  and for the rest it checks that the SMF services are online.
+
 ## 1.3.3
 
 - Add --all flag for updating all available services at once.
