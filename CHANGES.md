@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.3.3
+
+- Add --all flag for updating all available services at once.
+
 ## 1.3.2
 
 - Add `sdcadm update --force-same-image ...` to be able to for an
