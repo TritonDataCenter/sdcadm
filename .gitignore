@@ -4,3 +4,4 @@
 /docs/*.html
 /build
 /sdcadm-*.sh
+*.vim
