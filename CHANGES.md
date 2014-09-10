@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.3.4
+
+- Add `sdcadm experimental update-agents` to be able to update agents
+
 ## 1.3.3
 
 - Add --all flag for updating all available services at once.
