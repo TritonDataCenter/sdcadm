@@ -6,7 +6,7 @@
         "dhcpd": "dhcpd",
         "cnapi": "cnapi",
         "vmapi": "vmapi",
-        "manatee": "sdc-manatee",
+        "manatee": "sdc-postgres",
         "rabbitmq": "rabbitmq",
         "workflow": "workflow",
         "papi": "papi",
