@@ -19,7 +19,6 @@ NAME		:= sdcadm
 DOC_FILES	 = index.md config.md
 EXTRA_DOC_DEPS += deps/restdown-brand-remora/.git
 RESTDOWN_FLAGS   = --brand-dir=deps/restdown-brand-remora
-RESTDOWN_EXT := .md
 JS_FILES	:= $(shell find lib -name '*.js' | grep -v '/tmp/')
 JSL_CONF_NODE	 = tools/jsl.node.conf
 JSL_FILES_NODE	 = $(JS_FILES)

@@ -1,6 +1,6 @@
 ---
 title: sdc configuration variables
-markdown2extras: wiki-tables, code-friendly, cuddled-lists, link-patterns, footnotes
+markdown2extras: tables, code-friendly, cuddled-lists, link-patterns, footnotes
 markdown2linkpatternsfile: link-patterns.txt
 apisections: SDC Config
 ---
