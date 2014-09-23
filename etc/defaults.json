@@ -17,7 +17,6 @@
         "binder": "dhcpd",
         "mahi": "manta-authcache",
         "sdc": "sdc",
-        "sdcsso": "sdcsso",
         "manta": "manta-deployment",
         "ca": "ca",
         "sapi": "sapi",

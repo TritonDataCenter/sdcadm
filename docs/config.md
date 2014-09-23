@@ -231,7 +231,7 @@ Finally, `cnapi`, `fwapi` and `napi` also set the variable
 
 - Shouldn't we choose between `${SERVICE_NAME}_domain` and
   `${UPPERCASE_SERVICE_NAME}_SERVICE`?.
-- Why cloudapi's `cloudapi_domain` is missing and `sdcsso_domain` is not?
+- Why cloudapi's `cloudapi_domain` is missing?
 - Why `assets_pkg` and `sapi_pkg` are then only remaining `*_pkg` variables?
 - Are the following variables still in use?: `install_agents`, `initial_script`,
   `utc_offset`, `agents_root`,`zonetracker_database_path`.
