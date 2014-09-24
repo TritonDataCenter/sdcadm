@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.3.5
+
+- Add `sdcadm experimental update-gz-tools` to be able to update Global Zone
+  tools
+
 ## 1.3.4
 
 - Add `sdcadm experimental update-agents` to be able to update agents
