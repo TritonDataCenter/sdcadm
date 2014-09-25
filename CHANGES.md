@@ -12,7 +12,7 @@
 
 ## 1.3.5
 
-- Add `sdcadm experimental update-gz-tools` to be able to update Global Zone
+- Add `sdcadm experimental update-gz-tools` to be able to update global zone
   tools
 - Add `sdcadm update manatee` both, for HA setups and single dev VM.
 - Add `sdcadm experimental add-2nd-manatee --server=<UUID>` to create the
