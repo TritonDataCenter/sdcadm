@@ -14,6 +14,9 @@
 
 - Add `sdcadm experimental update-gz-tools` to be able to update Global Zone
   tools
+- Add `sdcadm update manatee` both, for HA setups and single dev VM.
+- Add `sdcadm experimental add-2nd-manatee --server=<UUID>` to create the
+second manatee VM for HA.
 
 ## 1.3.4
 
@@ -22,6 +25,9 @@
 ## 1.3.3
 
 - Add --all flag for updating all available services at once.
+- Add `sdcadm update sapi`, limited to a single instance on the headnode.
+- Add `sdcadm update moray`, limited to a single instance on the headnode.
+- Add `sdcadm update ufds`, limited to a single instance on the headnode.
 
 ## 1.3.2
 
