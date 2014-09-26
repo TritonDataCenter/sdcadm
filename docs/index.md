@@ -26,7 +26,7 @@ instances (e.g. cloudapi), making services HA, etc.
 In active development, very incomplete. See the [sdc-update project
 plan](https://mo.joyent.com/docs/engdoc/master/roadmap/projects/sdc-update.html).
 The current SDC upgrade process is still via the [incr-upgrade
-scripts](https://mo.joyent.com/usb-headnode/blob/master/incr-upgrade-scripts/README.md),
+scripts](https://github.com/joyent/sdc-headnode/blob/master/incr-upgrade-scripts/README.md),
 which `sdcadm` intends to replace.
 
 
@@ -226,6 +226,8 @@ for that a la `manta-adm cn -n ...`.
 
 ## sdcadm rollback
 
+Status: not yet implemented
+
 Support just one level of rollback. Find the last
 "/var/sdcadm/updates/$timestamp/curr-state.json" (each upgrade will record
 the current state of the world) and use that for the "plan.json".
@@ -255,11 +257,15 @@ supported.
 
 ## sdcadm history
 
+Status: not yet implemented
+
 We keep a history of updates in a 'sdcadm_history' moray bucket. This
 command lists the history a la `zpool history`.
 
 
 ## sdcadm check (or something like this)
+
+Status: not yet implemented
 
 Check that real data matches the definition of the world in SAPI.
 Check that the current state conforms to suggestions for HA. SAPI services
@@ -278,6 +284,38 @@ Aside:
   **Note:** Not sure this applies here. 'sdc-foundation' is
   "do these changes for this upgrade, else the upgrade failed".
 
+
+## sdcadm post-setup
+
+Status: not yet implemented
+
+The default setup of a SmartDataCenter headnode is somewhat minimal.
+"Everything up to adminui." Practical usage of SDC -- whether for production,
+development or testing -- involves a number of common post-setup steps. This
+command attempts to capture many of those for convenience and consistency.
+
+    sdcadm post-setup             # list all post-setup procedures
+    sdcadm post-setup <proc> ...  # run specific procedures, some are shortcuts
+                                  # to run a set of procedures.
+
+Perhaps eventually
+
+    sdcadm post-setup --status    # list all procs, showing which have been run
+
+TODO:
+- cloudapi: create a cloudapi instance
+- common-external-nics: external nics to imgapi, adminui
+- cloudapi-rbac: account_mgmt in cloudapi
+- dev-headnode-provisionable: make headnode provisionable
+- dev-local-image-creation: allow local custom image creation
+- imgapi-manta: setup imgapi to use a manta for custom image creation
+  (see also: dev-local-image-creation)
+- dev: add some fake data (users, packages) to practically play with the system
+- dev: setup amon email and/or xmpp notifications
+- make manatee HA: HA requires inputs (which servers to use), so that's
+  harder. Could have a dev-ha that does it just on the headnode.
+- make moray HA
+- make zk HA (MORAY-138)
 
 
 # Configuration

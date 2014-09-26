@@ -9,7 +9,7 @@
     "assert-plus": "0.1.4",
     "backoff": "2.3.0",
     "bunyan": "0.23.1",
-    "cmdln": "2.1.1",
+    "cmdln": "2.1.2",
     "dashdash": "1.6.0",
     "extsprintf": "1.2.0",
     "lockfd": "git+ssh://git@github.com:trentm/node-lockfd.git#fcbc0e2",
