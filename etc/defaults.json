@@ -14,7 +14,7 @@
         "adminui": "adminui",
         "dapi": "dapi",
         "redis": "redis",
-        "binder": "dhcpd",
+        "binder": "manta-nameservice",
         "mahi": "manta-authcache",
         "sdc": "sdc",
         "manta": "manta-deployment",
