@@ -12,6 +12,7 @@
 
 ## 1.3.5
 
+- Add `sdcadm update binder`
 - Add `sdcadm experimental update-gz-tools` to be able to update global zone
   tools
 - Add `sdcadm update manatee` both, for HA setups and single dev VM.
