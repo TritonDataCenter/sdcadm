@@ -259,8 +259,17 @@ supported.
 
 Status: not yet implemented
 
-We keep a history of updates in a 'sdcadm_history' moray bucket. This
-command lists the history a la `zpool history`.
+Brain dump: We keep a history of updates in a 'sdcadm_history' moray bucket.
+This command lists the history a la `zpool history` (though perhaps with
+tabular output). In case moray happens to be down, history for an upgrade
+should be cached locally and pushed to Moray on later uses of sdcadm
+(remember to consider this being done by AdminUI calling sdcadm.js, i.e.
+not just in cli.js).
+
+During a 'sdcadm update' there is a two phase write to the history: first at
+the start of the update before changes are made, and later on completion.
+We attempt to write that completion even when the update failed, but the
+initial write at the start allows for detection of update *crashes*.
 
 
 ## sdcadm check (or something like this)
