@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.3.6
+
+- Add `sdcadm experimental add-new-agent-svcs`.
+- Support full HA for `sdcadm update moray`.
+
 ## 1.3.5
 
 - Add `sdcadm update binder`
