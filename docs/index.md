@@ -314,7 +314,6 @@ Perhaps eventually
 TODO:
 - cloudapi: create a cloudapi instance
 - common-external-nics: external nics to imgapi, adminui
-- cloudapi-rbac: account_mgmt in cloudapi
 - dev-headnode-provisionable: make headnode provisionable
 - dev-local-image-creation: allow local custom image creation
 - imgapi-manta: setup imgapi to use a manta for custom image creation
