@@ -17,6 +17,7 @@
 
 ## 1.3.5
 
+- Add `sdcadm update mahi` with support for creating a delegate dataset
 - Add `sdcadm update binder`
 - Add `sdcadm experimental update-gz-tools` to be able to update global zone
   tools
