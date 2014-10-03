@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.3.7
+
+- Add `sdcadm check-health` as an eventual replacement for `sdc-healthcheck`.
+
 ## 1.3.6
 
 - Add `sdcadm experimental add-new-agent-svcs`.
