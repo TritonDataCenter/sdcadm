@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.3.8
+
+- Add `sdcadm expertimental install-platform` and `sdcadm expertimental assign-platform`
+
 ## 1.3.7
 
 - Add `sdcadm check-health` as an eventual replacement for `sdc-healthcheck`.
