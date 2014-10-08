@@ -53,8 +53,6 @@ Here-in random TODOs and scratchpad notes for sdcadm.
   translate to a `'allowNoopOrDowngrade':true` or similar, which
   'determineProcedures' will handle.
 
-- SdcAdm.getCandidateImages needs server-size `published_at>=...` filtering.
-
 - a way to list available updates (with changelog support)
   Perhaps use this under the hood:
         update-imgadm changes $from-image-uuid $to-image-uuid
