@@ -10,9 +10,14 @@
 
 # sdcadm Changelog
 
+## 1.3.9
+
+- Add `sdcadm experimental update-docker` to add/update the docker service &&
+  docker0 instance.
+
 ## 1.3.8
 
-- Add `sdcadm expertimental install-platform` and `sdcadm expertimental assign-platform`
+- Add `sdcadm experimental install-platform` and `sdcadm expertimental assign-platform`
 
 ## 1.3.7
 
