@@ -37,7 +37,8 @@
         "amon-relay": "amon-relay",
         "heartbeater": "heartbeater",
         "smartlogin": "smartlogin",
-        "zonetracker": "zonetracker"
+        "zonetracker": "zonetracker",
+        "zookeeper": "sdc-zookeeper"
     },
     "svcMinImages": {
         "binder": "20140731T211135Z",
@@ -60,6 +61,7 @@
         "manatee": "20140721T221128Z",
         "sdc": "20140725T191132Z",
         "cloudapi": "20140731T175858Z",
-        "ufds": "20140728T173339Z"
+        "ufds": "20140728T173339Z",
+        "zookeeper": "20140729T004608Z"
     }
 }
