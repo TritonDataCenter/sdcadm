@@ -10,10 +10,20 @@
 
 # sdcadm Changelog
 
+## 1.4.0
+- Add `sdcadm post-setup zookeeper` to create the zookeeper service and add a
+cluster of zookeeper instances.
+- Added `sdcadm update zookeeper`.
+- Added a warning for users when an image download fails due to the lack of
+external nic for IMGAPI
+- Save `self-update` changes into history.
+- Save history into SAPI when available.
+
 ## 1.3.9
 
 - Add `sdcadm experimental update-docker` to add/update the docker service &&
   docker0 instance.
+- Added post-setup commands, `cloudapi`, `common-external-nics`
 
 ## 1.3.8
 
