@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.4.1
+
+- Added `sdcadm create <service> --server=<UUID> [--image=<UUID>]`.
+
 ## 1.4.0
 - Add `sdcadm post-setup zookeeper` to create the zookeeper service and add a
 cluster of zookeeper instances.
