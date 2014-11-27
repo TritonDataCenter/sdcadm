@@ -13,6 +13,8 @@
 ## 1.4.1
 
 - Added `sdcadm create <service> --server=<UUID> [--image=<UUID>]`.
+- Moved `sdcadm experimental add-2nd-manatee` to `sdcadm post-setup ha-manatee`
+and include creation of 3rd manatee instance as part of it.
 
 ## 1.4.0
 - Add `sdcadm post-setup zookeeper` to create the zookeeper service and add a
