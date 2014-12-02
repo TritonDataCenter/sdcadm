@@ -16,7 +16,7 @@ apisections:
 
 # sdcadm
 
-`sdcadm` is a the tool intended for managing SDC config, core services and
+`sdcadm` is a tool intended for managing SDC config, core services and
 instances. I.e. It is responsible for setting up, upgrading, creating optional
 instances (e.g. cloudapi), making services HA, etc.
 
@@ -33,7 +33,7 @@ which `sdcadm` intends to replace.
 # Commands
 
 This section describes the basic design/plan for each of the sdcadm commands.
-Consult the online docs, i.e. `sdcadm help update`, for the most authoritative
+Consult the online docs, i.e. `sdcadm help <subcommand>`, for the most authoritative
 docs. The docs here are from the design stage so could be out of date.
 
 
@@ -79,9 +79,11 @@ Similar to some `manta-adm show` forms.
 
 ## sdcadm self-update
 
-Find the latest `sdcadm` image in updates.joyent.com, download it and
-install.
+Find the latest `sdcadm` image in updates.joyent.com, download it and install.
 
+It's always recommendable to run `sdcadm self-update` before to perform any
+sdcadm upgrade operation, specially because there could be critical bugfixes
+published since the last time sdcadm itself was updated.
 
 ## sdcadm update
 
@@ -296,34 +298,165 @@ Aside:
 
 ## sdcadm post-setup
 
-Status: not yet implemented
-
 The default setup of a SmartDataCenter headnode is somewhat minimal.
 "Everything up to adminui." Practical usage of SDC -- whether for production,
 development or testing -- involves a number of common post-setup steps. This
 command attempts to capture many of those for convenience and consistency.
 
-    sdcadm post-setup             # list all post-setup procedures
-    sdcadm post-setup <proc> ...  # run specific procedures, some are shortcuts
-                                  # to run a set of procedures.
+At the moment, the following are the sdcadm **sub-commands available** for
+SDC post-setup tune up:
 
-Perhaps eventually
+- `cloudapi`: Create the first CloudAPI instance.
+- `common-external-nics`: Add external NICs to `imgapi` and `adminui`
+  instances. Required to run any sdcadm command involving remote source images.
+- `zookeeper`: Create a *"cluster"* of zookeeper instances, and configure
+  all the SDC services to use them.
+- `ha-manatee`: Create the 2nd and 3rd manatee instances, required for manatee
+  HA.
 
-    sdcadm post-setup --status    # list all procs, showing which have been run
 
-TODO:
-- cloudapi: create a cloudapi instance
-- common-external-nics: external nics to imgapi, adminui
+### sdcadm post-setup common-external-nics
+
+In order to be able to import images from the SDC update channels, the `imgapi`
+instance needs to have an external NIC, which is not created by default when
+SDC headnode is setup. Until such NIC is added, any attempt to run any of the
+sdcadm operations performing requests to such remote source of upgrades will
+result in an error message like the following:
+
+
+      Error importing image <UUID> (<svc>@<version>)
+
+      There is an error trying to download images due to the lack of imgapi external nic.
+      Please, run:
+
+          `sdcadm post-setup common-external-nics`
+
+      and try again.
+
+Running the sub-command is pretty simple:
+
+        [root@headnode (coal) ~]# sdcadm post-setup common-external-nics
+        Added external nic to adminui
+        Added external nic to imgapi
+
+Please, note that while the command itself will exit pretty quickly, there will
+be two jobs queued to add those NICs, both of them involving a reboot of each
+one of these instances. Therefore, it's very convenient to wait for some time
+in order to give these jobs some time to be completed.
+
+#### Additional information
+
+In the future, it's very likely that this command will be modified in order to
+poll for Job's completion. In the meanwhile, it's possible to get the UUIDs of
+the Jobs associated with these NICs addition looking at sdcadm post-setup logs,
+usually available at:
+
+        /var/log/sdcadm/logs/<SOME-NUMBERS>-post-setup.log
+
+Just search the log files for something like:
+
+        [2014-12-01T15:43:17.303Z] TRACE: sdcadm/post-setup/76103 on headnode: (req_id=82788868-3109-4936-b4f4-df024639115c)
+            body received:
+            {"vm_uuid":"eca3f83d-975c-4fb9-83c1-44906536c876","job_uuid":"e040ea27-f6e5-4b1c-82dd-710ff10a6cf8"}
+        [2014-12-01T15:43:17.303Z] DEBUG: sdcadm/post-setup/76103 on headnode: Added external nic to imgapi (req_id=82788868-3109-4936-b4f4-df024639115c, progress=true)
+
+and then just poll the workflow job as documented:
+
+        [root@headnode (coal) ~]# sdc-workflow /jobs/e040ea27-f6e5-4b1c-82dd-710ff10a6cf8|json -H execution
+
+until it switches from `queued` or `running` to either `suceeded` or any
+failure state.
+
+### sdcadm post-setup cloudapi
+
+Initial setup of SmartDataCenter does not create a cloudapi instance. You need
+to create it using this command if you want to allow SDC users to create
+instances using unprivileged accounts, i.e., without using AdminUI.
+
+        [root@headnode (coal) ~]# sdcadm post-setup cloudapi
+        cloudapi0 zone created
+
+Contrary to `post-setup common-external-nics`, this command will wait until the
+`cloudapi` instance has been created and it's ready.
+
+Please, note that you shouldn't try to create first cloudapi instance and,
+in general, the first instance of any service using `sdcadm create` but
+instead, you should use the specific tools provided to add these services,
+since each service may need its own specific sets of custom parameters.
+
+### sdcadm post-setup zookeeper
+
+By default, SDC comes with a single zookeeper service instance running into the
+binder instance. While this initial setup is perfectly fine for development,
+it's recommended to update it to a *"cluster"* of zookeeper instances, each of
+them running into a different compute node, as the first step towards SDC HA.
+
+In addition to the usual `-y` and `-h` options, the `sdcadm post-setup zookeeper`
+sub-command takes the following notable options:
+
+- `i|image`: UUID of the specific image to use. The latest available image by
+  default.
+- `m|members`:  The number of instances to create (3 or 5). Default: 3
+- `s|servers`:  The UUID for the target servers. At least (m - 1) are required,
+  since the first zookeeper instance will be created on the headnode.
+
+
+        [root@headnode (coal) ~]# sdcadm post-setup zookeeper \
+        --servers=`564dc9e5-fcb0-fed8-570d-ca17753dd0cc` \
+        --servers=`3254278b-34f6-4b89-a749-49dbdfe0795f`
+
+
+#### Current Status: Waiting on MANATEE-243.
+
+### sdcadm post-setup ha-manatee
+
+Create 2nd and 3rd manatee instances as a required step for HA.
+
+When you have one manatee initially, you're in ONE_NODE_WRITE_MODE
+which is a special mode that exists just for bootstrapping. To go
+from this mode to a HA setup you'll need at least one more manatee.
+Switching modes however is not quite as simple as just provisioning a
+second one. This command attempts to move you from one instance to a
+HA setup.
+
+After examining your setup and ensuring you're in the correct state
+it will:
+
+- create a second manatee instance for you (with manatee-sitter disabled)
+- disable the one_node_write mode on the first instance
+- reboot the first manatee into multi-node mode
+- reenable the sitter and reboot the second instance
+- wait for manatee to return that it's synchronized
+
+After we've gone through this, it'll create a 3rd manatee instance
+ on the second server you specified to complete manatee ha setup.
+
+
+        sdcadm post-setup ha-manatee \
+        --servers=`564dc9e5-fcb0-fed8-570d-ca17753dd0cc` \
+        --servers=`3254278b-34f6-4b89-a749-49dbdfe0795f`
+
+As you've seen, two `servers` must be specified, one for each manatee
+instance to be created.
+
+### sdcadm post-setup ha-moray
+
+While adding more than a single moray zone is necessary in order to provide
+real HA for your SDC data, there's no need to add a special command in order
+to setup more than the default **moray** instance. You can add as many of them
+as you need by using `sdcadm create moray --server=UUID`.
+
+
+#### Ideas for the future:
 - dev-headnode-provisionable: make headnode provisionable
 - dev-local-image-creation: allow local custom image creation
 - imgapi-manta: setup imgapi to use a manta for custom image creation
   (see also: dev-local-image-creation)
 - dev: add some fake data (users, packages) to practically play with the system
 - dev: setup amon email and/or xmpp notifications
-- make manatee HA: HA requires inputs (which servers to use), so that's
-  harder. Could have a dev-ha that does it just on the headnode.
-- make moray HA
-- make zk HA (MORAY-138)
+
+
+
 
 
 # Configuration
