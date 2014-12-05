@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.4.2
+
+- Added `sdcadm experimental portolan` to add/update the portolan service.
+
 ## 1.4.1
 
 - Added `sdcadm create <service> --server=<UUID> [--image=<UUID>]`.
