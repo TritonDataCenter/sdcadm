@@ -23,7 +23,7 @@ instances (e.g. cloudapi), making services HA, etc.
 
 # Current Status
 
-In active development, very incomplete. See the [sdc-update project
+In active development, not yet complete. See the [sdc-update project
 plan](https://mo.joyent.com/docs/engdoc/master/roadmap/projects/sdc-update.html).
 The current SDC upgrade process is still via the [incr-upgrade
 scripts](https://github.com/joyent/sdc-headnode/blob/master/incr-upgrade-scripts/README.md),
@@ -89,7 +89,11 @@ published since the last time sdcadm itself was updated.
 
 The command to update SDC instances (core zones, agents, etc.). A simple
 example would be updating one of the stateless core zones to the latest
-available image, e.g.: `sdcadm update cnapi`
+available image, e.g.:
+
+        sdcadm update cnapi
+
+which will result in the following steps:
 
 - find the latest cnapi image (these are the "changes")
 - create /var/sdcadm/updates/$timestamp/plan.json (the "plan"), this is the
@@ -97,7 +101,7 @@ available image, e.g.: `sdcadm update cnapi`
 - confirm changes
 - execute plan.json (details on how particular services are upgraded is
   discussed later)
-- note the update in its history (in a 'sdcadm_history' bucket in moray)
+- note the update in its history (in a 'sdcadm\_history' bucket in moray)
 
 Calling forms:
 
@@ -105,12 +109,12 @@ Calling forms:
         Where '<svc>' is just the name, e.g. 'cnapi', for the latest
         available. Or 'cnapi@1.2.3' for that version (or latest of that ver
         if multiple images with that ver). Or 'cnapi@UUID' for a specific
-        cnapi. Or just 'UUID' because that in unambiguous.
+        cnapi.
     sdcadm update <inst> [<inst> ...]
         Where '<inst>' is a specific instance (per `sdcadm insts`),
-        e.g. 'cnapi0'.  Not sure if upgrades of just single instances of a
-        service should be allowed? Useful for e.g. testing interactions and
+        e.g. 'cnapi0'.  Useful for e.g. testing interactions and
         perhaps for dev. Perhaps for upgrading agents on a single CN.
+        Not yet implemented. See TOOLS-723.
     ... upgrade-spec ... | sdcadm update
     sdcadm update -f <./local-upgrade-file.json>
         Upgrade a set of services (or instances) per a simple changes JSON
@@ -139,25 +143,71 @@ Calling forms:
 There are more examples below that also cover cases like adding a new
 instance of a service, or deleting one.
 
+#### REVIEW: Development note:
+
 A note on SAPI /instances. I'm proposing that /instances change to be a
 reflection of actual state (core zones from VMAPI
-ListVms?owner_uuid=$admin&tags.smartdc_role, current deployed agents from CNAPI
+ListVms?owner\_uuid=$admin&tags.smartdc\_role, current deployed agents from CNAPI
 ServerList?extras=sysinfo) rather than its current possible split brain set
 of instances. We should maintain the ability to have special SAPI metadata
 defined on an instance (my understanding is this is rare, tho at least one
-used case for NODE_ONE_WRITE_MODE for manatee).
+use case for ONE\_NODE\_WRITE\_MODE for manatee).
 
-'sdcadm update' failure. Because we generate a target plan.json, we can
-have a `sdcadm update --retry|--resume|--whatever` that will re-confirm and
+### How to search for available updates?
+
+At the moment of writting the current doc, the only way to search for available
+updates for a given service is using `updates-imgadm`, and compare the results
+with the service/instance image version provided, for example, by either
+`sdcadm services` or `sdcadm instances`.
+
+Of course, you don't need to go through `updates-imgadm` step if your goal is
+to just upgrade to the latest available image of such service.
+
+There are couple things to note regarding available updates and future `sdcadm`
+development stages:
+
+- In the short term, **update channels**, already available for `updates-imgadm`
+  will be included into `sdcadm update`, allowing users to pick the right channel
+  for each setup from: development, staging, releases, ...
+- During upcoming iterations, the command `sdcadm avail` will be also
+  implemented.
+
+In the meanwhile, if you want to search for available updates for a given
+service, you can find the *"non obvious image names"* for all the services using:
+`cat /opt/smartdc/sdcadm/etc/defaults.json | json imgNameFromSvcName`.
+
+#### FUTURE: 'sdcadm update' failure.
+
+Because we generate a target plan.json, we can have a
+`sdcadm update --retry|--resume|--whatever` that will re-confirm and
 execute the "plan.json" from the latest upgrade attempt.
 
+## sdcadm create
+
+Create an instance for an existing SDC service.
+
+        sdcadm create <svc> --server=<UUID>
+
+Note that in order to create an instance of some services the option
+`--skip-ha-ready` must be specified, given that those services are not
+supposed to have more than one instance. When trying to create a new
+instance of one of these services, sdcadm will let you know that you should
+provide this flag.
+
+There are also some services which are not allowed to have more than one
+instance, like sdc, or services whose instances should not be created
+using this tool, like manatee or zookeeper.
+
+Finally, the first instance of some services should not be created using this
+tool when there is an alternate choice provided by `sdcadm post-setup`
+subcommand.
 
 ### 'sdcadm update/create' examples
 
 Update a service (all instances):
 
     sdcadm update cnapi
-    sdcadm update cnapi -i 11f2be78-fc8c-e556-bc01-ecdbc3fb4e66
+    sdcadm update cnapi@11f2be78-fc8c-e556-bc01-ecdbc3fb4e66
 
 which is a shortcut for:
 
@@ -226,7 +276,7 @@ a la `json -c COND ...`? Or clearer to have `sdcadm cn -n <filters...>`
 for that a la `manta-adm cn -n ...`.
 
 
-## sdcadm rollback
+## sdcadm rollback (PENDING)
 
 Status: not yet implemented
 
@@ -259,42 +309,100 @@ supported.
 
 ## sdcadm history
 
-Status: not yet implemented
+        [root@headnode (coal) ~]# sdcadm history
+        UUID                                  STARTED                   FINISHED                  CHANGES                  ERROR
+        468b565d-9a26-47d2-8036-aba4facff106  2014-12-04T08:30:08.417Z  2014-12-04T08:30:09.903Z  service(sdcadm)          -
+        2be86246-4abc-4e92-b338-9fcb3f01708c  2014-12-03T18:01:19.385Z  2014-12-03T18:10:34.960Z  update-service(adminui)  -
+        418e3cdc-0607-4b85-b698-e851a1e2599a  2014-12-03T17:53:47.394Z  2014-12-03T17:55:15.131Z  create(moray)            -
+        aa9beb7d-13c5-4956-98d1-59450fe9bb68  2014-12-03T16:57:54.339Z  2014-12-03T16:59:09.883Z  add-instance(cloudapi)   -
 
-Brain dump: We keep a history of updates in a 'sdcadm_history' moray bucket.
-This command lists the history a la `zpool history` (though perhaps with
+We keep a history of updates in a 'sdcadm\_history' moray bucket.
+This command lists the history a la `zpool history` ( with
 tabular output). In case moray happens to be down, history for an upgrade
-should be cached locally and pushed to Moray on later uses of sdcadm
-(remember to consider this being done by AdminUI calling sdcadm.js, i.e.
-not just in cli.js).
+is cached locally and pushed to Moray on later uses of sdcadm.
 
-During a 'sdcadm update' there is a two phase write to the history: first at
+During a `sdcadm update` there is a two phase write to the history: first at
 the start of the update before changes are made, and later on completion.
 We attempt to write that completion even when the update failed, but the
 initial write at the start allows for detection of update *crashes*.
 
+The same thing happens for other commands like `sdcadm self-update`,
+`sdcadm post-setup zookeeper` or `sdcadm post-setup cloudapi`. In general,
+any sdcadm subcommand causing a modification of the system will call history
+and save such change into the aforementioned 'sdcadm\_history' bucket.
 
-## sdcadm check (or something like this)
+The `-j|--json` option allows retrieving such changes in raw
+JSON format (with the same structure than update plan.json). Finally, if
+the UUID of a given change is given as an argument to `sdcadm history`,
+only that change, using JSON, will be retrieved:
 
-Status: not yet implemented
+        [root@headnode (coal) ~]# sdcadm history aa9beb7d-13c5-4956-98d1-59450fe9bb68
+        {
+            "uuid": "aa9beb7d-13c5-4956-98d1-59450fe9bb68",
+            "changes": [
+                {
+                    "image": {
+                    ...
+                    },
+                    "service": {
+                        "uuid": "e78ed5c4-2fc9-4eaf-b01f-69d125ab3389",
+                        "name": "cloudapi",
+                        "application_uuid": "060bfa19-4311-4c05-a6c1-17992adcd35f",
+                        "params": {
+                        ...
+                        }
+                        "type": "vm"
+                    },
+                    "type": "add-instance",
+                    "inst": {
+                        "type": "vm",
+                        "alias": "cloudapi0",
+                        "version": "master-20141202T130707Z-gd56fde9",
+                        "service": "cloudapi",
+                        "image": "2ab47008-7a25-11e4-857d-b771410898a7",
+                        "uuid": "0af28cf9-4c8b-4146-8a4d-f93f21bcea17",
+                        "zonename": "0af28cf9-4c8b-4146-8a4d-f93f21bcea17"
+                    }
+                }
+            ],
+            "started": 1417625874339,
+            "finished": 1417625949883
+        }
 
-Check that real data matches the definition of the world in SAPI.
-Check that the current state conforms to suggestions for HA. SAPI services
-could grow a "min_instances = 3" attribute for these suggestions.
+It's also possible to just search for history items started right after,
+(`--since`) or before (`--until`) the given date. Both command options take
+a valid ISO 8610 Date String as their possible values. Of course, a combination
+of both command options will allow to search withing a given time interval.
 
-- check: instances match the real ones
-- warning: whether SAPI service params at all match current state. They
-  don't necessarily *need* to, but perhaps we should enforce that. E.g. if
-  the SAPI service says image_uuid A, but live instances have B... is that
-  an error, or just a warning because could be transient?
+## sdcadm check-health
 
-Aside:
+Checks that SDC services (and instances) are healthy, i.e., SDC services
+either on the Global Zone or in the SDC vms are up and running.
 
-- check expected invariants in 'sdc-foundation'. Need to spec out
-  'sdc-foundation' cases.
-  **Note:** Not sure this applies here. 'sdc-foundation' is
-  "do these changes for this upgrade, else the upgrade failed".
+    [root@headnode (coal) ~]# sdcadm check-health
+    INSTANCE                                              SERVICE          HOSTNAME  ALIAS       HEALTHY
+    c3d3ed4e-86e5-4d84-b705-85192febaf48                  adminui          headnode  adminui0    true
+    30db9c5f-024c-4ade-8cdc-43d74656e03f                  amon             headnode  amon0       true
+    88540141-cabb-4910-86c0-bf1435b8e40d                  amonredis        headnode  amonredis0  true
 
+When given a service or instance UUID, only the information for such service
+will be displayed.
+
+## sdcadm check-config
+
+Verifies that the configuration values in SAPI for the `sdc` application are
+correct and match the values existing on the system. If any of these values
+isn't as expected, the command will emit an error.
+
+        [root@headnode (coal) ~]# sdcadm check-config
+        All good!
+
+You can get a detailed list of which values are checked by running:
+
+        sdc-sapi /applications?name=sdc | json -Ha
+
+#### FUTURE: Add the ability to edit SDC configuration using sdcadm. Both,
+at SAPI level and USB key config.
 
 ## sdcadm post-setup
 
