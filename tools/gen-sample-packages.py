@@ -6,19 +6,19 @@ Example run:
 
 $ npm install -g tabula json
 $ python gen-sample-pkgs.py | json -aj name max_physical_memory max_swap quota cpu_cap fss vcpu description  | tabula -s max_physical_memory -s name name max_physical_memory max_swap quota cpu_cap fss vcpu description
-NAME                 MAX_PHYSICAL_MEMORY  MAX_SWAP  QUOTA   CPU_CAP  FSS  VCPU  DESCRIPTION
-sample-0.25-kvm      256                  512       4096    20       20   1     Sample 0.25 GB RAM, 4 GB Disk
-sample-0.25-smartos  256                  512       4096    20       20   -     Sample 0.25 GB RAM, 4 GB Disk
-sample-0.5-kvm       512                  1024      8192    20       20   1     Sample 0.5 GB RAM, 8 GB Disk
-sample-0.5-smartos   512                  1024      8192    20       20   -     Sample 0.5 GB RAM, 8 GB Disk
-sample-1.0-kvm       1024                 2048      16384   20       20   1     Sample 1 GB RAM, 16 GB Disk
-sample-1.0-smartos   1024                 2048      16384   20       20   -     Sample 1 GB RAM, 16 GB Disk
-sample-4.0-kvm       4096                 8192      65536   50       50   1     Sample 4 GB RAM, 64 GB Disk
-sample-4.0-smartos   4096                 8192      65536   50       50   -     Sample 4 GB RAM, 64 GB Disk
-sample-8.0-kvm       8192                 16384     131072  100      100  1     Sample 8 GB RAM, 128 GB Disk
-sample-8.0-smartos   8192                 16384     131072  100      100  -     Sample 8 GB RAM, 128 GB Disk
-sample-16.0-kvm      16384                32768     262144  200      200  2     Sample 16 GB RAM, 256 GB Disk
-sample-16.0-smartos  16384                32768     262144  200      200  -     Sample 16 GB RAM, 256 GB Disk
+NAME                 MAX_PHYSICAL_MEMORY  MAX_SWAP  QUOTA   CPU_CAP  FSS  VCPUS  DESCRIPTION
+sample-0.25-kvm      256                  512       4096    20       20   1      Sample 0.25 GB RAM, 4 GB Disk
+sample-0.25-smartos  256                  512       4096    20       20   -      Sample 0.25 GB RAM, 4 GB Disk
+sample-0.5-kvm       512                  1024      8192    20       20   1      Sample 0.5 GB RAM, 8 GB Disk
+sample-0.5-smartos   512                  1024      8192    20       20   -      Sample 0.5 GB RAM, 8 GB Disk
+sample-1.0-kvm       1024                 2048      16384   20       20   1      Sample 1 GB RAM, 16 GB Disk
+sample-1.0-smartos   1024                 2048      16384   20       20   -      Sample 1 GB RAM, 16 GB Disk
+sample-4.0-kvm       4096                 8192      65536   50       50   1      Sample 4 GB RAM, 64 GB Disk
+sample-4.0-smartos   4096                 8192      65536   50       50   -      Sample 4 GB RAM, 64 GB Disk
+sample-8.0-kvm       8192                 16384     131072  100      100  1      Sample 8 GB RAM, 128 GB Disk
+sample-8.0-smartos   8192                 16384     131072  100      100  -      Sample 8 GB RAM, 128 GB Disk
+sample-16.0-kvm      16384                32768     262144  200      200  2      Sample 16 GB RAM, 256 GB Disk
+sample-16.0-smartos  16384                32768     262144  200      200  -      Sample 16 GB RAM, 256 GB Disk
 
 Notes:
 - With the exception of the cpu_cap=20 values (see below), this will
@@ -27,6 +27,13 @@ Notes:
   sized packages. Implication: This will result in CPU over provisioning if have
   lots of the smaller packages on a CN. So be it. I'll doc that on the command
   that adds these sample packages.
+
+
+These can then be installed into PAPI from the SDC headnode GZ with this
+command:
+
+    json -f /opt/smartdc/sdcadm/etc/sample-packages.json -a -o jsony-0 \
+        | while read pkg; do echo "$pkg" | sdc-papi /packages -X POST -d@-; done
 """
 
 
@@ -86,7 +93,7 @@ for ram_gb in [0.25, 0.5, 1., 4., 8., 16.]:
     pkgs.append(pkg)
 
     pkg_kvm = copy.copy(pkg)
-    pkg_kvm["vcpu"] = max(1, int(pkg_kvm["cpu_cap"] / 100.0))
+    pkg_kvm["vcpus"] = max(1, int(pkg_kvm["cpu_cap"] / 100.0))
     pkg_kvm["name"] = "sample-%s-kvm" % ram_gb
     pkgs.append(pkg_kvm)
 
