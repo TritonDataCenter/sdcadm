@@ -520,7 +520,7 @@ sub-command takes the following notable options:
 
 Create 2nd and 3rd manatee instances as a required step for HA.
 
-When you have one manatee initially, you're in ONE_NODE_WRITE_MODE
+When you have one manatee initially, you're in ONE\_NODE\_WRITE\_MODE
 which is a special mode that exists just for bootstrapping. To go
 from this mode to a HA setup you'll need at least one more manatee.
 Switching modes however is not quite as simple as just provisioning a
@@ -531,7 +531,7 @@ After examining your setup and ensuring you're in the correct state
 it will:
 
 - create a second manatee instance for you (with manatee-sitter disabled)
-- disable the one_node_write mode on the first instance
+- disable the ONE\_NODE\_WRITE\_MODE on the first instance
 - reboot the first manatee into multi-node mode
 - reenable the sitter and reboot the second instance
 - wait for manatee to return that it's synchronized
@@ -555,17 +555,146 @@ to setup more than the default **moray** instance. You can add as many of them
 as you need by using `sdcadm create moray --server=UUID`.
 
 
+## sdcadm experimental command
+
+The following are a set of temporary commands used as replacement of some of
+the [incr-upgrade
+scripts](https://github.com/joyent/sdc-headnode/blob/master/incr-upgrade-scripts/README.md)
+which will be eventually integrated into `sdcadm update --all` or moved into
+different sdcadm sub-commands. In the meanwhile, the following is the list
+of these experimental sub-commands involved into SDC update tasks.
+
+## sdcadm experimental dc-maint
+
+Show and modify the DC maintenance mode.
+
+"Maintenance mode" for an SDC means that Cloud API is in read-only mode.
+Modifying requests will return "503 Service Unavailable". Workflow API will
+be drained on entering maint mode.
+
+Limitation: This does not current wait for config changes to be made and
+cloudapi instances restarted. That means there is a window after starting that
+new jobs could come in.
+
+Usage:
+
+     sdcadm experimental dc-maint [-j]           # show DC maint status
+     sdcadm experimental dc-maint [--start]      # start DC maint
+     sdcadm experimental dc-maint [--stop]       # stop DC maint
+
+
+## sdcadm experimental install-platform
+
+Download and install platform image for later assignment.
+
+Usage:
+
+     sdcadm experimental install-platform IMAGE-UUID
+     sdcadm experimental install-platform PATH-TO-IMAGE
+     sdcadm experimental install-platform --latest
+
+Remember that you can get a list of available platform images from your
+updates channel by running:
+
+    updates-imgadm list name=platform
+
+## sdcadm experimental assign-platform
+
+Assign platform image to the given or all SDC servers.
+
+Usage:
+
+     sdcadm experimental assign-platform PLATFORM SERVER_UUID
+     sdcadm experimental assign-platform PLATFORM --all
+
+Logically, this command needs to run after `install-platform`,
+since you need to pass `assign-platform` the platform name, for example:
+
+      [root@headnode (coal) ~]# sdcadm experimental assign-platform 20141126T231525Z 564dc9e5-fcb0-fed8-570d-ca17753dd0cc
+      updating headnode 564dc9e5-fcb0-fed8-570d-ca17753dd0cc to 20141126T231525Z
+      Setting boot params for 564dc9e5-fcb0-fed8-570d-ca17753dd0cc
+      Updating booter cache for servers
+      Done updating booter caches
+
+Remember that you can review the list of available platforms by
+running:
+
+    sdc-cnapi /platforms | json -Ha
+
+## sdcadm experimental add-new-agent-svcs
+
+Create SAPI services for new global zone agents, if required.
+
+    sdcadm experimental add-new-agents-svc
+
+## sdcadm experimental update-other
+
+This subcommand is used to perform little modifications of SDC setups,
+like resolvers, DNS for new services, add region names, ...
+
+    sdcadm experimental update-other
+
+The command will take care of updating only those things which have been
+added to SDC since the global zone was built:
+
+    [root@headnode (coal) ~]# sdcadm experimental update-other
+    Updating maintain_resolvers for all vm services
+    Updating DNS domain service metadata for papi, mahi
+    Updating DNS domain SDC application metadata for papi, mahi
+    No need to update region_name for this data center
+    sapi_domain already present on node.config
+    Done.
+
+## sdcadm experimental update-gz-tools
+
+Update the SDC Global Zone Tools.
+
+Usage:
+
+     sdcadm experimental update-gz-tools IMAGE-UUID
+     sdcadm experimental update-gz-tools PATH-TO-INSTALLER
+     sdcadm experimental update-gz-tools --latest
+
+You can see the available gz-tools images by running:
+
+    updates-imgadm list name=gz-tools
+
+And then use the image uuid the same way than the following example:
+
+
+    [root@headnode (coal) ~]# sdcadm experimental update-gz-tools 94070fee-22f1-439e-9ae8-7879012edceb
+    Downloading gz-tools image 94070fee-22f1-439e-9ae8-7879012edceb (2.0.0) to /var/tmp/gz-tools-94070fee-22f1-439e-9ae8-7879012edceb-24644.tgz
+    Decompressing gz-tools tarball
+    Updating "sdc" zone tools
+    Updating global zone scripts
+    Mounting USB key
+    Unmounting USB key
+    Updating cn_tools on all compute nodes
+    Cleaning up gz-tools tarball
+    Updated gz-tools successfully (elapsed 22s).
+
+### sdcadm experimental help update-agents
+
+Update SDC agents
+
+Usage:
+
+     sdcadm experimental update-agents IMAGE-UUID
+     sdcadm experimental update-agents PATH-TO-INSTALLER
+     sdcadm experimental update-agents --latest
+
+Once more, you can see the available agents images by running:
+
+    updates-imgadm list name=agentsshar
+
 #### Ideas for the future:
+
 - dev-headnode-provisionable: make headnode provisionable
 - dev-local-image-creation: allow local custom image creation
 - imgapi-manta: setup imgapi to use a manta for custom image creation
   (see also: dev-local-image-creation)
-- dev: add some fake data (users, packages) to practically play with the system
+- dev: add some fake data (users, packages) to practically play with the system (see GH#1).
 - dev: setup amon email and/or xmpp notifications
-
-
-
-
 
 # Configuration
 
