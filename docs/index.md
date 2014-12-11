@@ -29,7 +29,6 @@ The current SDC upgrade process is still via the [incr-upgrade
 scripts](https://github.com/joyent/sdc-headnode/blob/master/incr-upgrade-scripts/README.md),
 which `sdcadm` intends to replace.
 
-
 # Commands
 
 This section describes the basic design/plan for each of the sdcadm commands.
@@ -84,6 +83,16 @@ Find the latest `sdcadm` image in updates.joyent.com, download it and install.
 It's always recommendable to run `sdcadm self-update` before to perform any
 sdcadm upgrade operation, specially because there could be critical bugfixes
 published since the last time sdcadm itself was updated.
+
+You can get the exact version of sdcadm running into your SDC setup using:
+
+        sdcadm --version
+
+The output of this command will include both, the semver version, and the usual
+image version, referencing git branch, date and git SHA. For example:
+
+        [root@headnode (coal) ~]# sdcadm --version
+        sdcadm 1.3.9 (master-20141114T063621Z-g995ee7e)
 
 ## sdcadm update
 
