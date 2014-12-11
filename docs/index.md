@@ -682,7 +682,7 @@ And then use the image uuid the same way than the following example:
     Cleaning up gz-tools tarball
     Updated gz-tools successfully (elapsed 22s).
 
-### sdcadm experimental help update-agents
+### sdcadm experimental update-agents
 
 Update SDC agents
 
