@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.4.3
+
+- Added DNS to docker and portolan instances
+
 ## 1.4.2
 
 - Added `sdcadm experimental portolan` to add/update the portolan service.
