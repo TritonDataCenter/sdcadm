@@ -22,6 +22,24 @@ Please see docs/index.md for more details.
 
 --
 
+# sdcadm self-update
+
+It's always recommendable to run `sdcadm self-update` before to perform any
+sdcadm upgrade operation, specially because there could be critical bugfixes
+published since the last time sdcadm itself was updated.
+
+You can get the exact version of sdcadm running into your SDC setup using:
+
+        sdcadm --version
+
+The output of this command will include both, the semver version, and the usual
+image version, referencing git branch, date and git SHA. For example:
+
+        [root@headnode (coal) ~]# sdcadm --version
+        sdcadm 1.3.9 (master-20141114T063621Z-g995ee7e)
+
+--
+
 # SDC post-setup with sdcadm
 
 The default setup of a SmartDataCenter is somewhat minimal. There are several
