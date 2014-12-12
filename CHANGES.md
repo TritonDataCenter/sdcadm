@@ -12,11 +12,13 @@
 
 ## 1.4.3
 
-- Added DNS to docker and portolan instances
+- Added DNS to docker and portolan instances.
+- Stop lying regarding image used for ha-manatee.
 
 ## 1.4.2
 
 - Added `sdcadm experimental portolan` to add/update the portolan service.
+- Everything `sdcadm experimental` added to `sdcadm history`.
 
 ## 1.4.1
 
