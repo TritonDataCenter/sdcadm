@@ -119,7 +119,7 @@ It's always a good idea to run `sdcadm check-health` and `sdc-healthcheck`
 once this command has been completed, in order to review that everything
 reconnected to manatee/moray successfully.
 
-## Created the desired number of moray instances for HA
+## Create the desired number of moray instances for HA
 
 Finally, it's desirable to have more than the default single moray instance
 for HA. Creation of additional moray instances didn't require any special
