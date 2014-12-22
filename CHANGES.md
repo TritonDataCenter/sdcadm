@@ -14,6 +14,8 @@
 
 - Added DNS to docker and portolan instances.
 - Stop lying regarding image used for ha-manatee.
+- Added `--just-download` option to `sdcadm experimental update-gz-tools`
+and `sdcadm experimental update-agents`.
 
 ## 1.4.2
 
