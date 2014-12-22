@@ -179,11 +179,18 @@ It's a good idea to pre-download all the bits required for an upgrade before
 actually going through it. That's the reason we've run the previous
 `sdcadm update` command with the `--just-images` option.
 
-Right now, it's not possible to pre-download some images for other SDC
-components, like agents or gz-tools, using `sdcadm`. Anyway, it's possible to
-download them using `updates-imgadm` as follows:
+It's also possible to pre-download some images for other SDC components, like
+agents or gz-tools, using `sdcadm`. Just proceed as follows:
 
-      updates-imgadm get-file <IMG_UUID>
+      sdcadm experimental update-gz-tools --latest --just-download
+      sdcadm experimental update-agents --latest --just-download
+
+Or, if you want to upgrade to a specific image version instead of latest
+available image:
+
+      sdcadm experimental update-gz-tools <IMG_UUID> --just-download
+      sdcadm experimental update-agents <IMG_UUID> --just-download
+
 
 Either way, the `sdcadm experimental` subcommands we're gonna mention below
 should be able to download and install the required images, or to proceed
