@@ -1,0 +1,69 @@
+# kthxbai config file (https://github.com/trentm/node-kthxbai)
+
+# +pragma: rm-self
+# +pragma: scrub-package-json
+
+# Default patterns
+**/AUTHORS
+**/CONTRIBUTORS
+**/README*
+**/Readme*
+**/readme*
+**/TODO*
+**/CHANGES.md
+**/History.md
+**/example
+**/examples
+**/samples
+**/test
+**/tests
+**/tst
+**/doc
+**/docs
+**/man
+**/.travis.yml
+
+# Custom patterns
+**/.dir-locals.el
+**/.gitmodules
+**/.npmignore
+**/.jshintrc
+**/docs
+**/Makefile
+**/benchmark
+
+# sdc-clients: Only lib/sapi.js is used.
+# TODO: Not sure all of these are safely removable.
+sdc-clients/tools
+sdc-clients/lib/*.javascript
+sdc-clients/lib/{dsapi,usageapi}.js
+
+# dtrace-provider
+**/dtrace-provider/build/{config.gypi,*.target.mk,gyp-flock-tool,binding.Makefile}
+**/dtrace-provider/build/Release/{.deps,obj.target,linker.lock}
+**/dtrace-provider/!(build|package.json|dtrace-provider.js|LICENSE)
+**/dtrace-provider/package.json.rej
+
+# verror
+**/verror/Makefile*
+**/verror/jsl.node.conf
+**/verror/experiments
+
+# extsprintf
+**/extsprintf/Makefile*
+**/extsprintf/jsl.node.conf
+
+# cmdln & dashdash
+**/cmdln/tools
+**/dashdash/tools
+
+# restify: our usage here is limited
+**/restify/node_modules/spdy
+
+# mkdirp
+**/mkdirp/node_modules/minimist
+**/mkdirp/bin
+**/.bin/mkdirp
+
+# bunyan (we don't need bunyan's optional 'mv' module usage)
+**/bunyan/node_modules/mv

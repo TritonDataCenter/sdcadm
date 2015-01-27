@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright (c) 2015, Joyent, Inc.
 #
 
 #
@@ -98,6 +98,11 @@ rm -rf $PROTO/node/share
 # Add a stamp file to know exactly what build we have.
 mkdir -p $PROTO/etc
 echo "$STAMP" >$PROTO/etc/buildstamp
+
+(cd $PROTO \
+    && CONTENTS=$(ls | grep -v install-sdcadm.sh | xargs) \
+    && tar czf contents.tgz $CONTENTS \
+    && rm -rf $CONTENTS)
 
 TMP=/var/tmp/$NAME
 

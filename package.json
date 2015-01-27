@@ -12,6 +12,7 @@
     "cmdln": "2.1.2",
     "dashdash": "1.6.0",
     "extsprintf": "1.2.0",
+    "kthxbai": "~0.4.0",
     "lockfd": "git+ssh://git@github.com:trentm/node-lockfd.git#fcbc0e2",
     "mkdirp": "0.3.5",
     "node-uuid": "1.4.1",

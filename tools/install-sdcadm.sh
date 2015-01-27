@@ -29,7 +29,7 @@ fi
 set -o errexit
 set -o pipefail
 
-
+TOP=$(cd $(dirname $0)/; pwd)
 DESTDIR=/opt/smartdc/sdcadm
 NEWDIR=$DESTDIR.new
 OLDDIR=$DESTDIR.old
@@ -77,7 +77,7 @@ function restore_old_on_error
 [[ "$(zonename)" == "global" ]] || fatal "not running in global zone"
 [[ "$(sysinfo | json "Boot Parameters.headnode")" == "true" ]] \
     || fatal "not running on the headnode"
-[[ -f "./etc/buildstamp" ]] || fatal "missing './etc/buildstamp'"
+[[ -f "./contents.tgz" ]] || fatal "missing './contents.tgz'"
 [[ -d "$WRKDIR" ]] || fatal "'$WRKDIR' does not exist"
 
 [[ -d $OLDDIR ]] && rm -rf $OLDDIR
@@ -85,13 +85,13 @@ function restore_old_on_error
 
 trap 'restore_old_on_error $?' EXIT
 
-cp -PR ./ $NEWDIR
-rm $NEWDIR/install-sdcadm.sh
+mkdir -p $NEWDIR
+(cd $NEWDIR && tar xf $TOP/contents.tgz)
 rm -rf $NEWDIR/.temp_bin
 
 # Archive the old sdcadm for possible rollback and log other details.
-cp ./package.json $WRKDIR/package.json
-cp ./etc/buildstamp $WRKDIR/buildstamp
+cp $NEWDIR/package.json $WRKDIR/package.json
+cp $NEWDIR/etc/buildstamp $WRKDIR/buildstamp
 if [[ -d $DESTDIR ]]; then
     echo "Archiving $(cat $DESTDIR/etc/buildstamp) to $WRKDIR/sdcadm.old"
     cp -PR $DESTDIR $WRKDIR/sdcadm.old

@@ -49,6 +49,7 @@ endif
 .PHONY: all
 all: | $(NPM_EXEC)
 	MAKE_OVERRIDES='CTFCONVERT=/bin/true CTFMERGE=/bin/true' $(NPM) install
+	./node_modules/.bin/kthxbai
 
 .PHONY: shar
 shar:
@@ -98,4 +99,3 @@ else
 	include ./tools/mk/Makefile.node.targ
 endif
 include ./tools/mk/Makefile.targ
-
