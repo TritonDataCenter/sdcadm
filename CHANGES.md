@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.4.4
+
+- Added `sdcadm rollback`
+
 ## 1.4.3
 
 - Added DNS to docker and portolan instances.

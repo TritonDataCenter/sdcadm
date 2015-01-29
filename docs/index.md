@@ -285,36 +285,29 @@ a la `json -c COND ...`? Or clearer to have `sdcadm cn -n <filters...>`
 for that a la `manta-adm cn -n ...`.
 
 
-## sdcadm rollback (PENDING)
+## sdcadm rollback
 
-Status: not yet implemented
+Rollback one or more service images to the versions they were at before
+applying the given plan update.
 
-Support just one level of rollback. Find the last
-"/var/sdcadm/updates/$timestamp/curr-state.json" (each upgrade will record
-the current state of the world) and use that for the "plan.json".
+    sdcadm rollback -f <./local-upgrade-file.json> --force
 
-    $ sdcadm rollback
-    Last update was at $timestamp
-    * * *
-    Rollback will make the following changes:
-        rollback cnapi0 to 1.2.3 (<uuid>) from 1.2.4 (<uuid>)
+In order to rollback one or more services to the version these services
+were before a given update, it's necessary to pass the `plan.json` file
+generated for such update, (plan files are usually at
+`/var/sdcadm/updates/$buildstamp`). `sdcadm` will figure out the previous
+version for those services using this file, and generate a new plan for
+the rollback process.
 
-    Would you like to continue with the rollback? [y/N] y
-    * * *
-    ...
-    Successfully rolled back (elapsed 65s)
+Right now there are no restrictions at all about what version a given
+service can be rolled back to, (if you can update a service to a given
+version, you can rollback a service to that same version).
 
-We occassionally have data migration changes in new revs of services that
-make rollback hard (or practically impossible). All a given update has
-is the current image manifest and the target image manifest. We could either
-have a `manifest.tags.sdcMigrationRev = <integer>` or choose a convention that
-a *major* version change implies a migration across which rollback is not
-supported.
-
-    $ sdcadm rollback
-    Last update was at $timestamp
-    sdcadm rollback: error (RollbackAcrossMigration): cannot rollback cnapi0 from 2.0.0 to 1.2.3 across a migration rev (sdcMigrationRev 3 to 2)
-
+Please, take into consideration that we're not making any check regarding
+service irreversible migrations at the moment. This is the reason you
+must specify the `--force` flag, in order to confirm that you want to
+rollback the services/instances listed into the provided plan file, despite
+of the possible issues this may cause with specific service migrations.
 
 ## sdcadm history
 
