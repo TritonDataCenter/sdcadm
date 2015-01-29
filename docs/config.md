@@ -217,7 +217,6 @@ Finally, `cnapi`, `fwapi` and `napi` also set the variable
 - `napi_mac_prefix`
 - `phonehome_automatic`
 - `show_setup_timers`
-- `serialize_setup`
 - `config_inc_dir` [^1]: Full path to config directory. (Usually `/usbkey/config.inc`).
 - `ZK_SERVERS` [^1]: Zookeeper servers
 - `manatee_shard` [^1]: Which manatee shard should use (`sdc`).
