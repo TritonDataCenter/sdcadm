@@ -65,10 +65,10 @@ be created:
 
 ## Add Zookeeper service cluster and switch SDC services to use it
 
-By default, a SDC setup runs with a single zookeeper instance running into the
-`binder` instance. This is not the recommended setup for a production
-environment; instead, it's recommended to create a *"cluster"* of 3 or 5
-zookeeper instances, and reconfigure the services using zookeeper to use it.
+By default, a SDC setup runs with a single zookeeper service instance
+running into the `binder` instance. This is not the recommended setup
+for a production environment; instead, it's recommended to create a
+*"cluster"* of 3 or 5 zookeeper service instances.
 
 In case this is a setup already being used by non-administrator users, it's a
 good idea to put the DC in maintenance `sdcadm experimental dc-maint --start`.
@@ -77,16 +77,15 @@ good idea to put the DC in maintenance `sdcadm experimental dc-maint --start`.
         --servers=`CN1_UUID` \
         --servers=`CN2_UUID`
 
-This command will create 3 zookeeper instances, the first of them into the
-Headnode, then another one into the CN identified by CN1\_UUID and the last
-one into CN2\_UUID.
+This command will create 2 more binder instances, each one into the CN
+identified by CN1\_UUID and into CN2\_UUID.
 
 If you need to create a cluster of 5 instances, you just need to pass couple
 more CN UUIDs to this command.
 
-Once the zookeeper instances have been configured and all of them have joined
-the *"cluster"*, manatee and moray will be reconfigured to begin using this
-setup instead of the zookeeper service running into the `binder` instance.
+Once the binder instances have been configured and all of them have joined
+the *"cluster"*, manatee and moray will be restarted to begin using this
+setup immediately.
 
 If you put the DC into maintenance, remember to recover it from such state
 by using `sdcadm experimental dc-maint --stop`, unless you want to proceed

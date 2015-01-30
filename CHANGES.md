@@ -12,6 +12,8 @@
 
 ## 1.4.4
 
+- Modified `sdcadm post-setup zookeeper` to use binder images instead of
+zookeeper images.
 - Added `sdcadm rollback`
 
 ## 1.4.3
