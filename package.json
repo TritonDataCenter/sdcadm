@@ -1,7 +1,7 @@
 {
   "name": "sdcadm",
   "description": "Administer a SmartDataCenter (SDC) standup",
-  "version": "1.4.5",
+  "version": "1.4.6",
   "author": "Joyent (joyent.com)",
   "private": true,
   "dependencies": {
@@ -13,6 +13,8 @@
     "dashdash": "1.6.0",
     "extsprintf": "1.2.0",
     "kthxbai": "~0.4.0",
+    "joyent-schemas": "git+ssh://git@github.com:joyent/schemas.git#1a634a6",
+    "jsprim": "0.6.1",
     "lockfd": "git+ssh://git@github.com:trentm/node-lockfd.git#fcbc0e2",
     "mkdirp": "0.3.5",
     "node-uuid": "1.4.1",

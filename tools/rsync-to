@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright (c) 2015, Joyent, Inc.
 #
 
 #
@@ -17,7 +17,7 @@
 set -o errexit
 
 TOP=$(cd $(dirname $0)/../; pwd)
-NODE=$1
+NODE=root@$1
 [[ -z "$NODE" ]] && echo 'rsync-to: error: no headnode given' && exit 1
 BASEDIR=/opt/smartdc/sdcadm
 

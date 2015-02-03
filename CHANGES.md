@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.4.6
+
+- Added `sdcadm experimental fabric` to initialize the SDC fabrics
+sub-system.
+
 ## 1.4.5
 - Added `sdcadm platform`. Moved `sdcadm experimental assign-platform` and
 `sdcadm experimental install-platform` under `sdcadm platform` command as
