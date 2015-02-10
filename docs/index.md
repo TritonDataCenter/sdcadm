@@ -692,14 +692,7 @@ Once more, you can see the available agents images by running:
 
     updates-imgadm list name=agentsshar
 
-#### Ideas for the future:
 
-- dev-headnode-provisionable: make headnode provisionable
-- dev-local-image-creation: allow local custom image creation
-- imgapi-manta: setup imgapi to use a manta for custom image creation
-  (see also: dev-local-image-creation)
-- dev: add some fake data (users, packages) to practically play with the system (see GH#1).
-- dev: setup amon email and/or xmpp notifications
 
 # Configuration
 
