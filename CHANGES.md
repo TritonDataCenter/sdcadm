@@ -5,10 +5,15 @@
 -->
 
 <!--
-    Copyright (c) 2014, Joyent, Inc.
+    Copyright (c) 2015, Joyent, Inc.
 -->
 
 # sdcadm Changelog
+
+## 1.5.0
+- Added `sdcadm platform`. Moved `sdcadm experimental assign-platform` and
+`sdcadm experimental install-platform` under `sdcadm platform` command as
+`assign` and `install`. Also added `list`, `usage` and `remove` subcommands.
 
 ## 1.4.4
 

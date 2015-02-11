@@ -198,7 +198,7 @@ given to an image file as documented in `docs/index.md`.
 You can download and *"install"* the OS platform for later assignation to
 the CNs you want to upgrade by running:
 
-      sdcadm experimental install-platform --latest
+      sdcadm platform install --latest
 
 This will only download and make the platform available for later usage, but
 will not assign it to any server.
@@ -280,13 +280,13 @@ platform during the overall upgrade.
 
 You can assign the downloaded platform image to one or more servers using:
 
-      sdcadm experimental assign-platform PLATFORM SERVER_UUID
-      sdcadm experimental assign-platform PLATFORM --all
+      sdcadm platform assign PLATFORM SERVER_UUID
+      sdcadm platform assign PLATFORM --all
 
 where `PLATFORM` is the platform version. If you need to update more than one
 server, but don't want to update all of them, you'll need to run
 
-      sdcadm experimental assign-platform PLATFORM SERVER_UUID
+      sdcadm platform assign PLATFORM SERVER_UUID
 
 as many times as the servers you need to update.
 

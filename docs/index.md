@@ -559,62 +559,39 @@ to setup more than the default **moray** instance. You can add as many of them
 as you need by using `sdcadm create moray --server=UUID`.
 
 
-## sdcadm experimental command
+## sdcadm platform
 
-The following are a set of temporary commands used as replacement for some of
-the [incr-upgrade
-scripts](https://github.com/joyent/sdc-headnode/blob/master/incr-upgrade-scripts/README.md)
-which will be eventually integrated into `sdcadm update --all` or moved into
-different sdcadm sub-commands. In the meantime, the following is a list
-of these experimental sub-commands involved in SDC update tasks.
+Platform related sdcadm commands. These are commands to assist with the
+common set of tasks required to manage platforms on a typical SDC setup.
 
-## sdcadm experimental dc-maint
-
-Show or modify the DC maintenance mode.
-
-"Maintenance mode" for an SDC setup means that Cloud API is in read-only mode.
-Modifying requests will return "503 Service Unavailable". The Workflow API will
-be drained on entering maint mode.
-
-Limitation: this does not currently wait for config changes to be made and
-cloudapi instances restarted. That means there is a window after starting
-maintenance mode that new jobs could still come in.
-
-Usage:
-
-     sdcadm experimental dc-maint [-j]           # show DC maint status
-     sdcadm experimental dc-maint [--start]      # start DC maint
-     sdcadm experimental dc-maint [--stop]       # stop DC maint
-
-
-## sdcadm experimental install-platform
+### sdcadm platform install
 
 Download and install platform image for later assignment.
 
 Usage:
 
-     sdcadm experimental install-platform IMAGE-UUID
-     sdcadm experimental install-platform PATH-TO-IMAGE
-     sdcadm experimental install-platform --latest
+     sdcadm platform install IMAGE-UUID
+     sdcadm platform install PATH-TO-IMAGE
+     sdcadm platform install --latest
 
 Remember that you can get a list of available platform images from your
 updates channel by running:
 
     updates-imgadm list name=platform
 
-## sdcadm experimental assign-platform
+### sdcadm platform assign
 
 Assign platform image to the given (or all) SDC servers.
 
 Usage:
 
-     sdcadm experimental assign-platform PLATFORM SERVER_UUID
-     sdcadm experimental assign-platform PLATFORM --all
+     sdcadm platform assign PLATFORM SERVER_UUID
+     sdcadm platform assign PLATFORM --all
 
-Logically, this command needs to run after `install-platform`,
-since you need to pass `assign-platform` the platform name, for example:
+Logically, this command needs to run after `install`,
+since you need to pass `assign` the platform version, for example:
 
-      [root@headnode (coal) ~]# sdcadm experimental assign-platform 20141126T231525Z 564dc9e5-fcb0-fed8-570d-ca17753dd0cc
+      [root@headnode (coal) ~]# sdcadm platform assign 20141126T231525Z 564dc9e5-fcb0-fed8-570d-ca17753dd0cc
       updating headnode 564dc9e5-fcb0-fed8-570d-ca17753dd0cc to 20141126T231525Z
       Setting boot params for 564dc9e5-fcb0-fed8-570d-ca17753dd0cc
       Updating booter cache for servers
@@ -623,7 +600,85 @@ since you need to pass `assign-platform` the platform name, for example:
 Remember that you can review the list of available platforms by
 running:
 
-    sdc-cnapi /platforms | json -Ha
+      sdc-cnapi /platforms | json -Ha
+
+### sdcadm platform list
+
+Provides a list of platform images available to be used on the current SDC
+setup, together with the number of servers currently running those platform
+versions, and the servers which will use those platform versions after their
+next reboot.
+
+      [root@headnode (coal) ~]# sdcadm platform list
+      PLATFORM          CURRENT  BOOT  LATEST
+      20150209T232111Z  1        1     true
+      20150131T004244Z  0        0     false
+      20141114T012007Z  1        1     false
+
+### sdcadm platform usage
+
+Provides a list of servers using the given platform.
+
+      [root@headnode (coal) ~]# sdcadm platform usage 20150209T232111Z
+      UUID                                  HOSTNAME  CURRENT           BOOT
+      564dc9e5-fcb0-fed8-570d-ca17753dd0cc  headnode  20150209T232111Z  20150209T232111Z
+
+### sdcadm platform remove
+
+     sdcadm platform remove PLATFORM [PLATFORM2 [PLATFORM3]]
+     sdcadm platform remove --all
+
+Removes the given platform image(s) from the USB key and, when the
+`--cleanup-cache` option is given, also removes the given platform image(s)
+from the on-disk cache.
+
+When a platform in use by any server is given, the `--force` option is
+mandatory.
+
+When given, the `--all` option will remove all the platforms not being
+used by any server (neither currently, or configured to boot into). Note that
+if this option is present, `--force` option will be ignored.
+
+
+      [root@headnode (coal) ~]# sdcadm platform remove --all
+      The following platform images will be removed:
+
+          20150205T171833Z
+
+      Would you like to continue? [y/N] y
+
+      Mounting USB key
+      Removing platform 20150205T171833Z
+      Unmounting USB key
+      Done.
+
+
+## sdcadm experimental command
+
+The following are a set of temporary commands used as replacement of some of
+the [incr-upgrade
+scripts](https://github.com/joyent/sdc-headnode/blob/master/incr-upgrade-scripts/README.md)
+which will be eventually integrated into `sdcadm update --all` or moved into
+different sdcadm sub-commands. In the meanwhile, the following is the list
+of these experimental sub-commands involved into SDC update tasks.
+
+## sdcadm experimental dc-maint
+
+Show and modify the DC maintenance mode.
+
+"Maintenance mode" for an SDC means that Cloud API is in read-only mode.
+Modifying requests will return "503 Service Unavailable". Workflow API will
+be drained on entering maint mode.
+
+Limitation: This does not current wait for config changes to be made and
+cloudapi instances restarted. That means there is a window after starting that
+new jobs could come in.
+
+Usage:
+
+     sdcadm experimental dc-maint [-j]           # show DC maint status
+     sdcadm experimental dc-maint [--start]      # start DC maint
+     sdcadm experimental dc-maint [--stop]       # stop DC maint
 
 
 ## sdcadm experimental add-new-agent-svcs
