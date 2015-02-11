@@ -10,7 +10,7 @@
 
 # sdcadm Changelog
 
-## 1.5.0
+## 1.4.5
 - Added `sdcadm platform`. Moved `sdcadm experimental assign-platform` and
 `sdcadm experimental install-platform` under `sdcadm platform` command as
 `assign` and `install`. Also added `list`, `usage` and `remove` subcommands.
