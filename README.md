@@ -97,7 +97,7 @@ with ha-manatee too.
 When you have one manatee initially, you're in ONE\_NODE\_WRITE\_MODE,
 which is a special mode that exists just for bootstrapping. To go
 from this mode to a HA setup you'll need at least one more manatee.
-However, wwitching modes is not quite as simple as just provisioning a
+However, switching modes is not quite as simple as just provisioning a
 second manatee. It involves the following steps:
 
 - create a second manatee instance for you (with manatee-sitter disabled)
@@ -165,12 +165,13 @@ notify you about the problem. Otherwise, you can continue onto the next step.
 The detailed list of commands to run in order to verify that we can proceed
 with the upgrade is:
 
-      sdcadm update --all --just-images
-      sdcadm update manatee --just-images
-      sdcadm update zookeeper --just-images
+    sdcadm self-update
+    sdcadm update --all --just-images
+    sdcadm update manatee --just-images
+    sdcadm update zookeeper --just-images
 
-Of course, this assumes that you already setup a zookeeper cluster using
-`sdcadm post-setup`; if that's not the case, you can just skip that step.
+If you have not configured an SDC zookeeper cluster, you can skip
+the `update zookeeper` step above.
 
 ## Download everything before running the upgrades
 
