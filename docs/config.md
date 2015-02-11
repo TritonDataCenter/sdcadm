@@ -87,10 +87,10 @@ In general, it shouldn't be modified: `dsapi_url`, `dsapi_http_user`,
 
 ## Datacenter details
 
-- `datacenter_name`: The name for the current DataCenter. It's assigned to the
+- `datacenter_name`: The name for the current data center. It's assigned to the
 GZ global variable `$DC_NAME`, and it's used for SDC services naming as:
 `service_name.datacenter_name.dns_domain`.
-- `region_name`: A set of datacenters that are interconnected by low-latency,
+- `region_name`: A set of data centers that are interconnected by low-latency,
 high-bandwith links are said to be in the same `region`. Unlike `SDC` services,
 which are scoped to a single DC, a `manta` exists on a given `region`. This
 region is used for manta services naming: `service_name.region.dns_domain`
