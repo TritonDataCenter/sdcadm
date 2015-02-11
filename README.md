@@ -283,7 +283,7 @@ You can assign the downloaded platform image to one or more servers using:
       sdcadm experimental assign-platform PLATFORM SERVER_UUID
       sdcadm experimental assign-platform PLATFORM --all
 
-where `PLATFORM` is the platform name. If you need to update more than one
+where `PLATFORM` is the platform version. If you need to update more than one
 server, but don't want to update all of them, you'll need to run
 
       sdcadm experimental assign-platform PLATFORM SERVER_UUID
