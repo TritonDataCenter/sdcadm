@@ -610,18 +610,18 @@ versions, and the servers which will use those platform versions after their
 next reboot.
 
       [root@headnode (coal) ~]# sdcadm platform list
-      PLATFORM          CURRENT  BOOT  LATEST
-      20150209T232111Z  1        1     true
-      20150131T004244Z  0        0     false
-      20141114T012007Z  1        1     false
+      VERSION           CURRENT_PLATFORM  BOOT_PLATFORM  LATEST
+      20150211T221747Z  0                 1              true
+      20150209T232111Z  1                 0              false
+      20141114T012007Z  1                 1              false
 
 ### sdcadm platform usage
 
 Provides a list of servers using the given platform.
 
-      [root@headnode (coal) ~]# sdcadm platform usage 20150209T232111Z
-      UUID                                  HOSTNAME  CURRENT           BOOT
-      564dc9e5-fcb0-fed8-570d-ca17753dd0cc  headnode  20150209T232111Z  20150209T232111Z
+      [root@headnode (coal) ~]# sdcadm platform usage 20141114T012007Z
+      UUID                                  HOSTNAME           CURRENT_PLATFORM  BOOT_PLATFORM
+      564de614-50df-7c8a-0360-8614a5ef6d22  00-0c-29-ef-6d-22  20141114T012007Z  20141114T012007Z
 
 ### sdcadm platform remove
 
