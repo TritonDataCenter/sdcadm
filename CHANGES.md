@@ -10,7 +10,7 @@
 
 # sdcadm Changelog
 
-## 1.4.6
+## 1.5.0
 
 - Added `sdcadm experimental fabric` to initialize the SDC fabrics
 sub-system.
