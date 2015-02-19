@@ -225,7 +225,7 @@ itself contains the fix for such problem.
 
     MANATEE0_UUID=$(vmadm lookup -1 alias=~manatee)
     zfs snapshot zones/$MANATEE0_UUID/data/manatee@backup
-    zfs send zones/$MANATEE0_UUID/data/manatee@backup >./manatee-backup.zfs
+    zfs send zones/$MANATEE0_UUID/data/manatee@backup > /var/tmp/manatee-backup.zfs
     zfs destroy zones/$MANATEE0_UUID/data/manatee@backup
 
 ### Upgrade Global Zone Tools
