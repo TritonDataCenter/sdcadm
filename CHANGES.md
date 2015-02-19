@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.5.1
+
+- Added `sdcadm channel` to retrieve available update channels and
+set/unset `updates_channel` into SAPI.
+
 ## 1.5.0
 
 - Added `sdcadm experimental fabric` to initialize the SDC fabrics
