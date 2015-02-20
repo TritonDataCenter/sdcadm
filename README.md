@@ -63,7 +63,7 @@ be created:
 
     sdcadm post-setup cloudapi
 
-## Add Zookeeper service cluster and switch SDC services to use it
+## Add Zookeeper service cluster to be used by SDC services
 
 By default, an SDC setup runs with a single zookeeper service running in the
 `binder` instance. This is not the recommended setup for a production
@@ -168,10 +168,10 @@ with the upgrade is:
     sdcadm self-update
     sdcadm update --all --just-images
     sdcadm update manatee --just-images
-    sdcadm update zookeeper --just-images
+    sdcadm update binder --just-images
 
 If you have not configured an SDC zookeeper cluster, you can skip
-the `update zookeeper` step above.
+the `update binder` step above.
 
 ## Download everything before running the upgrades
 
@@ -255,10 +255,10 @@ assume that you already went through the process described to complete the
 post-setup installation of SDC HA pieces, and we're going to just update an
 existing HA setup. In such case, you just need to run:
 
-    sdcadm update zookeeper
+    sdcadm update binder
 
 Then, run `sdc-healthcheck` to make sure everything is properly reconnected
-to moray. Once zookeeper VMs have been updated, the next step is to update
+to moray. Once binder VMs have been updated, the next step is to update
 manatee by running:
 
     sdcadm update manatee
