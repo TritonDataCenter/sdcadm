@@ -77,6 +77,45 @@ List all SDC services:
 It is similar to `manta-adm show`.
 
 
+## sdcadm channel
+
+The `channel` sub-command provides facilities to list the available update
+channels and to set the preferred `updates_channel` into SAPI's sdc config:
+
+    [root@headnode (coal) ~]# sdcadm channel list
+    NAME     DEFAULT        DESCRIPTION
+    dev      true (remote)  all development builds
+    release  -              release gold bits
+    staging  -              builds for testing in staging in prep for production release
+
+    [root@headnode (coal) ~]# sdc-sapi /applications?name=sdc|json -Ha metadata.update_channel
+
+    [root@headnode (coal) ~]# sdcadm channel help set
+    Set the default update channel.
+
+    Usage:
+         sdcadm channel set CHANNEL_NAME
+
+    Options:
+        -h, --help          Show this help.
+    [root@headnode (coal) ~]# sdcadm channel set dev
+    Update channel has been successfully set to: 'dev'
+
+    [root@headnode (coal) ~]# sdc-sapi /applications?name=sdc|json -Ha metadata.update_channel
+    dev
+
+    [root@headnode (coal) ~]# sdcadm channel list
+    NAME     DEFAULT  DESCRIPTION
+    dev      true     all development builds
+    release  -        release gold bits
+    staging  -        builds for testing in staging in prep for production release
+
+
+Note how once the `update_channel` value has been set, the default channel
+stops displaying the _remote_ label, which means that the value for this
+channel does not rely into the remote updates server default, but into the
+value selected locally.
+
 ## sdcadm self-update
 
 Find the latest `sdcadm` image in updates.joyent.com, download it, and install.
@@ -177,9 +216,12 @@ to just upgrade to the latest available image of such service.
 There are couple things to note regarding available updates and future `sdcadm`
 development stages:
 
-- In the short term, **update channels**, already available for `updates-imgadm`
-  will be included into `sdcadm update`, allowing users to pick the right channel
-  for each setup from: development, staging, releases, ...
+- Since v1.5.1, **update channels**, already available for `updates-imgadm`
+  have been included into `sdcadm update`, allowing users to pick the right
+  channel for each setup from: development, staging, releases, ...
+  Right now, only the `dev` channel contains images, but this will change in
+  the upcoming future, with the publication of images into the `staging` and
+  `release` channels.
 - During upcoming iterations, the command `sdcadm avail` will be also
   implemented.
 
@@ -518,9 +560,6 @@ sub-command takes the following notable options:
         [root@headnode (coal) ~]# sdcadm post-setup zookeeper \
         --servers=`564dc9e5-fcb0-fed8-570d-ca17753dd0cc` \
         --servers=`3254278b-34f6-4b89-a749-49dbdfe0795f`
-
-
-#### Current Status: Waiting on MANATEE-243.
 
 ### sdcadm post-setup ha-manatee
 
