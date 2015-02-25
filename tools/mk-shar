@@ -78,6 +78,7 @@ cp -PR \
     $TOP/lib \
     $TOP/etc \
     $TOP/smf \
+    $TOP/test \
     $TOP/node_modules \
     $TOP/tools/install-sdcadm.sh \
     $TOP/package.json \
