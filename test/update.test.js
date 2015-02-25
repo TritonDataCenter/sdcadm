@@ -30,15 +30,15 @@ test('sdcadm update --dry-run', function (t) {
         t.ifError(err);
         t.equal(stderr, '');
 
-        var findStrings = [
-            'Finding candidate update images for the "ca" service.',
-            'update "ca" service to image',
-            'Updated successfully'
-        ];
+        t.notEqual(stdout.indexOf('Finding candidate update images for the ' +
+                   '"ca" service.'), -1);
 
-        findStrings.forEach(function (str) {
-            t.ok(stdout.indexOf(str) !== -1, 'check update string present');
-        });
+        if (stdout.indexOf('Up-to-date.') === -1) {
+            t.notEqual(stdout.indexOf('update "ca" service to image'), -1,
+                       'check update string present');
+            t.notEqual(stdout.indexOf('Updated successfully'), -1,
+                       'check update string present');
+        }
 
         t.end();
     });
