@@ -11,9 +11,145 @@
 
 var test = require('tape').test;
 var exec = require('child_process').exec;
+var common = require('./common');
 
 
+var SERVICE_TITLES = ['TYPE', 'UUID', 'NAME', 'IMAGE', 'INSTS'];
 var SERVICES_DETAILS = [];
+
+
+function checkHelp(t, command) {
+    exec('sdcadm ' + command + ' --help', function (err, stdout, stderr) {
+        t.ifError(err);
+
+        t.ok(stdout.indexOf('sdcadm services [<options>]') !== -1);
+        t.equal(stderr, '');
+
+        t.end();
+    });
+}
+
+
+function parseServicesOutput(t, output, expectedTitles) {
+    var servicesDetails = common.parseTextOut(output);
+    t.ok(servicesDetails.length > 0);
+
+    var titles = servicesDetails.shift();
+    t.deepEqual(titles, expectedTitles || SERVICE_TITLES,
+                'check service titles present');
+
+    return servicesDetails.filter(function (r) {
+        // TODO: we should check validity of non-sapi-registered entries as well
+        return r[1] !== '-';
+    });
+}
+
+
+/*
+ * Recursive function to check the existence of a service, and its type, name,
+ * image, and instances count are correct.
+ */
+function checkServicesDetails(t, servicesDetails) {
+    if (servicesDetails.length === 0) {
+        return t.end();
+    }
+
+    function recur() {
+        return checkServicesDetails(t, servicesDetails);
+    }
+
+    var serviceDetails = servicesDetails.pop();
+    var type     = serviceDetails[0];
+    var svcUuid  = serviceDetails[1];
+    var name     = serviceDetails[2];
+    var imgUuid  = serviceDetails[3];
+    var numInsts = +serviceDetails[4];
+
+    t.notEqual(['vm', 'agent'].indexOf(type), -1, svcUuid + ' service type');
+
+    if (svcUuid === '-') {
+        return recur();
+    }
+
+    var cmd = 'sdc-sapi /services/' + svcUuid + ' | json -H';
+
+    exec(cmd, function (err, stdout, stderr) {
+        t.ifError(err);
+
+        var svcInfo = common.parseJsonOut(stdout);
+        if (!svcInfo) {
+            t.ok(false, 'failed to parse JSON for cmd ' + cmd);
+            return recur();
+        }
+
+        t.equal(svcInfo.type, type, svcUuid + ' service type matches');
+        t.equal(svcInfo.name, name, svcUuid + ' service name matches');
+
+        if (imgUuid === '-') {
+            return recur();
+        }
+
+        t.equal(svcInfo.params.image_uuid, imgUuid);
+
+        var cmd2 = 'sdc-imgapi /images/' + imgUuid + ' | json -H';
+
+        exec(cmd2, function (err2, stdout2, stderr2) {
+            t.ifError(err2, svcUuid + ' service image exists');
+
+            if (type !== 'vm') {
+                return recur();
+            }
+
+            var cmd3 = 'sdc-sapi /instances?service_uuid=' + svcUuid +
+                ' | json -H';
+
+            exec(cmd3, function (err3, stdout3, stderr3) {
+                t.ifError(err3, svcUuid + ' service instance fetch');
+
+                var instances = common.parseJsonOut(stdout3);
+                if (!instances) {
+                    t.ok(false, 'failed to parse JSON for cmd ' + cmd3);
+                    return recur();
+                }
+
+                t.equal(instances.length, numInsts);
+                instances.forEach(function (inst) {
+                    t.equal(inst.service_uuid, svcUuid); // sanity check
+                });
+
+                checkInstancesExist(t, instances, recur);
+            });
+        });
+    });
+}
+
+
+function checkInstancesExist(t, instances, cb) {
+    if (instances.length === 0) {
+        return cb();
+    }
+
+    var instance = instances.pop();
+    var vmUuid = instance.uuid;
+    var cmd = 'sdc-vmapi /vms/' + vmUuid + ' | json -H';
+
+    exec(cmd, function (err, stdout, stderr) {
+        t.ifError(err, 'check service instance ' + vmUuid + ' actually exists');
+
+        var instanceDetails = common.parseJsonOut(stdout);
+        if (!instanceDetails) {
+            t.ok(false, 'failed to parse JSON for cmd ' + cmd);
+            return checkInstancesExist(t, instances, cb);
+        }
+
+        t.equal(instanceDetails.uuid, instance.uuid); // sanity check
+
+        checkInstancesExist(t, instances, cb);
+    });
+}
+
+
+// ---
 
 
 test('sdcadm services --help', function (t) {
@@ -32,10 +168,9 @@ test('sdcadm services', function (t) {
         t.equal(stderr, '');
 
         // global, so other tests can compare against
-        SERVICES_DETAILS = parseServicesOutput(stdout);
-        t.ok(SERVICES_DETAILS.length > 0);
+        SERVICES_DETAILS = parseServicesOutput(t, stdout);
 
-        checkServicesDetails(t, deepCopy(SERVICES_DETAILS));
+        checkServicesDetails(t, common.deepCopy(SERVICES_DETAILS));
     });
 });
 
@@ -45,7 +180,8 @@ test('sdcadm svcs', function (t) {
         t.ifError(err);
         t.equal(stderr, '');
 
-        t.deepEqual(parseServicesOutput(stdout), SERVICES_DETAILS);
+        t.deepEqual(parseServicesOutput(t, stdout), SERVICES_DETAILS);
+
         t.end();
     });
 });
@@ -68,12 +204,10 @@ test('sdcadm services --json', function (t) {
         t.ifError(err);
         t.equal(stderr, '');
 
-        var details;
-        try {
-            details = JSON.parse(stdout);
-        } catch (e) {
-            t.ok(false, 'parse --json output');
-            details = {};
+        var details = common.parseJsonOut(stdout);
+        if (!details) {
+            t.ok(false, 'failed to parse JSON');
+            return t.end();
         }
 
         var svcDetails = {};
@@ -111,27 +245,15 @@ test('sdcadm services -o', function (t) {
         t.ifError(err);
         t.equal(stderr, '');
 
-        var data = stdout.split('\n').filter(function (r) {
-            return r !== '';
-        }).map(function (r) {
-            return r.split(/\s+/);
-        });
+        function relevant(data) {
+            return data.map(function (r) {
+                return [ r[1], r[2] ];
+            });
+        }
 
-        var titles = data.shift();
+        var services = parseServicesOutput(t, stdout, ['TYPE', 'UUID', 'NAME']);
 
-        t.deepEqual(titles, ['TYPE', 'UUID', 'NAME']);
-
-        var services = data.filter(function (r) {
-            return r[1] !== '-';
-        }).map(function (r) {
-            return [ r[1], r[2] ];
-        });
-
-        var prevSvcs = SERVICES_DETAILS.map(function (r) {
-            return [ r[1], r[2] ];
-        });
-
-        t.deepEqual(services, prevSvcs);
+        t.deepEqual(relevant(services), relevant(SERVICES_DETAILS));
 
         t.end();
     });
@@ -143,12 +265,9 @@ test('sdcadm services -s', function (t) {
         t.ifError(err);
         t.equal(stderr, '');
 
-        var services = parseServicesOutput(stdout);
-        var sortedSvcs = deepCopy(services).sort(function (a, b) {
-            if (a[2] < b[2]) {
-                return -1;
-            }
-            return 1;
+        var services = parseServicesOutput(t, stdout);
+        var sortedSvcs = common.deepCopy(services).sort(function (a, b) {
+            return (a[2] < b[2]) ? -1 : 1;
         });
 
         t.deepEqual(services, sortedSvcs);
@@ -156,122 +275,3 @@ test('sdcadm services -s', function (t) {
         t.end();
     });
 });
-
-
-function checkHelp(t, command) {
-    exec('sdcadm ' + command + ' --help', function (err, stdout, stderr) {
-        t.ifError(err);
-
-        t.ok(stdout.indexOf('sdcadm services [<options>]') !== -1);
-        t.equal(stderr, '');
-
-        t.end();
-    });
-}
-
-
-function parseServicesOutput(output) {
-    return output.split('\n').filter(function (r) {
-        return r !== '';
-    }).map(function (r) {
-        return r.split(/\s+/);
-    }).filter(function (r) {
-        // first row of output is column titles, which we don't want
-        return r[0] !== 'TYPE';
-    }).filter(function (r) {
-        // TODO: we should check validity of non-sapi-registered entries as well
-        return r[1] !== '-';
-    });
-}
-
-
-/*
- * Recursive function to check the existence of a service, and its type, name,
- * image, and instances count are correct.
- */
-function checkServicesDetails(t, servicesDetails) {
-    if (servicesDetails.length === 0) {
-        return t.end();
-    }
-
-    var serviceDetails = servicesDetails.pop();
-    var type     = serviceDetails[0];
-    var svcUuid  = serviceDetails[1];
-    var name     = serviceDetails[2];
-    var imgUuid  = serviceDetails[3];
-    var numInsts = +serviceDetails[4];
-
-    t.notEqual(['vm', 'agent'].indexOf(type), -1, svcUuid + ' service type');
-
-    if (svcUuid === '-') {
-        return checkServicesDetails(t, servicesDetails); // recur
-    }
-
-    var cmd = 'sdc-sapi /services/' + svcUuid + ' | json -H';
-
-    exec(cmd, function (err, stdout, stderr) {
-        t.ifError(err);
-
-        var svcInfo = JSON.parse(stdout);
-        t.equal(svcInfo.type, type, svcUuid + ' service type matches');
-        t.equal(svcInfo.name, name, svcUuid + ' service name matches');
-
-        if (imgUuid === '-') {
-            return checkServicesDetails(t, servicesDetails); // recur
-        }
-
-        t.equal(svcInfo.params.image_uuid, imgUuid);
-
-        var cmd2 = 'sdc-imgapi /images/' + imgUuid + ' | json -H';
-
-        exec(cmd2, function (err2, stdout2, stderr2) {
-            t.ifError(err2, svcUuid + ' service image exists');
-
-            if (type !== 'vm') {
-                return checkServicesDetails(t, servicesDetails); // recur
-            }
-
-            var cmd3 = 'sdc-sapi /instances?service_uuid=' + svcUuid +
-                ' | json -H';
-
-            exec(cmd3, function (err3, stdout3, stderr3) {
-                t.ifError(err3, svcUuid + ' service instance fetch');
-
-                var instances = JSON.parse(stdout3);
-                t.equal(instances.length, numInsts);
-                instances.forEach(function (inst) {
-                    t.equal(inst.service_uuid, svcUuid); // sanity check
-                });
-
-                checkInstancesExist(t, instances, function () {
-                    checkServicesDetails(t, servicesDetails); // recur
-                });
-            });
-        });
-    });
-}
-
-
-function checkInstancesExist(t, instances, cb) {
-    if (instances.length === 0) {
-        return cb();
-    }
-
-    var instance = instances.pop();
-    var vmUuid = instance.uuid;
-    var cmd = 'sdc-vmapi /vms/' + vmUuid + ' | json -H';
-
-    exec(cmd, function (err, stdout, stderr) {
-        t.ifError(err, 'check service instance ' + vmUuid + ' actually exists');
-
-        var instanceDetails = JSON.parse(stdout);
-        t.equal(instanceDetails.uuid, instance.uuid); // sanity check
-
-        checkInstancesExist(t, instances, cb);
-    });
-}
-
-
-function deepCopy(obj) {
-    return JSON.parse(JSON.stringify(obj)); // heh
-}

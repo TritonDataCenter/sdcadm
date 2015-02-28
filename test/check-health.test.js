@@ -11,9 +11,47 @@
 
 var test = require('tape').test;
 var exec = require('child_process').exec;
+var common = require('./common');
 
 
 var HEALTH_TITLES = ['INSTANCE', 'SERVICE', 'HOSTNAME', 'ALIAS', 'HEALTHY'];
+
+
+function parseHealthOutput(output) {
+    return common.parseTextOut(output).filter(function (r) {
+        // TODO: we should check everything, not just VMs
+        return r[3] !== '-';
+    });
+}
+
+
+// TODO: need to check if service and hostname are correct
+function checkHealthDetails(t, healthDetails) {
+    if (healthDetails.length === 0) {
+        return t.end();
+    }
+
+    var details = healthDetails.pop();
+
+    var cmd = 'sdc-vmapi /vms/' + details[0] + ' | json -H';
+    exec(cmd, function (err, stdout, stderr) {
+        t.ifError(err);
+
+        var vmDetails = common.parseJsonOut(stdout);
+        if (!vmDetails) {
+            t.ok(false, 'failed to parse JSON for cmd ' + cmd);
+            return t.end();
+        }
+
+        t.equal(vmDetails.uuid,  details[0]); // sanity check
+        t.equal(vmDetails.alias, details[3], 'alias should match');
+
+        checkHealthDetails(t, healthDetails);
+    });
+}
+
+
+// ---
 
 
 test('sdcadm check-health --help', function (t) {
@@ -42,36 +80,3 @@ test('sdcadm check-health', function (t) {
         checkHealthDetails(t, healthDetails);
     });
 });
-
-
-function parseHealthOutput(output) {
-    return output.split('\n').filter(function (r) {
-        return r !== '';
-    }).map(function (r) {
-        return r.split(/\s+/);
-    }).filter(function (r) {
-        // TODO: we should check everything, not just VMs
-        return r[3] !== '-';
-    });
-}
-
-
-// TODO: need to check if service and hostname are correct
-function checkHealthDetails(t, healthDetails) {
-    if (healthDetails.length === 0) {
-        return t.end();
-    }
-
-    var details = healthDetails.pop();
-
-    var cmd = 'sdc-vmapi /vms/' + details[0] + ' | json -H';
-    exec(cmd, function (err, stdout, stderr) {
-        t.ifError(err);
-
-        var vmDetails = JSON.parse(stdout);
-        t.equal(vmDetails.uuid,  details[0]); // sanity check
-        t.equal(vmDetails.alias, details[3], 'alias should match');
-
-        checkHealthDetails(t, healthDetails);
-    });
-}

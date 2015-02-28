@@ -11,6 +11,7 @@
 
 var test = require('tape').test;
 var exec = require('child_process').exec;
+var common = require('./common');
 
 
 var LIST_TITLES = ['VERSION', 'CURRENT_PLATFORM', 'BOOT_PLATFORM', 'LATEST'];
@@ -33,7 +34,7 @@ test('sdcadm platform list', function (t) {
         t.ifError(err);
         t.equal(stderr, '');
 
-        var platformsDetails = parsePlatformOutput(stdout);
+        var platformsDetails = common.parseTextOut(stdout);
 
         var titles = platformsDetails.shift();
         t.deepEqual(titles, LIST_TITLES);
@@ -63,7 +64,12 @@ test('sdcadm platform list', function (t) {
         exec(cmd, function (err2, stdout2, stderr2) {
             t.ifError(err2);
 
-            var platformsInfo = JSON.parse(stdout2);
+            var platformsInfo = common.parseJsonOut(stdout2);
+            if (!platformsInfo) {
+                t.ok(false, 'failed to parse /platforms JSON');
+                return t.end();
+            }
+
             var platformNames = Object.keys(platformsInfo);
 
             t.equal(platformNames.length, platformsDetails.length,
@@ -79,7 +85,11 @@ test('sdcadm platform list', function (t) {
             exec(cmd2, function (err3, stdout3, stderr3) {
                 t.ifError(err3);
 
-                var servers = JSON.parse(stdout3);
+                var servers = common.parseJsonOut(stdout3);
+                if (!servers) {
+                    t.ok(false, 'failed to parse /servers JSON');
+                    return t.end();
+                }
 
                 platformsDetails.forEach(function (platform) {
                     var timestamp = platform.timestamp;
@@ -96,12 +106,3 @@ test('sdcadm platform list', function (t) {
         });
     });
 });
-
-
-function parsePlatformOutput(output) {
-    return output.split('\n').filter(function (r) {
-        return r !== '';
-    }).map(function (r) {
-        return r.split(/\s+/);
-    });
-}
