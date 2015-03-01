@@ -14,14 +14,7 @@ var exec = require('child_process').exec;
 var common = require('./common');
 
 
-var DEFAULT_SERVICES = [
-    'adminui', 'amon', 'amonredis', 'assets', 'binder', 'ca', 'cnapi', 'dhcpd',
-    'fwapi', 'imgapi', 'mahi', 'manatee', 'moray', 'napi', 'papi', 'rabbitmq',
-    'redis', 'sapi', 'sdc', 'ufds', 'vmapi', 'workflow'
-];
-
 var INSTANCE_TITLES = ['INSTANCE', 'SERVICE', 'HOSTNAME', 'VERSION', 'ALIAS'];
-
 var INSTANCES_DETAILS = [];
 
 
@@ -37,12 +30,13 @@ function checkHelp(t, command) {
 }
 
 
-function parseInstancesOutput(t, output) {
+function parseInstancesOutput(t, output, expectedTitles) {
     var instancesDetails = common.parseTextOut(output);
     t.ok(instancesDetails.length > 0);
 
     var titles = instancesDetails.shift();
-    t.deepEqual(titles, INSTANCE_TITLES, 'check instance titles present');
+    t.deepEqual(titles, expectedTitles || INSTANCE_TITLES,
+                'check column titles');
 
     return instancesDetails.filter(function (r) {
         // TODO: we should check everything, not just VMs
@@ -119,13 +113,12 @@ test('sdcadm insts --help', function (t) {
 test('sdcadm instances', function (t) {
     exec('sdcadm instances', function (err, stdout, stderr) {
         t.ifError(err);
+        t.equal(stderr, '');
 
-        DEFAULT_SERVICES.forEach(function (svcName) {
+        common.DEFAULT_SERVICES.forEach(function (svcName) {
             var found = stdout.indexOf(svcName) !== -1;
             t.ok(found, svcName + ' in instances output');
         });
-
-        t.equal(stderr, '');
 
         // global, so other tests can compare against
         INSTANCES_DETAILS = parseInstancesOutput(t, stdout);
@@ -196,15 +189,8 @@ test('sdcadm instances -o', function (t) {
         t.ifError(err);
         t.equal(stderr, '');
 
-        var data = stdout.split('\n').filter(function (r) {
-            return r !== '';
-        }).map(function (r) {
-            return r.split(/\s+/);
-        });
-
-        var titles = data.shift();
-
-        t.deepEqual(titles, ['TYPE', 'INSTANCE', 'VERSION']);
+        var expectedTitles = ['TYPE', 'INSTANCE', 'VERSION'];
+        var data = parseInstancesOutput(t, stdout, expectedTitles);
 
         // TODO: should check more than just vms
         var vms = data.filter(function (r) {

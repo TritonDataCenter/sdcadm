@@ -9,6 +9,13 @@
  */
 
 
+var DEFAULT_SERVICES = [
+    'adminui', 'amon', 'amonredis', 'assets', 'binder', 'ca', 'cnapi', 'dhcpd',
+    'fwapi', 'imgapi', 'mahi', 'manatee', 'moray', 'napi', 'papi', 'rabbitmq',
+    'redis', 'sapi', 'sdc', 'ufds', 'vmapi', 'workflow'
+];
+
+
 function deepCopy(obj) {
     return JSON.parse(JSON.stringify(obj)); // heh
 }
@@ -33,6 +40,7 @@ function parseTextOut(output) {
 
 
 module.exports = {
+    DEFAULT_SERVICES: DEFAULT_SERVICES,
     deepCopy: deepCopy,
     parseJsonOut: parseJsonOut,
     parseTextOut: parseTextOut

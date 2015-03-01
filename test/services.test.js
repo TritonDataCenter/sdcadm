@@ -15,6 +15,7 @@ var common = require('./common');
 
 
 var SERVICE_TITLES = ['TYPE', 'UUID', 'NAME', 'IMAGE', 'INSTS'];
+var SERVICES_INFO = {};
 var SERVICES_DETAILS = [];
 
 
@@ -71,54 +72,43 @@ function checkServicesDetails(t, servicesDetails) {
         return recur();
     }
 
-    var cmd = 'sdc-sapi /services/' + svcUuid + ' | json -H';
+    var svcInfo = SERVICES_INFO[svcUuid];
+
+    t.equal(svcInfo.type, type, svcUuid + ' service type matches');
+    t.equal(svcInfo.name, name, svcUuid + ' service name matches');
+
+    if (imgUuid === '-') {
+        return recur();
+    }
+
+    t.equal(svcInfo.params.image_uuid, imgUuid);
+
+    var cmd = 'sdc-imgapi /images/' + imgUuid + ' | json -H';
 
     exec(cmd, function (err, stdout, stderr) {
-        t.ifError(err);
+        t.ifError(err, svcUuid + ' service image exists');
 
-        var svcInfo = common.parseJsonOut(stdout);
-        if (!svcInfo) {
-            t.ok(false, 'failed to parse JSON for cmd ' + cmd);
+        if (type !== 'vm') {
             return recur();
         }
 
-        t.equal(svcInfo.type, type, svcUuid + ' service type matches');
-        t.equal(svcInfo.name, name, svcUuid + ' service name matches');
-
-        if (imgUuid === '-') {
-            return recur();
-        }
-
-        t.equal(svcInfo.params.image_uuid, imgUuid);
-
-        var cmd2 = 'sdc-imgapi /images/' + imgUuid + ' | json -H';
+        var cmd2 = 'sdc-sapi /instances?service_uuid=' + svcUuid + ' | json -H';
 
         exec(cmd2, function (err2, stdout2, stderr2) {
-            t.ifError(err2, svcUuid + ' service image exists');
+            t.ifError(err2, svcUuid + ' service instance fetch');
 
-            if (type !== 'vm') {
+            var instances = common.parseJsonOut(stdout2);
+            if (!instances) {
+                t.ok(false, 'failed to parse JSON for cmd ' + cmd2);
                 return recur();
             }
 
-            var cmd3 = 'sdc-sapi /instances?service_uuid=' + svcUuid +
-                ' | json -H';
-
-            exec(cmd3, function (err3, stdout3, stderr3) {
-                t.ifError(err3, svcUuid + ' service instance fetch');
-
-                var instances = common.parseJsonOut(stdout3);
-                if (!instances) {
-                    t.ok(false, 'failed to parse JSON for cmd ' + cmd3);
-                    return recur();
-                }
-
-                t.equal(instances.length, numInsts);
-                instances.forEach(function (inst) {
-                    t.equal(inst.service_uuid, svcUuid); // sanity check
-                });
-
-                checkInstancesExist(t, instances, recur);
+            t.equal(instances.length, numInsts);
+            instances.forEach(function (inst) {
+                t.equal(inst.service_uuid, svcUuid); // sanity check
             });
+
+            checkInstancesExist(t, instances, recur);
         });
     });
 }
@@ -152,6 +142,25 @@ function checkInstancesExist(t, instances, cb) {
 // ---
 
 
+test('setup', function (t) {
+    exec('sdc-sapi /services | json -H', function (err, stdout, stderr) {
+        t.ifError(err);
+
+        var servicesInfo = common.parseJsonOut(stdout);
+        if (!servicesInfo) {
+            t.ok(false, 'failed to parse JSON to preload service info');
+            return t.end();
+        }
+
+        servicesInfo.forEach(function (svc) {
+            SERVICES_INFO[svc.uuid] = svc;
+        });
+
+        t.end();
+    });
+});
+
+
 test('sdcadm services --help', function (t) {
     checkHelp(t, 'services');
 });
@@ -166,6 +175,11 @@ test('sdcadm services', function (t) {
     exec('sdcadm services', function (err, stdout, stderr) {
         t.ifError(err);
         t.equal(stderr, '');
+
+        common.DEFAULT_SERVICES.forEach(function (svcName) {
+            var found = stdout.indexOf(svcName) !== -1;
+            t.ok(found, svcName + ' in instances output');
+        });
 
         // global, so other tests can compare against
         SERVICES_DETAILS = parseServicesOutput(t, stdout);

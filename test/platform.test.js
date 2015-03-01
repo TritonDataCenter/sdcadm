@@ -37,7 +37,7 @@ test('sdcadm platform list', function (t) {
         var platformsDetails = common.parseTextOut(stdout);
 
         var titles = platformsDetails.shift();
-        t.deepEqual(titles, LIST_TITLES);
+        t.deepEqual(titles, LIST_TITLES, 'check column titles');
 
         platformsDetails = platformsDetails.map(function (r) {
             var timestamp = r[0];
