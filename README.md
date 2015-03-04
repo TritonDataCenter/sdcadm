@@ -20,6 +20,17 @@ other SDC setup duties.
 
 Please see docs/index.md for more details.
 
+
+# Current status
+
+A warning that 'sdcadm' is still under development and isn't yet fully ready
+for use in production upgrades. In particular `sdcadm update ...` currently
+will selection from images build from "master" branches (as opposed to release
+branches) and by default will select the latest master build. That is
+bleeding edge. Current work includes full support for update "channels" so
+that a production datacenter can be set to only get "release" builds.
+
+
 --
 
 # sdcadm self-update
