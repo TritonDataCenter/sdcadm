@@ -1,6 +1,5 @@
 # kthxbai config file (https://github.com/trentm/node-kthxbai)
 
-# +pragma: rm-self
 # +pragma: scrub-package-json
 
 # Default patterns
