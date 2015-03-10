@@ -10,6 +10,12 @@
 
 # sdcadm Changelog
 
+## 1.5.2
+
+- Added `--force` and `--yes` option to `sdcadm experimental update-agents`.
+- Added ability to continue from a previously failed run to
+`post-setup ha-manatee`.
+
 ## 1.5.1
 
 - Added `sdcadm channel` to retrieve available update channels and
