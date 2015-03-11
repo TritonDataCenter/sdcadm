@@ -51,7 +51,7 @@ grep release-20150305 /var/tmp/sdc-release-images.txt | sort -u > /var/tmp/sdc-r
 Download each service image with sdcadm update <servicename>@<IMG_UUID> --just-images
 
 #### First check service image name (cross reference it)
-     Example:
+Example:
    
     grep manatee /var/tmp/service-image-names.txt
 
@@ -66,12 +66,12 @@ In this example service manatee actual image name is sdc-postgres
     0d05311e-c31d-11e4-8c8f-df1bc613f11a  sdc-postgres            release-20150305-20150305T094458Z-gad45608        I      smartos  2015-03-05T09:45:24Z
 
 #### Grab the image UUID (first field) and download image with: `sdcadm update <servicename>@<IMG_UUID> --just-images`
-     Example:
+Example:
 
     sdcadm update manta@0d05311e-c31d-11e4-8c8f-df1bc613f11a --just-images
 
 #### Repeat the download process for each individual service i.e. moray, cloudapi, binder, vmapi, sdc, papi etc.
-     Don't forget to record each `<servicename>@<IMG_UUID>` - this will be needed later when the actual upgrade is executed.
+Don't forget to record each `<servicename>@<IMG_UUID>` - this will be needed later when the actual upgrade is executed.
 
 #### As a last step download rabbitmq image
 
