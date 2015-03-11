@@ -50,39 +50,45 @@ grep release-20150305 /var/tmp/sdc-release-images.txt | sort -u > /var/tmp/sdc-r
 
 Download each service image with sdcadm update <servicename>@<IMG_UUID> --just-images
 
-1. First check service image name (cross reference it)
-   Example: `grep manatee /var/tmp/service-image-names.txt
-               "manatee": "sdc-postgres",
-   In this example service manatee actual image name is sdc-postgres
+#### First check service image name (cross reference it)
+     Example:
+   
+    grep manatee /var/tmp/service-image-names.txt
 
-2. Check available release image:
+    "manatee": "sdc-postgres"
+
+In this example service manatee actual image name is sdc-postgres
+
+#### Check available release image:
 
     grep sdc-postgres /var/tmp/sdc-release-20150305-images.txt
+
     0d05311e-c31d-11e4-8c8f-df1bc613f11a  sdc-postgres            release-20150305-20150305T094458Z-gad45608        I      smartos  2015-03-05T09:45:24Z
 
-3. Grab the image UUID (first field) and download image with: `sdcadm update <servicename>@<IMG_UUID> --just-images`
-   Example:
+#### Grab the image UUID (first field) and download image with: `sdcadm update <servicename>@<IMG_UUID> --just-images`
+     Example:
 
     sdcadm update manta@0d05311e-c31d-11e4-8c8f-df1bc613f11a --just-images
 
-4. Repeat the download process for each individual service i.e. moray, cloudapi, binder, vmapi, sdc, papi etc.
-   Don't forget to record each <servicename>@<IMG_UUID> - this will be needed later when the actual upgrade is executed.
+#### Repeat the download process for each individual service i.e. moray, cloudapi, binder, vmapi, sdc, papi etc.
+     Don't forget to record each `<servicename>@<IMG_UUID>` - this will be needed later when the actual upgrade is executed.
 
-5. As a last step download rabbitmq image
+#### As a last step download rabbitmq image
 
     sdcadm update rabbitmq@UUID --just-images --force-rabbitmq
 
-6. Download latest gz-tools
+#### Download latest gz-tools
 
     sdcadm experimental update-gz-tools --latest --just-download
 
-7. Download release agents (called agentsshar)
+#### Download release agents (called agentsshar)
 
     sdcadm experimental update-agents <IMG_UUID> --just-download
 
-8. Download the platform release image (`grep platform /var/tmp/sdc-release-20150305-images.txt`)
+#### Download the platform release image (`grep platform /var/tmp/sdc-release-20150305-images.txt`)
 
     sdcadm platform install UUID
+
 
 ## Proceeding with the upgrade
 
