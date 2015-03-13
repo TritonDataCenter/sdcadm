@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.5.3
+
+- NET-270: sdcadm needs to support configuring fabric NAT pools
+
 ## 1.5.2
 
 - Added `--force` and `--yes` option to `sdcadm experimental update-agents`.
