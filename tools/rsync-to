@@ -18,7 +18,7 @@ set -o errexit
 
 TOP=$(cd $(dirname $0)/../; pwd)
 NODE=root@$1
-[[ -z "$NODE" ]] && echo 'rsync-to: error: no headnode given' && exit 1
+[[ -z "$1" ]] && echo 'rsync-to: error: no headnode given' && exit 1
 BASEDIR=/opt/smartdc/sdcadm
 
 extraOpts=

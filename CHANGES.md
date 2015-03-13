@@ -10,9 +10,15 @@
 
 # sdcadm Changelog
 
+## 1.5.4
+
+- Add `sdcadm experimental default-fabric <UUID>` for adding a default fabric
+for a user
+
 ## 1.5.3
 
-- NET-270: sdcadm needs to support configuring fabric NAT pools
+- `sdcadm experimental fabrics` now requires the `sdc_nat_pool` property in
+its config for configuring the fabric NAT network pool.
 
 ## 1.5.2
 
