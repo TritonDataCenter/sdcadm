@@ -113,6 +113,9 @@ mv $NEWDIR $DESTDIR
 rm -f /opt/smartdc/bin/sdcadm
 ln -s $DESTDIR/bin/sdcadm /opt/smartdc/bin/sdcadm
 
+# Link-up to get `sdcadm` on the MANPATH.
+rm -f /opt/smartdc/man/man1/sdcadm.1
+ln -s $DESTDIR/man/man1/sdcadm.1 /opt/smartdc/man/man1/sdcadm.1
 
 # Add `serverUuid` to the config (better than having this
 # done on every `sdcadm` invocation later).

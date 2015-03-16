@@ -1,0 +1,695 @@
+# sdcadm(1) -- Administer a SmartDataCenter (SDC) standup
+
+## SYNOPSIS
+
+    sdcadm [options] COMMAND [args...]
+    sdcadm help COMMAND
+
+
+## DESCRIPTION
+
+`sdcadm` is a tool intended for managing SDC configuration, core services and
+instances. I.e. it is responsible for setting up, upgrading, creating optional
+instances (e.g. cloudapi), making services HA, etc.
+
+The runtime `sdcadm` configuration is loaded as follows:
+
+1. Load defaults from `/opt/smartdc/sdcadm/etc/defaults.json`.
+2. Load and merge in values from `/var/sdcadm/sdcadm.conf` (JSON format), if
+   that exists.
+3. Load some SDC config data via `bash /lib/sdc/config.sh -json`.
+
+
+## OPTIONS
+
+`-h, --help`
+    Print help and exit.
+
+`--version`
+    Print version and exit.
+
+`-v, --verbose`
+    Verbose/debug output.
+
+
+## SUBCOMMANDS
+
+### sdcadm help (?)
+
+Help on a specific sub-command.
+
+### sdcadm self-update \[options\]
+
+Update "sdcadm" itself.
+
+Find the latest `sdcadm` image in updates.joyent.com, download it, and install.
+
+It's recommended to run `sdcadm self-update` before performing any sdcadm
+upgrade operation, especially because there could be critical bugfixes published
+since the last time `sdcadm` itself was updated.
+
+You can get the exact version of sdcadm running in your SDC setup using:
+
+        sdcadm --version
+
+The output of this command will include both the semver version, and the usual
+image version (referencing git branch, date and git SHA). For example:
+
+        [root@headnode (coal) ~]# sdcadm --version
+        sdcadm 1.3.9 (master-20141114T063621Z-g995ee7e)
+
+
+`-h, --help`
+    Show this help.
+
+`-n, --dry-run`
+    Go through the motions without actually updating.
+
+`--allow-major-update`
+    Allow a major version update to sdcadm. By default
+    major updates are skipped (to avoid accidental
+    backward compatibility breakage).
+
+
+### sdcadm instances \[options\]
+
+List all SDC service instances.
+Note that "service" here includes SDC core vms and agents.
+
+
+`-h, --help`
+    Show this help.
+
+`-j, --json`
+    JSON output
+
+`-H`
+    Omit table header row.
+
+`-o field1,...`
+    Specify fields (columns) to output.
+
+`-s field1,...`
+    Sort on the given fields. Default is
+    "-type,service,hostname,version,alias".
+
+`-I, --group-by-image`
+    Group by unique (service, image).
+
+### sdcadm services \[options\]
+
+List all SDC services.
+
+
+`-h, --help`
+    Show this help.
+
+`-j, --json`
+    JSON output
+
+`-H`
+    Omit table header row.
+
+`-o field1,...`
+    Specify fields (columns) to output.
+
+`-s field1,...`
+    Sort on the given fields. Default is "-type,name".
+
+### sdcadm update \[options\]
+
+Update SDC services and instances.
+
+     sdcadm update [<options>] <svc> ...
+     sdcadm update [<options>] <svc>@<image> ...
+     sdcadm update [<options>] <svc>@<version> ...
+
+
+`-h, --help`
+    Show this help.
+
+`-n, --dry-run`
+    Go through the motions without actually updating.
+
+`-a, --all`
+    Update all instances.
+
+`-y, --yes`
+    Answer yes to all confirmations.
+
+`-I, --just-images`
+    Just import images. Commonly this is used to preload
+    images before the full upgrade run.
+
+`--force-rabbitmq`
+    Forcibly update rabbitmq (which is not updated by default)
+
+`--force-same-image`
+    Allow update of an instance(s) even if the target
+    image is the same as the current.
+
+`-C, --channel=ARG`
+    Use the given channel to fetch the image(s), even if
+    it is not the default one.
+
+### sdcadm rollback \[options\] -f ./local-upgrade-file.json ...
+
+Rollback SDC services and instances.
+
+In order to rollback one or more services to the version these services
+were before a given update, it's necessary to pass the `plan.json` file
+generated for such update, (plan files are usually at
+`/var/sdcadm/updates/$buildstamp`). `sdcadm` will figure out the previous
+version for those services using this file, and generate a new plan for
+the rollback process.
+
+Right now there are no restrictions at all about what version a given
+service can be rolled back to -- if you can update a service to a given
+version, you can rollback a service to that same version.
+
+Please take into consideration that we're not making any checks regarding
+irreversible service migrations at the moment. This is the reason you
+must specify the `--force` flag, in order to confirm that you want to
+rollback the services/instances listed into the provided plan file.
+
+`-h, --help`
+    Show this help.
+
+`-n, --dry-run`
+    Go through the motions without actually rolling back.
+
+`-y, --yes`
+    Answer yes to all confirmations.
+
+`--force`
+    Do the rollback despite of migrations and version dependencies
+
+`-f FILE_PATH, --file=FILE_PATH`
+    Full path to file with update plan.json to rollback
+
+### sdcadm create \[options\] svc
+
+Create an instance for an existing SDC service.
+
+Note that in order to create an instance of some services the option
+`--skip-ha-ready` must be specified, given that those services are not
+supposed to have more than one instance. There are also some services
+which are not allowed to have more than one instance, or services
+whose instances should not be created using this tool, like manatee or
+zookeeper. Finally, the first instance of some services should not be
+created using this tool when there is an alternate choice provided by
+`post-setup` subcommand.
+
+`-h, --help`
+    Show this help.
+
+`-n, --dry-run`
+    Go through the motions without actually creating.
+
+`-i ARG, --image=ARG`
+    UUID of the Image to be used for the instance.
+
+`-s ARG, --server=ARG`
+    The UUID for the target server.
+
+`-y, --yes`
+    Answer yes to all confirmations.
+
+`--skip-ha-check`
+    Allow create the instance even if the service is not HA ready.
+
+### sdcadm check-config \[options\]
+
+Check sdc config in SAPI versus system reality.
+
+`-h, --help`
+    Show this help.
+
+### sdcadm check-health (health) \[options\] \[svc or inst...\]
+
+Check that services or instances are up.
+
+`-h, --help`
+    Show this help.
+
+`-j, --json`
+    JSON output
+
+`-q, --quiet`
+    Only print health errors, if any
+
+`-H`
+    Omit table header row.
+
+### sdcadm post-setup \[options\] COMMAND \[args...\]
+
+Common post-setup procedures.
+
+The default setup of a SmartDataCenter headnode is somewhat
+minimal. "Everything up to adminui." Practical usage of
+SDC -- whether for production, development or testing --
+involves a number of common post-setup steps. This command
+attempts to capture many of those for convenience and
+consistency.
+
+`-h, --help`
+    Show this help message and exit.
+
+### sdcadm post-setup help COMMAND
+
+Help on a specific post-setup sub-command.
+
+### sdcadm post-setup cloudapi
+
+Create a first cloudapi instance.
+
+Initial setup of SmartDataCenter does not create a cloudapi instance.
+This procedure will do that for you.
+
+
+### sdcadm post-setup common-external-nics
+
+Add external NICs to the adminui and imgapi zones.
+
+By default no SDC core zones are given external nics in initial
+setup. Typically it is most useful to have those for the adminui
+instance (to be able to access the operator portal in your browser)
+and for the imgapi instance (to enable it to reach out to
+updates.joyent.com and images.joyent.com for images). IMGAPI
+instances are always firewalled such that only outbound connections
+are allowed.
+
+### sdcadm post-setup zookeeper \[options\]
+
+Create a zookeeper cluster, known as an ensemble, using Headnode's
+binder as the first member and leader of the cluster.
+
+Given that the existing binder instance will be included into the
+ensemble, and we need an odd number of machines for better cluster
+reliability, we need to specify an additional number of new instances
+to be created, either 2 or 4, in order to complete a total of 3 or 5
+instances.
+
+
+`-h, --help`
+    Show this help and exit.
+
+`-y, --yes`
+    Answer yes to all confirmations.
+
+`-s ARG, --servers=ARG`
+    UUID for the target servers. At least m are required.
+
+`-m INT, --members=INT`
+    Number of instances to create (2 or 4). Default: 2
+
+### sdcadm post-setup ha-manatee \[options\]
+
+Create 2nd and 3rd manatee instances as the 1st required step for HA.
+
+When you have one manatee initially, you're in ONE\_NODE\_WRITE\_MODE
+which is a special mode that exists just for bootstrapping. To go
+from this mode to a HA setup you'll need at least one more manatee.
+Switching modes however is not quite as simple as just provisioning a
+second one. This command attempts to move you from one instance to a
+HA setup.
+
+After examining your setup and ensuring you're in the correct state
+it will:
+
+- create a second manatee instance for you (with manatee-sitter disabled)
+- disable the ONE\_NODE\_WRITE\_MODE on the first instance
+- reboot the first manatee into multi-node mode
+- reenable the sitter and reboot the second instance
+- wait for manatee to return that it's synchronized
+
+After we've gone through this, it'll create a 3rd manatee instance
+on the second server you specified to complete manatee ha setup.
+
+`-h, --help`
+    Show this help and exit.
+
+`-y, --yes`
+    Answer yes to all confirmations.
+
+`-s ARG, --servers=ARG`
+    The UUID for the target servers. Two values are required, one for sync
+    manatee, another for async manatee.
+
+
+### sdcadm post-setup dev-headnode-prov
+
+Make the headnode provisionable, for development and testing.
+
+This is done via `ALLOC_FILTER_HEADNODE` and `ALLOC_FILTER_MIN_RESOURCES`
+SAPI configuration of the CNAPI service. See
+[SAPI configuration](https://github.com/joyent/sdc-cnapi/blob/master/docs/index.md#sapi-configuration )
+
+### sdcadm platform \[options\] COMMAND \[args...\]
+
+Platform related sdcadm commands.
+
+These are commands to assist with the common set of tasks
+required to manage platforms on a typical SDC setup.
+
+`-h, --help`
+    Show this help and exit.
+
+
+### sdcadm platform help COMMAND
+
+Help on a specific platform sub-command.
+
+### sdcadm platform install \[options\] \[args\]
+
+Download and install platform image for later assignment.
+
+     sdcadm platform install IMAGE-UUID
+     sdcadm platform install PATH-TO-IMAGE
+     sdcadm platform install --latest
+
+`-h, --help`
+    Show this help and exit.
+
+`--latest`
+    Update using the last published platform image.
+
+### sdcadm platform assign \[options\] \[args\]
+
+Assign platform image to the given SDC server(s).
+
+     sdcadm platform assign PLATFORM SERVER1 [ SERVER2 [SERVER3] ]
+     sdcadm platform assign PLATFORM --all
+
+`-h, --help`
+    Show this help and exit.
+
+`--all`
+    Assign given platform image to all servers instead of
+    just the given one(s).
+
+### sdcadm platform list \[options\]
+
+Provides a list of platform images available to be used.
+
+
+`-h, --help`
+    Show this help.
+
+`-j, --json`
+    Show platforms list as raw JSON. Other options will not apply
+
+`-J, --jsonstream`
+    new-line separated JSON streaming output
+
+`-H`
+    Omit table header row.
+
+`-o field1,...`
+    Specify fields (columns) to output.
+
+`-s field1,...`
+    Sort on the given fields. Default is
+    "-version,current\_platform,boot\_platform".
+
+### sdcadm platform usage PLATFORM
+
+Provides a list of servers using the given platform.
+
+
+`-h, --help`
+    Show this help.
+
+`-j, --json`
+    Show platforms list as raw JSON. Other options will not apply
+
+`-H`
+    Omit table header row.
+
+`-o field1,...`
+    Specify fields (columns) to output.
+
+`-s field1,...`
+    Sort on the given fields. Default is
+    "-uuid,hostname,current\_platform,boot\_platform".
+
+### sdcadm platform remove
+
+Removes the given platform image(s).
+
+     sdcadm platform remove PLATFORM [PLATFORM2 [PLATFORM3]]
+     sdcadm platform remove --all
+
+When a platform in use by any server is given, the --force option
+is mandatory.
+
+When given, the --all option will remove all the platforms not being
+used by any server (neither currently, or configured to boot into).
+
+
+`-h, --help`
+    Show this help.
+
+`--all`
+    Removes all the platforms not in use.
+
+`--force`
+    Remove the given platform despite of being in use.
+
+`--cleanup-cache`
+    Also remove the given platform(s) from the on-disk cache.
+
+`-y, --yes`
+    Answer yes to all confirmations.
+
+### sdcadm channel [options] COMMAND [args...]
+
+sdcadm commands for operations with update channels.
+
+Provide a list of available update channels and set/update
+the preferred update channel.
+
+`-h, --help`
+    Show this help and exit.
+
+
+### sdcadm channel help COMMAND
+
+Help on a specific channel sub-command.
+
+### sdcadm channel list
+
+Provides a list of update channels available.
+
+`-h, --help`
+    Show this help.
+
+`-j, --json`
+    Show channels list as raw JSON. Other options will not apply
+
+`-H`
+    Omit table header row.
+
+### sdcadm channel set CHANNEL_NAME
+
+Set the default update channel.
+
+`-h, --help`
+    Show this help.
+
+###  sdcadm history \[options\] \[HISTORY-ITEM-UUID\]
+
+History of sdcadm commands.
+
+The historical collection of sdcadm commands ran into the current
+SDC setup, searchable by execution time (when SAPI is available).
+
+We keep a history of updates in an 'sdcadm\_history' moray bucket.
+This command lists the history ala `zpool history` (with tabular output).
+In case moray happens to be down, history for an upgrade is cached locally
+and pushed to Moray on later uses of sdcadm.
+
+There is a two phase write to the history during an `sdcadm update`: first at
+the start of the update, before changes are made, and later upon completion.
+We attempt to write that completion even when the update failed, but the
+initial write at the start allows for detection of update *crashes*.
+
+The same thing happens for other commands, like `sdcadm self-update`,
+`sdcadm post-setup zookeeper`, or `sdcadm post-setup cloudapi`. In general,
+any sdcadm subcommand causing a modification of the system will call history
+and save such change into the aforementioned 'sdcadm\_history' bucket.
+
+The `-j|--json` option allows retrieving such changes in raw JSON format
+(with the same structure than update plan.json). If the UUID of a given change
+is given as an argument to `sdcadm history`, only that change will be
+retrieved.
+
+It's also possible to just search for history items started after
+(`--since`) or before (`--until`) a given date. Both command options take
+a valid ISO 8610 Date String as their possible values. Of course, a combination
+of both command options will allow searching within a given time interval.
+
+`-h, --help`
+    Show this help message and exit.
+
+`-j, --json`
+    Show history as JSON.
+`-H`
+    Omit table header row.
+
+`-o field1,...`
+    Specify fields (columns) to output.
+
+`-s field1,...`
+    Sort on the given fields. Default is "-started,finished".
+
+`--since=ARG`
+    Return only values since the given date. ISO 8601 Date String.
+
+`--until=ARG`
+    Return only values until the given date. ISO 8601 Date String.
+
+When HISTORY-ITEM-UUID is given, only that history item will
+be included using JSON format and all the other options will
+be ignored
+
+
+### sdcadm experimental \[options\] command \[args...\]
+
+Experimental, unsupported, temporary sdcadm commands.
+
+These are unsupported and temporary commands to assist with
+migration away from incr-upgrade scripts. The eventual
+general upgrade process will not include any commands under
+"sdcadm experimental".
+
+`-h, --help`
+    Show this help message and exit.
+
+
+### sdcadm experimental help COMMAND
+
+Help on a specific experimental sub-command.
+
+### sdcadm experimental update-agents \[options\] \[args...\]
+
+Update SDC agents
+
+     sdcadm experimental update-agents IMAGE-UUID
+     sdcadm experimental update-agents PATH-TO-INSTALLER
+     sdcadm experimental update-agents --latest
+
+
+`--latest`
+    Update using the last published agents installer.
+
+`--just-download`
+    Download the agents installer for later usage.
+
+`--force`
+    Re-run the agents installer even if it was run before
+
+`-y, --yes`
+    Answer yes to all confirmations.
+
+### sdcadm experimental dc-maint \[options\]
+
+Show and modify the DC maintenance mode.
+
+"Maintenance mode" for an SDC means that Cloud API is in read-only
+mode. Modifying requests will return "503 Service Unavailable".
+Workflow API will be drained on entering maint mode.
+
+Limitation: This does not current wait for config changes to be made
+and cloudapi instances restarted. That means there is a window after
+starting that new jobs could come in.
+
+     sdcadm experimental dc-maint [-j]           # show DC maint status
+     sdcadm experimental dc-maint [--start]      # start DC maint
+     sdcadm experimental dc-maint [--stop]       # stop DC maint
+
+`-h, --help`
+    Show this help message and exit.
+
+`-j, --json`
+    Show status as JSON.
+
+`--start`
+    Start maintenance mode.
+
+`--stop`
+    Stop maintenance mode (i.e. restore DC to full operation).
+
+
+### sdcadm experimental update-other
+
+Temporary grabbag for small SDC update steps.
+The eventual goal is to integrate all of this into "sdcadm update".
+
+`-h, --help`
+    Show this help message and exit.
+
+### sdcadm experimental update-gz-tools \[options\] \[args...\]
+
+Temporary grabbag for updating the SDC global zone tools.
+The eventual goal is to integrate all of this into "sdcadm update".
+
+     sdcadm experimental update-gz-tools IMAGE-UUID
+     sdcadm experimental update-gz-tools PATH-TO-INSTALLER
+     sdcadm experimental update-gz-tools --latest
+
+`-h, --help`
+    Show this help message and exit.
+
+`--latest`
+    Update using the last published gz-tools installer.
+
+`--just-download`
+    Download the GZ Tools installer for later usage.
+
+
+### sdcadm experimental add-new-agent-svcs
+
+Temporary grabbag for installing the SDC global zone new agents.
+The eventual goal is to integrate all of this into "sdcadm update".
+
+`-h, --help`
+    Show this help message and exit.
+
+### sdcadm experimental update-docker \[options\]
+
+Add/update the docker service.
+
+`-h, --help`
+    Show this help message and exit.
+
+`-f, --force`
+    Allow update to proceed even if already at latest image.
+
+### sdcadm experimental portolan \[options\]
+
+Add/update the portolan service.
+
+`-h, --help`
+    Show this help message and exit.
+
+`-f, --force`
+    Allow update to proceed even if already at latest image.
+
+### sdcadm experimental fabrics \[-c conf\] \[-f\] \[-h\]
+
+Initialize fabrics in the datacenter.
+
+`-c FILE, --conf=FILE`
+    Use configuration information instead of prompting
+
+`-f, --force`
+    force an update, even if fabric configuration already exists
+
+`-h, --help`
+    Display this help message
+
+
+## COPYRIGHT
+
+sdcadm Copyright (c) 2015 Joyent Inc., All rights reserved.

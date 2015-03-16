@@ -24,7 +24,7 @@ JSL_CONF_NODE	 = tools/jsl.node.conf
 JSL_FILES_NODE	 = $(JS_FILES)
 JSSTYLE_FILES	 = $(JS_FILES)
 JSSTYLE_FLAGS	 = -f tools/jsstyle.conf
-CLEAN_FILES += ./node_modules ./build/sdcadm-*.sh ./build/sdcadm-*.imgmanifest ./build/shar-image
+CLEAN_FILES += ./node_modules ./build/sdcadm-*.sh ./build/sdcadm-*.imgmanifest ./build/shar-image ./man/man1/sdcadm.1
 
 
 NODE_PREBUILT_VERSION=v0.10.26
@@ -62,7 +62,7 @@ test:
 	./test/runtests
 
 .PHONY: release
-release: all shar
+release: all man shar
 
 .PHONY: publish
 publish: release
@@ -92,6 +92,15 @@ check-version:
 	@echo Version check ok.
 
 check:: check-version
+
+
+.PHONY: man
+man: man/man1/sdcadm.1.ronn
+	rm -f man/man1/sdcadm.1
+	./node_modules/.bin/marked-man --input man/man1/sdcadm.1.ronn \
+		--date `git log -1 --pretty=format:%cd --date=short` \
+		--output man/man1/sdcadm.1
+	chmod 444 man/man1/sdcadm.1
 
 
 include ./tools/mk/Makefile.deps
