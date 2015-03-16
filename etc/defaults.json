@@ -5,6 +5,7 @@
         "assets": "assets",
         "imgapi": "imgapi",
         "dhcpd": "dhcpd",
+        "docker": "docker",
         "cnapi": "cnapi",
         "vmapi": "vmapi",
         "manatee": "sdc-postgres",
