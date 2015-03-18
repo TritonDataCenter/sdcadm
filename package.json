@@ -6,7 +6,7 @@
   "private": true,
   "dependencies": {
     "async": "0.2.9",
-    "assert-plus": "0.1.4",
+    "assert-plus": "0.1.5",
     "backoff": "2.3.0",
     "bunyan": "0.23.1",
     "cmdln": "2.1.2",
