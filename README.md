@@ -25,8 +25,8 @@ Please see docs/index.md for more details.
 
 A warning that 'sdcadm' is still under development and isn't yet fully ready
 for use in production upgrades. In particular `sdcadm update ...` currently
-will selection from images build from "master" branches (as opposed to release
-branches) and by default will select the latest master build. That is
+will select from images built from "master" branches (as opposed to release
+branches) and by default will choose the latest master build. That is
 bleeding edge. Current work includes full support for update "channels" so
 that a production datacenter can be set to only get "release" builds.
 
