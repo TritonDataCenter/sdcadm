@@ -5,3 +5,4 @@
 /build
 /sdcadm-*.sh
 *.vim
+man/man1/sdcadm.1
