@@ -440,12 +440,20 @@ Removes the given platform image(s).
      sdcadm platform remove PLATFORM [PLATFORM2 [PLATFORM3]]
      sdcadm platform remove --all
 
-When a platform in use by any server is given, the --force option
+When a platform in use by any server is given, the `--force` option
 is mandatory.
 
-When given, the --all option will remove all the platforms not being
+When given, the `--all` option will remove all the platforms not being
 used by any server (neither currently, or configured to boot into).
 
+Please, note that unless the `--cleanup-cache` option is given, the
+platform image will remain available to be used at the `/usbkey/os`
+directory and, therefore, will continue appearing into the listing
+provided by both CNAPI and `sdcadm platform list`.
+
+On these cases, you can re-run this command with the desired platform
+images and the `--cleanup-cache` option, and sdcadm will remove them
+from the cache directory.
 
 `-h, --help`
     Show this help.
