@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.5.5
+
+- TOOLS-913, TOOLS-910, TOOLS-684 A number of fixes to properly support pulling
+  and updating from channels other than the default.
+
 ## 1.5.4
 
 - Add `sdcadm experimental default-fabric <UUID>` for adding a default fabric
