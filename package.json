@@ -20,7 +20,7 @@
     "node-uuid": "1.4.1",
     "once": "1.3.0",
     "read": "1.0.5",
-    "sdc-clients": "git+ssh://git@github.com:joyent/node-sdc-clients.git#2bc953d",
+    "sdc-clients": "git+ssh://git@github.com:joyent/node-sdc-clients.git#8174438",
     "semver": "2.2.1",
     "strsplit": "1.0.0",
     "tabula": "1.2.2",
