@@ -11,6 +11,19 @@
 
 var test = require('tape').test;
 var exec = require('child_process').exec;
+var checkHelp = require('./common').checkHelp;
+
+
+test('sdcadm --help', function (t) {
+    exec('sdcadm --help', function (err, stdout, stderr) {
+        t.ifError(err);
+
+        t.notEqual(stdout.indexOf('sdcadm [OPTIONS] COMMAND [ARGS...]'), -1);
+        t.equal(stderr, '');
+
+        t.end();
+    });
+});
 
 
 test('sdcadm help', function (t) {
@@ -78,13 +91,6 @@ test('sdcadm help platform', function (t) {
 });
 
 
-function checkHelp(t, subcommand, match) {
-    exec('sdcadm help ' + subcommand, function (err, stdout, stderr) {
-        t.ifError(err);
-
-        t.ok(stdout.indexOf(match) !== -1);
-        t.equal(stderr, '');
-
-        t.end();
-    });
-}
+test('sdcadm help experimental', function (t) {
+    checkHelp(t, 'experimental', 'sdcadm experimental [OPTIONS] COMMAND');
+});

@@ -8,6 +8,8 @@
  * Copyright (c) 2015, Joyent, Inc.
  */
 
+var exec = require('child_process').exec;
+
 
 var DEFAULT_SERVICES = [
     'adminui', 'amon', 'amonredis', 'assets', 'binder', 'ca', 'cnapi', 'dhcpd',
@@ -39,8 +41,21 @@ function parseTextOut(output) {
 }
 
 
+function checkHelp(t, subcommand, match) {
+    exec('sdcadm help ' + subcommand, function (err, stdout, stderr) {
+        t.ifError(err);
+
+        t.notEqual(stdout.indexOf(match), -1);
+        t.equal(stderr, '');
+
+        t.end();
+    });
+}
+
+
 module.exports = {
     DEFAULT_SERVICES: DEFAULT_SERVICES,
+    checkHelp: checkHelp,
     deepCopy: deepCopy,
     parseJsonOut: parseJsonOut,
     parseTextOut: parseTextOut

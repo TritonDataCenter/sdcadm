@@ -103,12 +103,19 @@ function checkServicesDetails(t, servicesDetails) {
                 return recur();
             }
 
-            t.equal(instances.length, numInsts);
             instances.forEach(function (inst) {
                 t.equal(inst.service_uuid, svcUuid); // sanity check
             });
 
-            checkInstancesExist(t, instances, recur);
+            // garganuan hack: napi is abused in create.test.js, so the
+            // instances listed here won't match what's normal
+            if (name === 'napi') {
+                t.ok(instances.length >= numInsts);
+                return recur();
+            } else {
+                t.equal(instances.length, numInsts);
+                checkInstancesExist(t, instances, recur);
+            }
         });
     });
 }
