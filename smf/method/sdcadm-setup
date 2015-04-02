@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright (c) 2015, Joyent, Inc.
 #
 
 #
@@ -17,12 +17,22 @@ set -o xtrace
 
 . /lib/svc/share/smf_include.sh
 
-# Setup log rotation.
-logadm -w sdcadm_logs \
-    -b '/opt/smartdc/sdcadm/tools/rotate-logs.sh -i /var/log/sdcadm/logs/ /var/log/sdcadm/sdcadm.log' \
-    -t '/var/log/sdcadm/sdcadm_$nodename_%FT%H:%M:%S.log' \
-    -C 168 -S 1g -p 1h \
-    /var/log/sdcadm/sdcadm.log
+function setup_logadm {
+    logadm -w sdcadm_logs \
+        -b '/opt/smartdc/sdcadm/tools/rotate-logs.sh -i /var/log/sdcadm/logs/ /var/log/sdcadm/sdcadm.log' \
+        -t '/var/log/sdcadm/sdcadm_$nodename_%FT%H:%M:%S.log' \
+        -C 168 -S 1g -p 1h \
+        /var/log/sdcadm/sdcadm.log
+
+    # Move the smf_logs entry to run last (after the entries we just added) so
+    # that the default '-C' (from
+    # https://github.com/joyent/smartos-live/blob/master/overlay/generic/etc/logadm.conf)
+    # doesn't defeat our attempts to rotate out of "/var/svc/log".
+    /usr/sbin/logadm -r smf_logs
+    /usr/sbin/logadm -w smf_logs -C 8 -c -s 1m '/var/svc/log/*.log'
+}
+
+
 
 # Even though our '-b cmd' creates this file, logadm rotation will not rotate
 # if the 'logs' dir and 'sdcadm.log' file don't exist.
