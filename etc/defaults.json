@@ -38,7 +38,11 @@
         "amon-relay": "amon-relay",
         "heartbeater": "heartbeater",
         "smartlogin": "smartlogin",
-        "zonetracker": "zonetracker"
+        "zonetracker": "zonetracker",
+        "cn-agent": "cn-agent",
+        "vm-agent": "vm-agent",
+        "net-agent": "net-agent",
+        "config-agent": "config-agent"
     },
     "svcMinImages": {
         "binder": "20140731T211135Z",
@@ -61,6 +65,10 @@
         "manatee": "20140721T221128Z",
         "sdc": "20140725T191132Z",
         "cloudapi": "20140731T175858Z",
-        "ufds": "20140728T173339Z"
+        "ufds": "20140728T173339Z",
+        "cn-agent": "2015-04-01T01:22:31Z",
+        "vm-agent": "2015-02-26T07:17:54Z",
+        "net-agent": "2015-02-26T07:17:08Z",
+        "config-agent": "2015-02-26T02:03:35Z"
     }
 }
