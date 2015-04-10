@@ -70,6 +70,7 @@ be created:
 
     sdcadm post-setup cloudapi
 
+
 ## Add Zookeeper service cluster to be used by SDC services
 
 By default, an SDC setup runs with a single zookeeper service running in the
@@ -98,6 +99,7 @@ setup immediately.
 If you put the DC into maintenance, remember to recover it from such state
 by using `sdcadm experimental dc-maint --stop`, unless you want to proceed
 with ha-manatee too.
+
 
 ## Create the required manatee instances for HA
 
