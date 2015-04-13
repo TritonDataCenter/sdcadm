@@ -9,7 +9,7 @@
     "quota": 3072,
     "zfs_io_priority": 8,
     "fss": 8,
-    "cpu_cap": 12,
+    "cpu_cap": 25,
     "billing_tag": "sample-128M",
     "default": false,
     "v": 1
