@@ -154,7 +154,7 @@ test('sdcadm check-health -q', function (t) {
 
 
 // TODO: this won't work on an HA standup
-// TODO: simply disabling an SFM service instance is one step in test, but we
+// TODO: simply disabling an SMF service instance is one step in test, but we
 // need something more subtle yet brutal (like disabling manatee)
 test('disable papi for health check', function (t) {
     exec('sdc-login papi svcadm disable papi', function (err, stdout, stderr) {
