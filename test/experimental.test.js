@@ -45,8 +45,7 @@ test('sdcadm experimental --help', function (t) {
 
 
 test('sdcadm experimental update-agents --help', function (t) {
-    // TODO: currently this command doesn't understand --help
-    t.end();
+    checkHelp(t, 'update-agents', 'experimental update-agents IMAGE-UUID');
 });
 
 
@@ -236,8 +235,7 @@ test('sdcadm experimental update-other', function (t) {
 
 
 test('sdcadm experimental update-gz-tools --help', function (t) {
-    // TODO: currently this command doesn't understand --help
-    t.end();
+    checkHelp(t, 'update-gz-tools', 'experimental update-gz-tools IMAGE-UUID');
 });
 
 
