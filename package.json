@@ -13,22 +13,22 @@
     "dashdash": "1.6.0",
     "extsprintf": "1.2.0",
     "kthxbai": "~0.4.0",
-    "joyent-schemas": "git+ssh://git@github.com:joyent/schemas.git#0685142",
+    "joyent-schemas": "git+https://github.com/joyent/schemas.git#0685142",
     "jsprim": "0.6.1",
-    "lockfd": "git+ssh://git@github.com:trentm/node-lockfd.git#fcbc0e2",
+    "lockfd": "git+https://github.com/trentm/node-lockfd.git#fcbc0e2",
     "mkdirp": "0.3.5",
     "node-uuid": "1.4.1",
     "once": "1.3.0",
     "read": "1.0.5",
-    "sdc-clients": "git+ssh://git@github.com:joyent/node-sdc-clients.git#8174438",
+    "sdc-clients": "git+https://github.com/joyent/node-sdc-clients.git#8174438",
     "semver": "2.2.1",
     "strsplit": "1.0.0",
     "tabula": "1.2.2",
     "tape": "3.5.0",
-    "urclient": "git+ssh://git@github.com:joyent/node-urclient.git#034753b",
+    "urclient": "git+https://github.com/joyent/node-urclient.git#034753b",
     "vasync": "1.4.3",
     "verror": "1.3.7",
-    "wf-client": "git+ssh://git@github.com:joyent/sdc-wf-client.git#9bcb3a0ebec7cd5b4052acaacde8fd6e3e2dfcf9"
+    "wf-client": "git+https://github.com/joyent/sdc-wf-client.git#9bcb3a0ebec7cd5b4052acaacde8fd6e3e2dfcf9"
   },
   "devDependencies": {
       "marked-man": "0.1.4"
