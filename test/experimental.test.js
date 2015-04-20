@@ -13,6 +13,8 @@ var test = require('tape').test;
 var exec = require('child_process').exec;
 
 var DC_MAINT_START_TIME = +new Date();
+var OWNER_UUID; // filled in by setup
+var LATEST_AGENTS;
 
 
 function checkHelp(t, subCmd, expectedStr) {
@@ -34,7 +36,16 @@ test('setup', function (t) {
     exec('sdcadm post-setup common-external-nics',
          function (err, stdout, stderr) {
         t.ifError(err);
-        t.end();
+
+        var cmd = 'sdc-ufds s "(login=admin)" | json uuid';
+        exec(cmd, function (err2, stdout2, stderr2) {
+            t.ifError(err2);
+
+            OWNER_UUID = stdout2.split('\n')[0];
+            t.ok(OWNER_UUID, 'owner_uuid found');
+
+            t.end();
+        });
     });
 });
 
@@ -57,12 +68,14 @@ test('sdcadm experimental update-agents --force --latest --yes', function (t) {
 
         if (!stdout.match('The file was already downloaded to')) {
             var match = stdout.match(/file version is: master-(\d{8}t\d{6}z)/i);
-            var origTimestamp = match[1];
 
-            match = stdout.match(/Downloading.+?\(.+?master-(\d{8}t\d{6}z)/i);
-            var newTimestamp = match[1];
+            if (match) {
+                var origTimestamp = match[1];
+                match = stdout.match(/Download.+?\(.+?master-(\d{8}t\d{6}z)/i);
+                var newTimestamp = match[1];
 
-            t.ok(newTimestamp >= origTimestamp, 'new shar is newer');
+                t.ok(newTimestamp >= origTimestamp, 'new shar is newer');
+            }
         } else {
             t.ok(stdout.match('Using agent .+ from previous download'));
         }
@@ -85,14 +98,35 @@ test('sdcadm experimental update-agents --latest --yes', function (t) {
         t.ok(stdout.match('The file was already downloaded to'));
         t.ok(stdout.match('provide --force option if you want to run it'));
 
+        var match = stdout.match('Latest agents file version is: (.+)');
+        LATEST_AGENTS = match && match[1];
+        t.ok(LATEST_AGENTS, 'found latest agents file uuid');
+
         t.end();
     });
 });
 
 
 test('sdcadm experimental update-agents <img uuid>', function (t) {
-    // TODO
-    t.end();
+    var cmd = 'sdcadm experimental update-agents ' + LATEST_AGENTS +
+              ' --force --yes';
+
+    exec(cmd, function (err, stdout, stderr) {
+        t.ifError(err);
+        t.equal(stderr, '');
+
+        var expected = [
+            'The file was already downloaded to',
+            'Executing agents installer across data center',
+            'Done'
+        ];
+
+        expected.forEach(function (str) {
+            t.ok(stdout.match(str), 'Find in output: ' + str);
+        });
+
+        t.end();
+    });
 });
 
 
@@ -140,7 +174,7 @@ test('sdcadm experimental dc-maint (part 1)', function (t) {
         t.ifError(err);
         t.equal(stderr, '');
 
-        /* JSSTYLED */
+        // JSSTYLED
         var match = stdout.match(/DC maintenance: on \(since (.+)\)/);
         t.ok(match);
 
@@ -212,25 +246,91 @@ test('sdcadm experimental update-other --help', function (t) {
 
 
 test('sdcadm experimental update-other', function (t) {
-    exec('sdcadm experimental update-other', function (err, stdout, stderr) {
-        t.ifError(err);
-        t.equal(stderr, '');
+    var mahiDomain = '';
+    var papiDomain = '';
+    var sapiUrl    = '';
 
-        var expected = [
-            'Updating maintain_resolvers for all vm services',
-            'Updating DNS domain service metadata for papi, mahi',
-            'Updating DNS domain SDC application metadata for papi, mahi',
-            'Done'
-        ];
+    function runUpdate() {
+        exec('sdcadm experimental update-other',
+             function (err, stdout, stderr) {
+            t.ifError(err);
+            t.equal(stderr, '');
 
-        expected.forEach(function (str) {
-            t.notEqual(stdout.indexOf(str), -1, 'output contains: ' + str);
+            var expected = [
+                'Updating maintain_resolvers for all vm services',
+                'Updating DNS domain service metadata for papi, mahi',
+                'Updating DNS domain SDC application metadata for papi, mahi',
+                'Done'
+            ];
+
+            expected.forEach(function (str) {
+                t.notEqual(stdout.indexOf(str), -1, 'output contains: ' + str);
+            });
+
+            checkDomains();
         });
+    }
 
-        // TODO: more sanity checks
+    function checkDomains() {
+        var cmd = 'sdc-sapi /applications?name=sdc | json -H';
 
-        t.end();
-    });
+        exec(cmd, function (err, stdout, stderr) {
+            t.ifError(err);
+            t.equal(stderr, '');
+
+            var sdc = JSON.parse(stdout)[0];
+            t.ok(sdc);
+
+            mahiDomain = sdc.metadata.MAHI_SERVICE;
+            papiDomain = sdc.metadata.PAPI_SERVICE;
+            sapiUrl    = sdc.metadata['sapi-url'];
+
+            t.ok(mahiDomain);
+            t.ok(papiDomain);
+            t.ok(sapiUrl);
+
+            checkServices();
+        });
+    }
+
+    function checkServices() {
+        exec('sdc-sapi /services | json -H', function (err, stdout, stderr) {
+            t.ifError(err);
+            t.equal(stderr, '');
+
+            var services = JSON.parse(stdout);
+
+            var vms = services.filter(function (svc) {
+                return svc.type === 'vm';
+            });
+
+            var mahi = services.filter(function (svc) {
+                return svc.name === 'mahi';
+            })[0];
+
+            var papi = services.filter(function (svc) {
+                return svc.name === 'papi';
+            })[0];
+
+            t.ok(mahi, 'mahi service present');
+            t.ok(papi, 'papi service present');
+
+            t.equal(mahi.metadata.SERVICE_DOMAIN, mahiDomain);
+            t.equal(papi.metadata.SERVICE_DOMAIN, papiDomain);
+
+            t.equal(sapiUrl, mahi.metadata['sapi-url']);
+            t.equal(sapiUrl, papi.metadata['sapi-url']);
+
+            vms.forEach(function (vm) {
+                t.equal(vm.params.maintain_resolvers, true,
+                        vm.name + ' name has maintain_resolvers');
+            });
+
+            t.end();
+        });
+    }
+
+    runUpdate();
 });
 
 
@@ -415,11 +515,10 @@ test('sdcadm experimental portolan --force', function (t) {
 test('sdcadm experimental portolan', function (t) {
     exec('sdcadm experimental portolan', function (err, stdout, stderr) {
         t.ifError(err);
-
-        // there is a potential for race here, since the image could have been
-        // updated during the --force test above
-        t.ok(stdout.match('nothing to do'), 'portolan already updated');
         t.equal(stderr, '');
+
+        t.ok(stdout.match('Reprovision "portolan"'));
+        t.ok(stdout.match('Updated portolan'));
 
         t.end();
     });
@@ -442,66 +541,96 @@ test('sdcadm experimental fabrics --force', function (t) {
 
 
 test('sdcadm experimental fabrics --force --coal', function (t) {
-    exec('sdcadm experimental fabrics --force --coal',
-         function (err, stdout, stderr) {
-        t.ifError(err);
-        t.equal(stderr, '');
+    function runFabrics() {
+        exec('sdcadm experimental fabrics --force --coal',
+             function (err, stdout, stderr) {
+            t.ifError(err);
+            t.equal(stderr, '');
 
-        var expected = [
-            'Initialize fabrics for CoaL',
-            'Ensure services using "fabric_cfg"',
-            'Successfully added default fabric',
-            'Setting up CoaL HN fabric',
-            'Writing boot-time networking file to USB key',
-            'Successfully initialized fabric sub-system'
-        ];
+            var expected = [
+                'Initialize fabrics for CoaL',
+                'Ensure services using "fabric_cfg"',
+                'Successfully added default fabric',
+                'Setting up CoaL HN fabric',
+                'Writing boot-time networking file to USB key',
+                'Successfully initialized fabric sub-system'
+            ];
 
-        expected.forEach(function (str) {
-            t.notEqual(stdout.indexOf(str), -1, 'output contains: ' + str);
+            expected.forEach(function (str) {
+                t.notEqual(stdout.indexOf(str), -1, 'output contains: ' + str);
+            });
+
+            t.ok(stdout.match('Created default fabric VLAN') ||
+                 stdout.match('Already have default fabric VLAN'));
+
+            t.ok(stdout.match('Created default fabric network') ||
+                 stdout.match('Already have default fabric network'));
+
+            checkPools();
         });
+    }
 
-        t.ok(stdout.match('Created default fabric VLAN') ||
-             stdout.match('Already have default fabric VLAN'));
+    function checkPools() {
+        var cmd = 'sdc-napi /network_pools | json -H';
 
-        t.ok(stdout.match('Created default fabric network') ||
-             stdout.match('Already have default fabric network'));
+        exec(cmd, function (err, stdout, stderr) {
+            t.ifError(err);
 
-
-        exec('sdc-napi /network_pools | json -H',
-             function (err2, stdout2, stderr2) {
-            t.ifError(err2);
-
-            var pools = JSON.parse(stdout2);
+            var pools = JSON.parse(stdout);
             var natPools = pools.filter(function (pool) {
                 return pool.name === 'sdc_nat';
             });
+
             t.equal(natPools.length, 1);
 
-            exec('sdc-napi /networks?name=sdc_underlay | json -H',
-                 function (err3, stdout3, stderr3) {
-                t.ifError(err3);
-
-                var networks = JSON.parse(stdout3);
-                t.equal(networks.length, 1);
-                t.equal(networks[0].name, 'sdc_underlay');
-
-                exec('sdc-napi /nic_tags | json -H',
-                     function (err4, stdout4, stderr4) {
-                    t.ifError(err4);
-
-                    var tags = JSON.parse(stdout4);
-                    var underlayTags = tags.filter(function (tag) {
-                        return tag.name === 'sdc_underlay';
-                    });
-                    t.equal(underlayTags.length, 1);
-
-                    // TODO: more fabric sanity checks
-
-                    t.end();
-                });
-            });
+            checkNetworks();
         });
-    });
+    }
+
+    function checkNetworks() {
+        var cmd = 'sdc-napi /networks?name=sdc_underlay | json -H';
+
+        exec(cmd, function (err, stdout, stderr) {
+            t.ifError(err);
+
+            var networks = JSON.parse(stdout);
+            t.equal(networks.length, 1);
+            t.equal(networks[0].name, 'sdc_underlay');
+
+            checkTags();
+        });
+    }
+
+    function checkTags() {
+        exec('sdc-napi /nic_tags | json -H', function (err, stdout, stderr) {
+            t.ifError(err);
+
+            var tags = JSON.parse(stdout);
+            var underlayTags = tags.filter(function (tag) {
+                return tag.name === 'sdc_underlay';
+            });
+
+            t.equal(underlayTags.length, 1);
+
+            checkVlans();
+        });
+    }
+
+    function checkVlans() {
+        var cmd = 'sdc-napi /fabrics/' + OWNER_UUID + '/vlans | json -H';
+
+        exec(cmd, function (err, stdout, stderr) {
+            t.ifError(err);
+            t.equal(stderr, '');
+
+            var vlan = JSON.parse(stdout)[0];
+            t.equal(vlan.name, 'default');
+
+            t.end();
+        });
+    }
+
+    runFabrics();
 });
 
 
@@ -511,5 +640,22 @@ test('sdcadm experimental default-fabric --help', function (t) {
 
 
 test('sdcadm experimental default-fabric', function (t) {
-    t.end();
+    var cmd = 'sdcadm experimental default-fabric ' + OWNER_UUID;
+
+    exec(cmd, function (err, stdout, stderr) {
+        t.ifError(err);
+        t.equal(stderr, '');
+
+        var expected = [
+            'have default fabric VLAN',
+            'have default fabric network',
+            'added default fabric'
+        ];
+
+        expected.forEach(function (str) {
+            t.ok(stdout.match(str));
+        });
+
+        t.end();
+    });
 });
