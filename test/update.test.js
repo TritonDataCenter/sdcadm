@@ -13,6 +13,15 @@ var test = require('tape').test;
 var exec = require('child_process').exec;
 
 
+test('setup', function (t) {
+    exec('sdcadm post-setup common-external-nics',
+         function (err, stdout, stderr) {
+        t.ifError(err);
+        t.end();
+    });
+});
+
+
 test('sdcadm update --help', function (t) {
     exec('sdcadm update --help', function (err, stdout, stderr) {
         t.ifError(err);
@@ -67,7 +76,8 @@ test('sdcadm update --just-images', function (t) {
             t.ok(regex.match(stdout), 'check update regex present');
         });
 
-        var imgUuid = stdout.match('Imported image (.+?) \(')[0];
+        // JSSTYLED
+        var imgUuid = stdout.match(/Imported image (.+?) \(/)[0];
 
         var cmd = 'sdc-imgapi /images/' + imgUuid + ' | json -H';
         exec(cmd, function (err2, stdout2, stderr2) {
@@ -95,14 +105,14 @@ test('sdcadm update', function (t) {
         }
 
         var findRegex = [
-            'Installing image .+ \(papi',
+            'Installing image .+ \\(papi',
             'Reprovisioning papi VM',
-            'Wait (60s) for papi instance',
+            'Wait \\(60s\\) for papi instance',
             'Updated successfully'
         ];
 
         findRegex.forEach(function (regex) {
-            t.ok(stdout.match(regex), 'check update string present');
+            t.ok(stdout.match(regex), 'check update string present:' + regex);
         });
 
         var papiUuid = stdout.match('papi instance (.+?) to come up')[1];
