@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.5.6
+
+- `sdcadm experimental update-docker` now ensures that the zone has
+ a delegate dataset
+
 ## 1.5.5
 
 - Support full HA for `sdcadm update mahi`.
