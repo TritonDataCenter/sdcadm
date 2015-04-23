@@ -701,6 +701,19 @@ Initialize fabrics in the datacenter.
 `-h, --help`
     Display this help message
 
+### sdcadm experimental install-docker-cert -k key -c cert
+
+Installs a custom TLS certificate to be used by sdc-docker.
+
+`-h, --help`
+    Show this help message and exit.
+
+`-k, --key`
+    Path to private key.
+
+`-c, --cert`
+    Path to certificate.
+
 
 ## COPYRIGHT
 
