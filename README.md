@@ -321,3 +321,26 @@ maintenance window, just in case.
 
 Finally, if you have some Amon alarms raised during the upgrade period, this is
 a good moment to clear them all.
+
+# Developer notes
+
+## Testing sdcadm
+
+This should only be done by developers, and only in dev or test environments.
+Tests will muck around with the sdc setup, doing terrible and unholy things to
+your data.
+
+In order to run sdcadm tests, you'll first need to signal to the tests that
+you really do want them to run:
+
+    touch /lib/sdc/.sdc-test-no-production-data
+
+After that, to run the tests themselves:
+
+    /opt/smartdc/sdcadm/test/runtests
+
+The full battery of tests can take up to thirty minutes to run. To only run
+tests in a single file, instead of all test files, consider using the -f flag
+with the `runtests` command. For example, to run the tests in sdcadm.test.js:
+
+    /opt/smartdc/sdcadm/test/runtests -f sdcadm.test.js
