@@ -374,6 +374,10 @@ Download and install platform image for later assignment.
 `--latest`
     Update using the last published platform image.
 
+`-C, --channel=ARG`
+    Use the given channel to fetch the image(s), even if
+    it is not the default one.
+
 ### sdcadm platform assign \[options\] \[args\]
 
 Assign platform image to the given SDC server(s).
