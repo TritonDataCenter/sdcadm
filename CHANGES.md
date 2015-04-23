@@ -12,6 +12,7 @@
 
 ## 1.5.6
 
+- Add support for installing custom TLS certificates for sdc-docker with `sdcadm experimental install-docker-cert`
 - `sdcadm experimental update-docker` now ensures that the zone has
  a delegate dataset
 
