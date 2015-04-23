@@ -517,8 +517,7 @@ test('sdcadm experimental portolan', function (t) {
         t.ifError(err);
         t.equal(stderr, '');
 
-        t.ok(stdout.match('Reprovision "portolan"'));
-        t.ok(stdout.match('Updated portolan'));
+        t.ok(stdout.match(/Portolan .+? matches the service: nothing to do/));
 
         t.end();
     });
