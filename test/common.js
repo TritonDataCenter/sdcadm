@@ -18,6 +18,9 @@ var DEFAULT_SERVICES = [
 ];
 
 
+var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
+
 function deepCopy(obj) {
     return JSON.parse(JSON.stringify(obj)); // heh
 }
@@ -55,6 +58,7 @@ function checkHelp(t, subcommand, match) {
 
 module.exports = {
     DEFAULT_SERVICES: DEFAULT_SERVICES,
+    UUID_RE: UUID_RE,
     checkHelp: checkHelp,
     deepCopy: deepCopy,
     parseJsonOut: parseJsonOut,

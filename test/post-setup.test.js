@@ -149,6 +149,102 @@ test('sdcadm post-setup help dev-headnode-prov', function (t) {
 });
 
 
+test('sdcadm post-setup dev-sample-data', function (t) {
+    var packageNames = [
+        'sample-128M',
+        'sample-256M',
+        'sample-512M',
+        'sample-1G',
+        'sample-2G',
+        'sample-4G',
+        'sample-8G',
+        'sample-16G',
+        'sample-32G',
+        'sample-64G'
+    ];
+
+    var imageNames = [
+        'minimal',
+        'base'
+    ];
+
+    function checkPkgs(pkgUuids, cb) {
+        var pkgUuid = pkgUuids.shift();
+
+        if (!pkgUuid) {
+            return cb();
+        }
+
+        var cmd = 'sdc-papi /packages/' + pkgUuid + ' | json -H';
+        exec(cmd, function (err, stdout, stderr) {
+            t.ifError(err);
+            t.equal(stderr, '');
+
+            var pkg = JSON.parse(stdout);
+            t.equal(pkg.uuid, pkgUuid, 'PAPI has package ' + pkgUuid);
+
+            checkPkgs(pkgUuids, cb);
+        });
+    }
+
+    function checkImgs(imgUuids, cb) {
+        var imgUuid = imgUuids.shift();
+
+        if (!imgUuid) {
+            return cb();
+        }
+
+        var cmd = 'sdc-imgapi /images/' + imgUuid + ' | json -H';
+        exec(cmd, function (err, stdout, stderr) {
+            t.ifError(err);
+            t.equal(stderr, '');
+
+            var img = JSON.parse(stdout);
+            t.equal(img.uuid, imgUuid, 'imgapi has image ' + imgUuid);
+
+            checkImgs(imgUuids, cb);
+        });
+    }
+
+    exec('sdcadm post-setup dev-sample-data', function (err, stdout, stderr) {
+        t.ifError(err);
+        t.equal(stderr, '');
+
+        var pkgUuids = packageNames.map(function (pkg) {
+            var added_re = 'Added package ' + pkg + ' \\((.+?)\\)';
+            var exist_re = 'Already have package ' + pkg + ' \\((.+?)\\)';
+
+            var match = stdout.match(added_re) || stdout.match(exist_re);
+            t.ok(match, 'package added or exists: ' + pkg);
+
+            return match[1]; // uuid
+        });
+
+        var imgUuids = imageNames.map(function (img) {
+            var added_re = 'Imported image (.+?) \\(' + img;
+            var exist_re = 'Already have image (.+?) \\(' + img;
+
+            var match = stdout.match(added_re) || stdout.match(exist_re);
+            t.ok(match, 'image added or exists: ' + img);
+
+            return match[1]; // uuid
+        });
+
+        checkPkgs(pkgUuids, function () {
+            checkImgs(imgUuids, function () {
+                t.end();
+            });
+        });
+    });
+});
+
+
+test('sdcadm post-setup help dev-sample-data', function (t) {
+    checkHelp(t, 'post-setup dev-sample-data',
+              'Add sample data suitable for *development and testing*.');
+});
+
+
 test('sdcadm post-setup zookeeper', function (t) {
     exec('sdcadm post-setup zookeeper', function (err, stdout, stderr) {
         t.ok(err);
