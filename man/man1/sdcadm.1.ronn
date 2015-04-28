@@ -295,6 +295,11 @@ reliability, we need to specify an additional number of new instances
 to be created, either 2 or 4, in order to complete a total of 3 or 5
 instances.
 
+Remember that you need to specify the -s option as many times as
+different servers UUIDs you need to provide:
+
+sdcadm post-setup zookeeper -s SERVER\_UUID1 -s SERVER\_UUID2
+
 
 `-h, --help`
     Show this help and exit.
@@ -330,6 +335,11 @@ it will:
 
 After we've gone through this, it'll create a 3rd manatee instance
 on the second server you specified to complete manatee ha setup.
+
+Remember that you need to specify the -s option as many times as
+different servers UUIDs you need to provide:
+
+sdcadm post-setup ha-manatee -s SERVER\_UUID1 -s SERVER\_UUID2
 
 `-h, --help`
     Show this help and exit.
