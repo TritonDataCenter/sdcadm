@@ -145,6 +145,7 @@ test('sdcadm experimental dc-maint --start', function (t) {
 
         var expectedStr = [
             'Putting cloudapi in read-only mode',
+            'Putting docker in read-only mode',
             'Waiting up to 5 minutes for workflow jobs to drain',
             'Workflow cleared of running and queued jobs'
         ];
@@ -206,7 +207,8 @@ test('sdcadm experimental dc-maint --stop', function (t) {
     exec('sdcadm experimental dc-maint --stop', function (err, stdout, stderr) {
         t.ifError(err);
 
-        t.notEqual(stdout.indexOf('Taking cloudapi out of read-only mode'), -1);
+        t.notEqual(stdout.indexOf('Taking cloudapi out of read-only mode\n' +
+                                  'Taking docker out of read-only mode'), -1);
         t.equal(stderr, '');
 
         t.end();
