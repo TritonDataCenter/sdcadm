@@ -148,10 +148,10 @@ Update SDC services and instances.
     Allow update of an instance(s) even if the target
     image is the same as the current.
 
-`--force-bypass-validation`
+`--force-bypass-min-image`
     Allow update of an instance(s) even if the target
     image is unknown or it does not fulfil the
-    minimum requirements for updates.
+    minimum image requirements for updates.
 
 `-C, --channel=ARG`
     Use the given channel to fetch the image(s), even if
