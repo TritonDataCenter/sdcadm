@@ -176,8 +176,6 @@ with the upgrade is:
 
     sdcadm self-update
     sdcadm update --all --just-images
-    sdcadm update manatee --just-images
-    sdcadm update binder --just-images
 
 If you have not configured an SDC zookeeper cluster, you can skip
 the `update binder` step above.
