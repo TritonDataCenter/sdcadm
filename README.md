@@ -5,7 +5,7 @@
 -->
 
 <!--
-    Copyright (c) 2014, Joyent, Inc.
+    Copyright (c) 2015, Joyent, Inc.
 -->
 
 # sdcadm
@@ -90,7 +90,7 @@ This command will create 2 more binder instances, one placed on the CN
 identified by CN1\_UUID, and the other CN identified by CN2\_UUID.
 
 If you need to create a cluster of 5 instances, you just need to pass a couple
-additional CN UUIDs to this command.
+additional CN UUIDs to this command together with the `--members=4` argument.
 
 Once the binder instances have been configured, and all of them have joined
 the *"cluster"*, manatee and moray will be restarted to begin using this
