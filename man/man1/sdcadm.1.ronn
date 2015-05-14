@@ -284,6 +284,23 @@ updates.joyent.com and images.joyent.com for images). IMGAPI
 instances are always firewalled such that only outbound connections
 are allowed.
 
+
+### sdcadm post-setup underlay-nics \[options\]
+
+Provisions underlay NICs on the provided underlay network for the given
+Compute Node(s).
+
+sdcadm post-setup underlay-nics NETWORK\_UUID SERVER1 \[ SERVER2 \[SERVER3\] \]
+
+Note that this command can be re-run as many times as needed and it
+will automatically take care of do not provision two underlay nics
+into the same network for any CN.
+
+
+`-h, --help`
+    Show this help and exit.
+
+
 ### sdcadm post-setup zookeeper \[options\]
 
 Create a zookeeper cluster, known as an ensemble, using Headnode's
