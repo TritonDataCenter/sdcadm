@@ -424,6 +424,20 @@ Assign platform image to the given SDC server(s).
     Assign given platform image to all servers instead of
     just the given one(s).
 
+`-x ARG, --exclude=ARG`  
+    Exclude the servers matching the given conditions.
+    Only used when provided together with '--all' option.
+    On the left side of the exclude expression any server
+    property can be used. Allowed comparision operators
+    are only '===' and '!=='. At the right side of the
+    operator an arbitrary string, a boolean or a number
+    can be used.
+
+Exclude examples:
+     -x 'traits.internal === "Manta Node"'
+     -x 'traits.internal !== "PKGSRC Development"'
+     -x 'headnode === false'
+
 ### sdcadm platform list \[options\]
 
 Provides a list of platform images available to be used.
