@@ -417,6 +417,12 @@ Assign platform image to the given SDC server(s).
      sdcadm platform assign PLATFORM SERVER1 [ SERVER2 [SERVER3] ]
      sdcadm platform assign PLATFORM --all
 
+Please, note that installing a new platform image will not
+assign this image to any server. Install will just download
+the image into the USB key (/mnt/usbkey/os) and place a copy
+into the key cache directory (/usbkey/os), and make this image
+available through CNAPI for later assignment.
+
 `-h, --help`
     Show this help and exit.
 
