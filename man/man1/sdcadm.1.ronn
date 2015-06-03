@@ -177,6 +177,7 @@ irreversible service migrations at the moment. This is the reason you
 must specify the `--force` flag, in order to confirm that you want to
 rollback the services/instances listed into the provided plan file.
 
+
 `-h, --help`
     Show this help.
 
@@ -205,6 +206,7 @@ zookeeper. Finally, the first instance of some services should not be
 created using this tool when there is an alternate choice provided by
 `post-setup` subcommand.
 
+
 `-h, --help`
     Show this help.
 
@@ -227,12 +229,14 @@ created using this tool when there is an alternate choice provided by
 
 Check sdc config in SAPI versus system reality.
 
+
 `-h, --help`
     Show this help.
 
 ### sdcadm check-health (health) \[options\] \[svc or inst...\]
 
 Check that services or instances are up.
+
 
 `-h, --help`
     Show this help.
@@ -256,6 +260,7 @@ SDC -- whether for production, development or testing --
 involves a number of common post-setup steps. This command
 attempts to capture many of those for convenience and
 consistency.
+
 
 `-h, --help`
     Show this help message and exit.
@@ -358,6 +363,7 @@ different servers UUIDs you need to provide:
 
 sdcadm post-setup ha-manatee -s SERVER\_UUID1 -s SERVER\_UUID2
 
+
 `-h, --help`
     Show this help and exit.
 
@@ -384,6 +390,7 @@ Platform related sdcadm commands.
 These are commands to assist with the common set of tasks
 required to manage platforms on a typical SDC setup.
 
+
 `-h, --help`
     Show this help and exit.
 
@@ -400,11 +407,18 @@ Download and install platform image for later assignment.
      sdcadm platform install PATH-TO-IMAGE
      sdcadm platform install --latest
 
+Please note that installing a new platform image will not
+assign this image to any server. Install will download the
+image, put it on the boot node USB key (/mnt/usbkey/os)
+and copy it back to the platform cache directory (/usbkey/os).
+The image is made available through CNAPI for later assignment.
+
+
 `-h, --help`
     Show this help and exit.
 
 `--latest`
-    Update using the last published platform image.
+    Install the latest platform image in the update channel.
 
 `-C, --channel=ARG`
     Use the given channel to fetch the image(s), even if
@@ -417,11 +431,6 @@ Assign platform image to the given SDC server(s).
      sdcadm platform assign PLATFORM SERVER1 [ SERVER2 [SERVER3] ]
      sdcadm platform assign PLATFORM --all
 
-Please note that installing a new platform image will not
-assign this image to any server. Install will just download
-the image into the USB key (/mnt/usbkey/os) and place a copy
-into the key cache directory (/usbkey/os), and make this image
-available through CNAPI for later assignment.
 
 `-h, --help`
     Show this help and exit.
@@ -430,7 +439,7 @@ available through CNAPI for later assignment.
     Assign given platform image to all servers instead of
     just the given one(s).
 
-`-x ARG, --exclude=ARG`  
+`-x ARG, --exclude=ARG`
     Exclude the servers matching the given conditions.
     Only used when provided together with '--all' option.
     On the left side of the exclude expression any server
@@ -511,6 +520,7 @@ On these cases, you can re-run this command with the desired platform
 images and the `--cleanup-cache` option, and sdcadm will remove them
 from the cache directory.
 
+
 `-h, --help`
     Show this help.
 
@@ -533,6 +543,7 @@ sdcadm commands for operations with update channels.
 Provide a list of available update channels and set/update
 the preferred update channel.
 
+
 `-h, --help`
     Show this help and exit.
 
@@ -544,6 +555,7 @@ Help on a specific channel sub-command.
 ### sdcadm channel list
 
 Provides a list of update channels available.
+
 
 `-h, --help`
     Show this help.
@@ -557,6 +569,7 @@ Provides a list of update channels available.
 ### sdcadm channel set CHANNEL_NAME
 
 Set the default update channel.
+
 
 `-h, --help`
     Show this help.
@@ -593,6 +606,7 @@ It's also possible to just search for history items started after
 a valid ISO 8610 Date String as their possible values. Of course, a combination
 of both command options will allow searching within a given time interval.
 
+
 `-h, --help`
     Show this help message and exit.
 
@@ -626,6 +640,7 @@ These are unsupported and temporary commands to assist with
 migration away from incr-upgrade scripts. The eventual
 general upgrade process will not include any commands under
 "sdcadm experimental".
+
 
 `-h, --help`
     Show this help message and exit.
@@ -672,6 +687,7 @@ starting that new jobs could come in.
      sdcadm experimental dc-maint [--start]      # start DC maint
      sdcadm experimental dc-maint [--stop]       # stop DC maint
 
+
 `-h, --help`
     Show this help message and exit.
 
@@ -690,6 +706,7 @@ starting that new jobs could come in.
 Temporary grabbag for small SDC update steps.
 The eventual goal is to integrate all of this into "sdcadm update".
 
+
 `-h, --help`
     Show this help message and exit.
 
@@ -701,6 +718,7 @@ The eventual goal is to integrate all of this into "sdcadm update".
      sdcadm experimental update-gz-tools IMAGE-UUID
      sdcadm experimental update-gz-tools PATH-TO-INSTALLER
      sdcadm experimental update-gz-tools --latest
+
 
 `-h, --help`
     Show this help message and exit.
@@ -717,12 +735,14 @@ The eventual goal is to integrate all of this into "sdcadm update".
 Temporary grabbag for installing the SDC global zone new agents.
 The eventual goal is to integrate all of this into "sdcadm update".
 
+
 `-h, --help`
     Show this help message and exit.
 
 ### sdcadm experimental update-docker \[options\]
 
 Add/update the docker service.
+
 
 `-h, --help`
     Show this help message and exit.
@@ -734,6 +754,7 @@ Add/update the docker service.
 
 Add/update the portolan service.
 
+
 `-h, --help`
     Show this help message and exit.
 
@@ -744,18 +765,20 @@ Add/update the portolan service.
 
 Initialize fabrics in the datacenter.
 
+
+`-h, --help`
+    Display this help message
+
 `-c FILE, --conf=FILE`
     Use configuration information instead of prompting
 
 `-f, --force`
     force an update, even if fabric configuration already exists
 
-`-h, --help`
-    Display this help message
-
 ### sdcadm experimental install-docker-cert -k key -c cert
 
 Installs a custom TLS certificate to be used by sdc-docker.
+
 
 `-h, --help`
     Show this help message and exit.
