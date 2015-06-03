@@ -418,7 +418,7 @@ The image is made available through CNAPI for later assignment.
     Show this help and exit.
 
 `--latest`
-    Install the latest platform image in the update channel.
+    Install the latest platform image from the update channel.
 
 `-C, --channel=ARG`
     Use the given channel to fetch the image(s), even if
