@@ -409,7 +409,7 @@ Download and install platform image for later assignment.
 
 Please note that installing a new platform image will not
 assign this image to any server. Install will download the
-image, put it on the boot node USB key (/mnt/usbkey/os)
+image, put it on the head node USB key (/mnt/usbkey/os)
 and copy it back to the platform cache directory (/usbkey/os).
 The image is made available through CNAPI for later assignment.
 
