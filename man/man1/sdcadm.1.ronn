@@ -417,7 +417,7 @@ Assign platform image to the given SDC server(s).
      sdcadm platform assign PLATFORM SERVER1 [ SERVER2 [SERVER3] ]
      sdcadm platform assign PLATFORM --all
 
-Please, note that installing a new platform image will not
+Please note that installing a new platform image will not
 assign this image to any server. Install will just download
 the image into the USB key (/mnt/usbkey/os) and place a copy
 into the key cache directory (/usbkey/os), and make this image
@@ -502,7 +502,7 @@ is mandatory.
 When given, the `--all` option will remove all the platforms not being
 used by any server (neither currently, or configured to boot into).
 
-Please, note that unless the `--cleanup-cache` option is given, the
+Please note that unless the `--cleanup-cache` option is given, the
 platform image will remain available to be used at the `/usbkey/os`
 directory and, therefore, will continue appearing into the listing
 provided by both CNAPI and `sdcadm platform list`.
