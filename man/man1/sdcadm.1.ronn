@@ -70,6 +70,9 @@ image version (referencing git branch, date and git SHA). For example:
     major updates are skipped (to avoid accidental
     backward compatibility breakage).
 
+`-C ARG, --channel=ARG`
+    Use the given channel to fetch the image, even if it
+    is not the default one.
 
 ### sdcadm instances \[options\]
 
