@@ -470,6 +470,14 @@ Provides a list of platform images available to be used.
 `-J, --jsonstream`
     new-line separated JSON streaming output
 
+`-a, --active`
+    Do not display platform images where current and boot
+    platforms are zero.
+
+`-i, --inactive`
+    Display only platform images where current and boot
+    platforms are zero.
+
 `-H`
     Omit table header row.
 
