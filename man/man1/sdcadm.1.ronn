@@ -119,6 +119,21 @@ List all SDC services.
 `-s field1,...`
     Sort on the given fields. Default is "-type,name".
 
+
+### sdcadm available \[options\]
+
+Display images available for update of SDC services and instances.
+
+     sdcadm avail(able) [<options>] [<svc>] ...
+
+`-h, --help`
+    Show this help.
+
+`-C ARG, --channel=ARG`
+    Use the given channel to search for the image(s),
+    even if it is not the default one.
+
+
 ### sdcadm update \[options\]
 
 Update SDC services and instances.

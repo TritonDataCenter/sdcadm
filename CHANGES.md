@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.5.7
+
+- Added `scadm avail(able)`.
+
 ## 1.5.6
 
 - Add support for installing custom TLS certificates for sdc-docker with `sdcadm experimental install-docker-cert`
