@@ -592,6 +592,16 @@ Provides a list of update channels available.
 `-H`
     Omit table header row.
 
+
+### sdcadm channel get
+
+Get the default update channel.
+
+
+`-h, --help`
+    Show this help.
+
+
 ### sdcadm channel set CHANNEL_NAME
 
 Set the default update channel.

@@ -12,7 +12,8 @@
 
 ## 1.5.7
 
-- Added `scadm avail(able)`.
+- Added `sdcadm avail(able)`.
+- Added `sdcadm channel get`
 
 ## 1.5.6
 
