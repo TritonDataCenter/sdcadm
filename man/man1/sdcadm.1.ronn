@@ -152,6 +152,10 @@ Display images available for update of SDC services and instances.
 `-s field1,...`
     Sort on the given fields. Default is "-service,version,image".
 
+`-x ARG, --exclude=ARG`
+    Exclude the given services (only when looking for
+    updates for all services, i.e. no arguments given).
+
 ### sdcadm update \[options\]
 
 Update SDC services and instances.
@@ -192,6 +196,9 @@ Update SDC services and instances.
 `-C, --channel=ARG`
     Use the given channel to fetch the image(s), even if
     it is not the default one.
+
+`-x ARG, --exclude=ARG`
+    Exclude the given services (only when -a|--all is provided).
 
 ### sdcadm rollback \[options\] -f ./local-upgrade-file.json ...
 

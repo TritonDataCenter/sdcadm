@@ -14,6 +14,7 @@
 
 - Added `sdcadm avail(able)`.
 - Added `sdcadm channel get`
+- Added `-x|--exclude` option to `sdcadm update` and `sdcadm avail`.
 
 ## 1.5.6
 
