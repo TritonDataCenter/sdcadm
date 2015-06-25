@@ -13,7 +13,7 @@
     "dashdash": "1.6.0",
     "extsprintf": "1.2.0",
     "kthxbai": "~0.4.0",
-    "joyent-schemas": "git+https://github.com/joyent/schemas.git#0685142",
+    "joyent-schemas": "git+https://github.com/joyent/schemas.git#8e19f70",
     "jsprim": "0.6.1",
     "lockfd": "git+https://github.com/trentm/node-lockfd.git#fcbc0e2",
     "mkdirp": "0.3.5",
