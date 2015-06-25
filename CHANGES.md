@@ -15,12 +15,14 @@
 - Added `sdcadm avail(able)`.
 - Added `sdcadm channel get`
 - Added `-x|--exclude` option to `sdcadm update` and `sdcadm avail`.
+- Added `-k|--keep-latest` option to `sdcadm platform remove`
 
 ## 1.5.6
 
-- Add support for installing custom TLS certificates for sdc-docker with `sdcadm experimental install-docker-cert`
+- Add support for installing custom TLS certificates for sdc-docker with
+  `sdcadm experimental install-docker-cert`
 - `sdcadm experimental update-docker` now ensures that the zone has
- a delegate dataset
+  a delegate dataset
 
 ## 1.5.5
 

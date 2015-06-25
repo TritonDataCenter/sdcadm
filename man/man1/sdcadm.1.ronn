@@ -587,6 +587,10 @@ from the cache directory.
 `-y, --yes`
     Answer yes to all confirmations.
 
+`-k NUM, --keep-latest=NUM`
+    Keep the given number of the most recent platforms. (Requires `--all`).
+
+
 ### sdcadm channel [options] COMMAND [args...]
 
 sdcadm commands for operations with update channels.
