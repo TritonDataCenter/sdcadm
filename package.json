@@ -19,6 +19,7 @@
     "mkdirp": "0.3.5",
     "node-uuid": "1.4.1",
     "once": "1.3.0",
+    "progbar": "1.1.0",
     "read": "1.0.5",
     "sdc-clients": "git+https://github.com/joyent/node-sdc-clients.git#e6c4a74",
     "semver": "2.2.1",
