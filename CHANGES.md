@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.5.8
+
+- Added `--force-data-path` option for portolan upgrade
+
 ## 1.5.7
 
 - Added `sdcadm avail(able)`.

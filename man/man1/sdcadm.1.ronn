@@ -181,6 +181,10 @@ Update SDC services and instances.
     Just import images. Commonly this is used to preload
     images before the full upgrade run.
 
+`--force-data-path`
+    Forcibly update compoents in the customer data path (which
+    are not updated by default). Applies to: portolan.
+
 `--force-rabbitmq`
     Forcibly update rabbitmq (which is not updated by default)
 

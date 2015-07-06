@@ -24,6 +24,7 @@
         "sapi": "sapi",
         "cloudapi": "cloudapi",
         "napi": "napi",
+        "portolan": "portolan",
         "moray": "manta-moray",
         "amonredis": "amonredis",
         "ufds": "ufds",
