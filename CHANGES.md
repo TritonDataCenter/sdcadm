@@ -10,6 +10,13 @@
 
 # sdcadm Changelog
 
+## 1.6.0
+
+- Changed the behaviour of `sdcadm update --all --force-rabbitmq` and
+  `sdcadm update --all --force-data-path` to allow updating of rabbitmq
+  and portolan (currently the sole "data path" service) along with the
+  usual `--all` services.
+
 ## 1.5.8
 
 - Added `--force-data-path` option for portolan upgrade
