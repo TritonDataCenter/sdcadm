@@ -297,9 +297,17 @@ Check that services or instances are up.
 `-H`
     Omit table header row.
 
-`-t ARG, --type=ARG`
-    Instance type (vm or agent).
+`-s ARG, --servers=ARG`
+    The UUID or hostname of the CNs to limit the check to. One argument
+    per server is required: -s UUID1 -s UUID2 ...
 
+Instances to be checked can be filtered via <filter> by type:
+    type=vm
+    type=agent
+
+and service or instance name:
+    imgapi
+    cnapi cn-agent
 
 ### sdcadm post-setup \[options\] COMMAND \[args...\]
 
