@@ -297,6 +297,10 @@ Check that services or instances are up.
 `-H`
     Omit table header row.
 
+`-t ARG, --type=ARG`
+    Instance type (vm or agent).
+
+
 ### sdcadm post-setup \[options\] COMMAND \[args...\]
 
 Common post-setup procedures.
