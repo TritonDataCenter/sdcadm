@@ -771,10 +771,12 @@ Help on a specific experimental sub-command.
 
 Update SDC agents
 
-     sdcadm experimental update-agents IMAGE-UUID
-     sdcadm experimental update-agents PATH-TO-INSTALLER
-     sdcadm experimental update-agents --latest
+     sdcadm experimental update-agents [OPTIONS] IMAGE-UUID [SERVER ...]
+     sdcadm experimental update-agents [OPTIONS] PATH-TO-INSTALLER [SERVER ...]
+     sdcadm experimental update-agents [OPTIONS] --latest [SERVER ...]
 
+`-h, --help`
+    Show this help message and exit.
 
 `--latest`
     Update using the last published agents installer.
@@ -787,6 +789,30 @@ Update SDC agents
 
 `-y, --yes`
     Answer yes to all confirmations.
+
+Server selection:
+    
+`-a, --all`
+    Update on all servers already setup.
+
+`-x FILTER, --exclude=FILTER`
+    Exclude the servers matching the given conditions. Only used when
+    updating ALL the servers. On the left side of the exclude expression any
+    server property can be used. Allowed comparision operators are only
+    '===' and '!=='. At the right side of the operator an arbitrary string, a
+    boolean or a number can be used.
+
+Selecting on which servers agents are updated:
+
+1. Use -a|--all to run on all servers already setup.
+2. Pass a set SERVERs arguments. A 'SERVER' may be a hostname or UUID.
+
+The set of servers can be filtered down via '-x|--exclude' FILTER.
+
+Exclude FILTER examples:
+     -x 'traits.internal === "Manta Node"'
+     -x 'traits.internal !== "PKGSRC Development"'
+     -x 'headnode === false'
 
 ### sdcadm experimental dc-maint \[options\]
 
