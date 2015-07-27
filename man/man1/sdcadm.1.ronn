@@ -615,6 +615,34 @@ from the cache directory.
     Keep the given number of the most recent platforms. (Requires `--all`).
 
 
+### sdcadm platform avail
+
+Return the list of remotely available platform images
+published after the latest image installed locally.
+
+
+     sdcadm platform avail [OPTIONS]
+
+
+`-h, --help`
+    Show this help.
+
+`-j, --json`
+    Show platforms list as raw JSON. Other options will not apply.
+
+`-J, --jsonstream`
+    new-line separated JSON streaming output.
+
+`-H`
+    Omit table header row.
+
+`-o field1,...`
+    Specify fields (columns) to output.
+
+`-s field1,...`
+    Sort on the given fields. Default is "-version,uuid,published\_at".
+
+
 ### sdcadm channel [options] COMMAND [args...]
 
 sdcadm commands for operations with update channels.

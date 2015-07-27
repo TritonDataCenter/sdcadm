@@ -17,6 +17,7 @@
   and portolan (currently the sole "data path" service) along with the
   usual `--all` services.
 - Allows `sdcadm avail` to show available updates for portolan and rabbitmq.
+- Added `sdcadm platform avail`
 
 ## 1.5.8
 
