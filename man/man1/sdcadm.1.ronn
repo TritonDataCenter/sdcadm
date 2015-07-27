@@ -538,6 +538,10 @@ Provides a list of platform images available to be used.
     Display only platform images where current and boot
     platforms are zero.
 
+`-u, --usbkey`
+    Display only platform images stored in USB Key (do not
+    display images stored only in cache directory).
+
 `-H`
     Omit table header row.
 
