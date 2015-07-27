@@ -449,6 +449,10 @@ Platform related sdcadm commands.
 These are commands to assist with the common set of tasks
 required to manage platforms on a typical SDC setup.
 
+Note that SDC keeps a cache directory (/usbkey/os) of the
+platform images installed on the USB key (/mnt/usbkey/os).
+Please read help of sub-commands in order to know how this
+may or not affect each of them.
 
 `-h, --help`
     Show this help and exit.
