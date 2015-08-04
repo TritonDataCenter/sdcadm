@@ -10,6 +10,12 @@
 
 # sdcadm Changelog
 
+## 1.6.1
+
+- `sdcadm experimental udpate-agents` now runs its own Ur Queue, instead of
+  passing a script to each CN using sdc-oneachnode. Command options have been
+  modified accordingly.
+
 ## 1.6.0
 
 - Changed the behaviour of `sdcadm update --all --force-rabbitmq` and
