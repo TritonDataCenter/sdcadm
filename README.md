@@ -190,13 +190,13 @@ It's also possible to pre-download some images for other SDC components, like
 agents or gz-tools, using `sdcadm`. Just proceed as follows:
 
       sdcadm experimental update-gz-tools --latest --just-download
-      sdcadm experimental update-agents --latest --just-download
+      sdcadm experimental update-agents --latest --just-download --all
 
 Or, if you want to upgrade to a specific image version instead of the latest
 available image:
 
       sdcadm experimental update-gz-tools <IMG_UUID> --just-download
-      sdcadm experimental update-agents <IMG_UUID> --just-download
+      sdcadm experimental update-agents <IMG_UUID> --just-download --all
 
 
 Either way, the `sdcadm experimental` subcommands we mention below should be
@@ -245,7 +245,7 @@ itself contains the fix for such problem.
 
 ### Upgrade agents
 
-    sdcadm experimental update-agents --latest
+    sdcadm experimental update-agents --latest --all
 
 ### Upgrade all the non-HA services
 
