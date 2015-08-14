@@ -10,6 +10,27 @@
 
 # sdcadm Changelog
 
+## 1.7.0
+
+- TOOLS-754: http_proxy support. If your SDC is firewalled of, but you
+  have an HTTP proxy that can be used to given `sdcadm` (and IMGAPI)
+  external access, then sdcadm can work with that.
+
+        sapiadm update $(sdc-sapi /applications?name=sdc | json -H 0.uuid) \
+            metadata.http_proxy=http://my-proxy.example.com:8080
+
+  Then after a minute or two (to allow config-agents to update configurations
+  appropriately) you should be able to 'sdcadm up ...' et al via
+  that proxy.
+
+  A side-effect of this change is that programmatic usage of "lib/sdcadm.js"
+  must explicitly finialize the `SdcAdm` instance:
+
+        var SdcAdm = require('./lib/sdcadm');
+        var adm = new SdcAdm({...});
+        // ...
+        adm.fini();
+
 ## 1.6.1
 
 - `sdcadm experimental udpate-agents` now runs its own Ur Queue, instead of
