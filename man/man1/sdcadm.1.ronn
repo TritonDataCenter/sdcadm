@@ -138,7 +138,7 @@ Display images available for update of SDC services and instances.
     only the latest image for each service.
 
 `-j, --json`
-    Show platforms list as raw JSON. Other options will not apply.
+    Show images list as raw JSON. Other options will not apply.
 
 `-J, --jsonstream`
     new-line separated JSON streaming output.
@@ -641,6 +641,15 @@ published after the latest image installed locally.
 
 `-s field1,...`
     Sort on the given fields. Default is "-version,uuid,published\_at".
+
+
+### sdcadm platform set-default PLATFORM
+
+Set the default platform image for new servers.
+
+`-h, --help`
+    Show this help.
+
 
 
 ### sdcadm channel [options] COMMAND [args...]

@@ -10,6 +10,12 @@
 
 # sdcadm Changelog
 
+## 1.7.1
+
+- Deprecated 'latest' symlink for platforms
+- Added `sdcadm platform set-default PLATFORM` subcommand
+- Include default platform column in `sdcadm platform list`
+
 ## 1.7.0
 
 - TOOLS-754: http_proxy support. If your SDC is firewalled of, but you
