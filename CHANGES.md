@@ -15,6 +15,7 @@
 - Deprecated 'latest' symlink for platforms
 - Added `sdcadm platform set-default PLATFORM` subcommand
 - Include default platform column in `sdcadm platform list`
+- Added `sdcadm platform assign --latest`
 
 ## 1.7.0
 
