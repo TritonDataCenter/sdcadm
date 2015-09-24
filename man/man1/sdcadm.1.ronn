@@ -881,6 +881,8 @@ The eventual goal is to integrate all of this into "sdcadm update".
 `--just-download`
     Download the GZ Tools installer for later usage.
 
+`--force-reinstall`
+    Force reinstall of the current gz-tools image in use.
 
 ### sdcadm experimental add-new-agent-svcs
 
