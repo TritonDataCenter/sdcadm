@@ -650,7 +650,8 @@ Set the default platform image for new servers.
 `-h, --help`
     Show this help.
 
-
+`--latest`
+    Set default platform image to latest installed into USB key.
 
 ### sdcadm channel [options] COMMAND [args...]
 
