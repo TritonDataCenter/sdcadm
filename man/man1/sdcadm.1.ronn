@@ -642,6 +642,9 @@ published after the latest image installed locally.
 `-s field1,...`
     Sort on the given fields. Default is "-version,uuid,published\_at".
 
+`-C, --channel=ARG`
+    Use the given channel to fetch the image(s), even if
+    it is not the default one.
 
 ### sdcadm platform set-default PLATFORM
 
