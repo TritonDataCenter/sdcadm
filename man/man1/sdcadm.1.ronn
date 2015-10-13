@@ -309,6 +309,14 @@ and service or instance name:
     imgapi
     cnapi cn-agent
 
+
+### sdcadm default-fabric  \[options\] <account-uuid>
+
+Initialize a default fabric for an account.
+
+`-h, --help`
+    Display this help message.
+
 ### sdcadm post-setup \[options\] COMMAND \[args...\]
 
 Common post-setup procedures.
@@ -432,6 +440,24 @@ sdcadm post-setup ha-manatee -s SERVER\_UUID1 -s SERVER\_UUID2
 `-s ARG, --servers=ARG`
     The UUID for the target servers. Two values are required, one for sync
     manatee, another for async manatee.
+
+### sdcadm post-setup fabrics [-c conf] [--reconfigure] [-h]
+
+Create portolan instance, nat service when needed and setup fabrics.
+
+Initial setup of SmartDataCenter does not create a portolan instance.
+This procedure will do that for you and setup underlay-nics and
+fabrics and, if docker is setup, update docker config to use fabrics.
+
+
+`-h, --help`
+    Display this help message.
+
+`-c FILE, --conf=FILE`
+    Use the given configuration file (required).
+
+`-r, --reconfigure`
+    Update fabrics configuration wiht the provided one.
 
 
 ### sdcadm post-setup dev-headnode-prov
@@ -907,31 +933,6 @@ Add/update the docker service.
 
 `-f, --force`
     Allow update to proceed even if already at latest image.
-
-### sdcadm experimental portolan \[options\]
-
-Add/update the portolan service.
-
-
-`-h, --help`
-    Show this help message and exit.
-
-`-f, --force`
-    Allow update to proceed even if already at latest image.
-
-### sdcadm experimental fabrics \[-c conf\] \[-f\] \[-h\]
-
-Initialize fabrics in the datacenter.
-
-
-`-h, --help`
-    Display this help message
-
-`-c FILE, --conf=FILE`
-    Use configuration information instead of prompting
-
-`-f, --force`
-    force an update, even if fabric configuration already exists
 
 ### sdcadm experimental install-docker-cert -k key -c cert
 
