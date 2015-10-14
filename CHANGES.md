@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.7.3
+
+- TOOLS-1234: 'sdcadm ex underlay-nics -h' for help doesn't work
+
 ## 1.7.2
 
 - Implemented changes from https://github.com/joyent/rfd/tree/master/rfd/0009:
