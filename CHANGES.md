@@ -10,6 +10,16 @@
 
 # sdcadm Changelog
 
+## 1.7.2
+
+- Implemented changes from https://github.com/joyent/rfd/tree/master/rfd/0009:
+  Replaced `sdcadm experimental fabrics` + `sdcadm experimental portolan` with
+  `sdcadm post-setup fabrics`. Dropped support for `--coal` option and added
+  documentation about how to setup fabrics in CoaL to SDC's developers guide
+  (https://github.com/joyent/sdc/blob/master/docs/developer-guide/coal-post-setup-fabrics.md).
+- Get `sdcadm experimental default-fabric` out of experimental, i.e. now is
+  `sdcadm default-fabric`.
+
 ## 1.7.1
 
 - Deprecated 'latest' symlink for platforms
