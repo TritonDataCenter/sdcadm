@@ -2,7 +2,7 @@ A "step" is a JS function with the signature:
 
         function (arg, next)
 
-It is meant to be encapsulate a useful chunk of work (a step) done for some
+It is meant to encapsulate a useful chunk of work (a step) done for some
 sdcadm process, e.g. a small thing like "run imgadm import of the given UUID
 locally", or a larger thing like "wait for the given instance (a VM) to come
 online". Typically the "sdcadm process" here is a part of `sdcadm up ...` or
@@ -11,7 +11,7 @@ online". Typically the "sdcadm process" here is a part of `sdcadm up ...` or
 Note that sdcadm already has the concept of "procedures" for encapsulating
 chunks of work for "sdcadm up ...". However those are heavier weight. Each
 "procedure" is an object with `.summarize()` and `.execute()` methods (see
-"lib/procedures/procedure.js"). Procures' `execute` will often be made
+"lib/procedures/procedure.js"). Procedures' `execute` will often be made
 up of a number of steps.
 
 For a good inspiration see
@@ -21,7 +21,7 @@ fairly tight because it just orders a list of steps to run for each
 service, where each step is defined elsewhere.
 
 
-# Goals
+# Goals for "steps"
 
 - Separate smaller files for easier maintenance.
 - Easier discovery so there is more re-use of these steps.
@@ -42,15 +42,19 @@ usage can be:
 
     // ...
     vasync.pipeline({arg: contextArg, funcs: [
-        steps.doACommonThing,
-        steps.doAnotherCommonThing,
+        steps.widgetDoACommonThing,
+        steps.widgetDoAnotherCommonThing,
         function aStepSpecificToHere(arg, next) {
             // ...
         },
-        steps.finishWithThisCommonThing
+        steps.wuzzleFinishWithThisCommonThing
     ]}, function (err) {
         // ...
     });
+
+Naming: Each step file is a "namespace". All exported functions should be
+prefixed with that namespace. Name the file 'like-this.js' with all its
+functions name `likeThisFoo` and `likeThisBarBling`.
 
 
 # TODO
