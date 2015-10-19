@@ -12,6 +12,7 @@
 
 ## 1.7.3
 
+- TOOLS-1236: 'sdcadm avail' doesn't need to print out channel info
 - TOOLS-1234: 'sdcadm post-setup underlay-nics -h' for help doesn't work
 - TOOLS-1031: 'sdcadm post-setup underlay-nics' verifies that CNs have the
   configured fabric underlay network tag assigned to any actual nic before
