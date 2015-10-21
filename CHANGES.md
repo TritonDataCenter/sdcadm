@@ -12,6 +12,9 @@
 
 ## 1.7.3
 
+- TOOLS-1167/TOOLS-1166: sdcadm ex update-agents now updates node.config
+  in all CNs, has limited concurrency and agentsshar file download and
+  execution are now two separated steps
 - TOOLS-1236: 'sdcadm avail' doesn't need to print out channel info
 - TOOLS-1234: 'sdcadm post-setup underlay-nics -h' for help doesn't work
 - TOOLS-1031: 'sdcadm post-setup underlay-nics' verifies that CNs have the

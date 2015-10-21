@@ -829,6 +829,10 @@ Update SDC agents
 `-y, --yes`
     Answer yes to all confirmations.
 
+`-r INT, --rate=INT`
+    Number of concurrent servers downloading agentsshar file or being updated
+    simultaneously. Default: 5.
+
 Server selection:
     
 `-a, --all`
