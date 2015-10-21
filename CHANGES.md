@@ -10,6 +10,12 @@
 
 # sdcadm Changelog
 
+## 1.7.4
+
+- TOOLS-1225 Drop confusing `-x,--exclude SERVERS` options on `sdcadm
+  experimental update-agents ...` and `sdcadm platform assign ...`.  Also a
+  number of robustness improvements to `sdcadm experimental update-agents`.
+
 ## 1.7.3
 
 - TOOLS-1167/TOOLS-1166: sdcadm ex update-agents now updates node.config
