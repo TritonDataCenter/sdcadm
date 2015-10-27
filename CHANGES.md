@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.7.5
+
+- TOOLS-1246: sdcadm commands would break due to bad sshpk 1.5.0 release
+
 ## 1.7.4
 
 - TOOLS-1225 Drop confusing `-x,--exclude SERVERS` options on `sdcadm
