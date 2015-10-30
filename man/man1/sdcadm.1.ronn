@@ -42,11 +42,13 @@ Help on a specific sub-command.
 
 Update "sdcadm" itself.
 
-Find the latest `sdcadm` image in updates.joyent.com, download it, and install.
+Find the given `sdcadm` image in updates.joyent.com, download it, and install.
+Latest version of sdcadm can be installed by providing the `--latest` option
+instead of an image UUID.
 
-It's recommended to run `sdcadm self-update` before performing any sdcadm
-upgrade operation, especially because there could be critical bugfixes published
-since the last time `sdcadm` itself was updated.
+It's recommended to run `sdcadm self-update --latest` before performing any
+sdcadm upgrade operation, especially because there could be critical bugfixes
+published since the last time `sdcadm` itself was updated.
 
 You can get the exact version of sdcadm running in your SDC setup using:
 
@@ -57,6 +59,11 @@ image version (referencing git branch, date and git SHA). For example:
 
         [root@headnode (coal) ~]# sdcadm --version
         sdcadm 1.3.9 (master-20141114T063621Z-g995ee7e)
+
+        # Update to the given image UUID:
+        sdcadm self-update IMAGE_UUID [<options>]
+        # Update to the latest available image:
+        sdcadm self-update --latest [<options>]
 
 
 `-h, --help`
@@ -73,6 +80,9 @@ image version (referencing git branch, date and git SHA). For example:
 `-C ARG, --channel=ARG`
     Use the given channel to fetch the image, even if it
     is not the default one.
+
+`--latest`
+    Get the latest available image.
 
 ### sdcadm instances \[options\]
 

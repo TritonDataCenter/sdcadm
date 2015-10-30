@@ -10,6 +10,12 @@
 
 # sdcadm Changelog
 
+## 1.8.0
+
+- TOOLS-1251: `sdcadm self-update` no longer updates to latest sdcadm available
+  image and requires either a given image UUID or `--latest` option to be
+  provided.
+
 ## 1.7.5
 
 - TOOLS-1246: sdcadm commands would break due to bad sshpk 1.5.0 release
