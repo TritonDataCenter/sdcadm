@@ -31,9 +31,9 @@ for use in production upgrades.
 
 # sdcadm self-update
 
-It's always recommended to run `sdcadm self-update` before performing any
-sdcadm upgrade operations, especially because there could be critical bugfixes
-published since the last time sdcadm itself was updated.
+It's always recommended to run `sdcadm self-update --latest` before performing
+any sdcadm upgrade operations, especially because there could be critical
+bugfixes published since the last time sdcadm itself was updated.
 
 You can get the exact version of sdcadm running in your SDC setup using:
 
