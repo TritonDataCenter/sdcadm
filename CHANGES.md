@@ -10,6 +10,12 @@
 
 # sdcadm Changelog
 
+## 1.8.1
+
+- TOOLS-1252: `sdcadm avail sdcadm` and `sdcadm avail` will now include
+  `sdcadm` available images without adding `sdcadm` to SAPI services.
+  (This may be modified in the future).
+
 ## 1.8.0
 
 - TOOLS-1251: `sdcadm self-update` no longer updates to latest sdcadm available
