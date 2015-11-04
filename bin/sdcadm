@@ -6,13 +6,13 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright (c) 2015, Joyent, Inc.
 #
 
 TOP=$(cd $(dirname $0)/../; pwd)
 if [[ -x "$TOP/build/node/bin/node" ]]; then
     # Dev layout.
-    $TOP/build/node/bin/node $TOP/lib/cli.js "$@"
+    $TOP/build/node/bin/node $TOP/lib/cli/index.js "$@"
 else
-    /opt/smartdc/sdcadm/node/bin/node /opt/smartdc/sdcadm/lib/cli.js "$@"
+    /opt/smartdc/sdcadm/node/bin/node /opt/smartdc/sdcadm/lib/cli/index.js "$@"
 fi
