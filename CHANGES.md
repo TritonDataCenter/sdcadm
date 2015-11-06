@@ -12,6 +12,9 @@
 
 ## 1.8.1
 
+- TOOLS-1264/TOOLS-563: Moved sdcadm subcommands to their own files and added
+  `sdcadm experimental update` and `scdadm experimental avail` which can handle
+  individual updates (and availability) of vm, cn and net agents.
 - TOOLS-1252: `sdcadm avail sdcadm` and `sdcadm avail` will now include
   `sdcadm` available images without adding `sdcadm` to SAPI services.
   (This may be modified in the future).
