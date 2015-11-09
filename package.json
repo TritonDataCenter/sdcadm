@@ -1,7 +1,7 @@
 {
   "name": "sdcadm",
   "description": "Administer a SmartDataCenter (SDC) standup",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "author": "Joyent (joyent.com)",
   "private": true,
   "dependencies": {
@@ -10,7 +10,7 @@
     "backoff": "2.3.0",
     "bunyan": "0.23.1",
     "cmdln": "3.3.0",
-    "dashdash": "1.6.0",
+    "dashdash": "1.10.0",
     "extsprintf": "1.2.0",
     "kthxbai": "~0.4.0",
     "joyent-schemas": "git+https://github.com/joyent/schemas.git#385e6eb",

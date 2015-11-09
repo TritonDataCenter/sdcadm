@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.8.2
+
+- TOOLS-1074: Added bash completion
+
 ## 1.8.1
 
 - TOOLS-1264/TOOLS-563: Moved sdcadm subcommands to their own files and added
