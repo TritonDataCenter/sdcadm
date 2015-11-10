@@ -12,6 +12,9 @@
 
 ## 1.8.2
 
+- TOOLS-1172: Reject `sdcadm up <unknown svc or inst>` with error msg
+- TOOLS-1239: Prevent `sdcadm up <svc>@<UUID of different svc image>`
+- TOOLS-1173: Fixed support for `sdcadm up <svc>@<version>`
 - TOOLS-1074: Added bash completion
 
 ## 1.8.1
