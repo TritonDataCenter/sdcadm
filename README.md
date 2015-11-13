@@ -15,16 +15,21 @@ contribution guidelines, issues, and general documentation, visit the main
 [SDC](http://github.com/joyent/sdc) project page.
 
 `sdcadm` is a tool that lives in the SmartDataCenter headnode's GZ, for
-handling SDC upgrades, listing of services and instances, health checks, and
-other SDC setup duties.
+handling SDC post-setup (i.e. setup steps after initial headnode setup),
+upgrades, listing of services and instances, health checks, and other SDC setup
+duties.
 
 Please see docs/index.md for more details.
 
 
 # Current status
 
-A warning that 'sdcadm' is still under development and isn't yet fully ready
-for use in production upgrades.
+While `sdcadm` is still under significant development, and is far from complete,
+it is currently the recommended way to update SDC. Signs of incompleteness are
+that sub-commands of `sdcadm experimental ...` are required as part of the upgrade
+process.
+
+Read on for the current recommended SDC post-setup and upgrade procedures.
 
 
 --

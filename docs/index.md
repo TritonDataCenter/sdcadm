@@ -16,6 +16,9 @@ apisections:
 
 # sdcadm
 
+This document is intended as design docs and notes for *developers* of sdcadm.
+For operators of an SDC to *use* `sdcadm`, please see the README.md.
+
 `sdcadm` is a tool intended for managing SDC configuration, core services and
 instances. I.e. it is responsible for setting up, upgrading, creating optional
 instances (e.g. cloudapi), making services HA, etc.
