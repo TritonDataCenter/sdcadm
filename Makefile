@@ -24,7 +24,7 @@ JSL_CONF_NODE	 = tools/jsl.node.conf
 JSL_FILES_NODE	 = $(JS_FILES)
 JSSTYLE_FILES	 = $(JS_FILES)
 JSSTYLE_FLAGS	 = -f tools/jsstyle.conf
-CLEAN_FILES += ./node_modules ./build/sdcadm-*.sh ./build/sdcadm-*.imgmanifest ./build/shar-image ./man/man1/sdcadm.1
+CLEAN_FILES += ./node_modules ./build/sdcadm-*.sh ./build/sdcadm-*.imgmanifest ./build/shar-image ./man/man1/sdcadm.1 ./etc/sdcadm.completion
 
 
 NODE_PREBUILT_VERSION=v0.10.26
@@ -66,7 +66,7 @@ test:
 	./test/runtests
 
 .PHONY: release
-release: all man shar
+release: all man completion shar
 
 .PHONY: publish
 publish: release
@@ -106,6 +106,10 @@ man: man/man1/sdcadm.1.ronn
 		--output man/man1/sdcadm.1
 	chmod 444 man/man1/sdcadm.1
 
+.PHONY: completion
+completion:
+	rm -f etc/sdcadm.completion
+	./bin/sdcadm completion > etc/sdcadm.completion
 
 include ./tools/mk/Makefile.deps
 ifeq ($(shell uname -s),SunOS)
