@@ -1,7 +1,7 @@
 {
   "name": "sdcadm",
   "description": "Administer a SmartDataCenter (SDC) standup",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "author": "Joyent (joyent.com)",
   "private": true,
   "dependencies": {

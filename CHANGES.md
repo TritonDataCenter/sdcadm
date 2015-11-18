@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+
+# 1.8.3
+
+- TOOLS-1269: Always force `no_rabit=true` when updating agents
+
 ## 1.8.2
 
 - TOOLS-1172: Reject `sdcadm up <unknown svc or inst>` with error msg
