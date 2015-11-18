@@ -42,7 +42,10 @@ setup_logadm
 
 # Create symlink to sdcadm.completion from /etc/bash/bash_completion.d/
 
-rm /etc/bash/bash_completion.d/sdcadm
+if [[ -h /etc/bash/bash_completion.d/sdcadm ]]; then
+	rm /etc/bash/bash_completion.d/sdcadm
+fi
+
 cd /etc/bash/bash_completion.d
 ln -s /opt/smartdc/sdcadm/etc/sdcadm.completion sdcadm
 
