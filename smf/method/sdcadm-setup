@@ -40,4 +40,10 @@ function setup_logadm {
 
 setup_logadm
 
+# Create symlink to sdcadm.completion from /etc/bash/bash_completion.d/
+
+rm /etc/bash/bash_completion.d/sdcadm
+cd /etc/bash/bash_completion.d
+ln -s /opt/smartdc/sdcadm/etc/sdcadm.completion sdcadm
+
 exit $SMF_EXIT_OK
