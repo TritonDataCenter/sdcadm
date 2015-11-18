@@ -11,7 +11,7 @@
 # sdcadm Changelog
 
 
-# 1.8.3
+## 1.8.3
 
 - TOOLS-1269: Always force `no_rabit=true` when updating agents
 
