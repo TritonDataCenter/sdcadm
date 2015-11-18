@@ -11,6 +11,12 @@
 # sdcadm Changelog
 
 
+## 1.8.4
+
+- TOOLS-1277: `sdcadm experimental cns` to setup the CNS service and instance,
+  and `sdcadm up cns` to update. Note: Eventually this will move to either
+  post-setup or being a default created service.
+
 ## 1.8.3
 
 - TOOLS-1269: Always force `no_rabit=true` when updating agents

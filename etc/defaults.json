@@ -7,6 +7,7 @@
         "dhcpd": "dhcpd",
         "docker": "docker",
         "cnapi": "cnapi",
+        "cns": "cns",
         "vmapi": "vmapi",
         "manatee": "sdc-postgres",
         "rabbitmq": "rabbitmq",
