@@ -11,6 +11,13 @@
 # sdcadm Changelog
 
 
+## 1.8.5
+
+- TOOLS-905: Move `dc-maint` out of `experimental`. Now should be used just as
+  `sdcadm dc-maint [options]`.
+- TOOLS-1187: Fixed `sdcadm update manatee` not properly freezing shard for
+  updates.
+
 ## 1.8.4
 
 - TOOLS-1277: `sdcadm experimental cns` to setup the CNS service and instance,
