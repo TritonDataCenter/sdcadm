@@ -467,7 +467,7 @@ fabrics and, if docker is setup, update docker config to use fabrics.
     Use the given configuration file (required).
 
 `-r, --reconfigure`
-    Update fabrics configuration wiht the provided one.
+    Update fabrics configuration with the provided one.
 
 
 ### sdcadm post-setup dev-headnode-prov
