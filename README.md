@@ -76,18 +76,18 @@ be created:
     sdcadm post-setup cloudapi
 
 
-## Add Zookeeper service cluster to be used by SDC services
+## Add Binder/Zookeeper service cluster to be used by SDC services
 
 By default, an SDC setup runs with a single zookeeper service running in the
 `binder` instance. This is not the recommended setup for a production
 environment; instead, it's recommended to create a *"cluster"* of 3 or 5
-zookeeper service instances.
+binder service instances.
 
 In case this is a setup already being used by non-administrator users, it's a
 good idea to put the DC in maintenance first
 (`sdcadm dc-maint --start`). Then:
 
-    sdcadm post-setup zookeeper \
+    sdcadm post-setup ha-binder \
         --servers=`CN1_UUID` \
         --servers=`CN2_UUID`
 
@@ -146,7 +146,7 @@ CNs we added the manatees on the previous step:
     sdcadm create moray --server=CN1_UUID
     sdcadm create moray --server=CN2_UUID
 
-And that's it. With this, we should have a setup with multiple zookeeper,
+And that's it. With this, we should have a setup with multiple binder,
 manatee and moray instances, ready to operate with HA. As an additional step,
 if you plan to give access to non-administrator customers to your SDC setup
 (i.e. if you've installed CloudAPI), it would be handy to also have several
