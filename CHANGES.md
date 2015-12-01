@@ -11,6 +11,18 @@
 # sdcadm Changelog
 
 
+## 1.8.6
+
+- TOOLS-1287: Renamed `sdcadm post-setup zookeeper` to
+  `sdcadm post-setup ha-binder` in order to make clear what type of VMs the
+  command will create.
+- TOOLS-1121: `sdcadm update manatee` doesn't use the "sleep(60)" anymore and,
+  instead, uses waitForInstToBeUp properly.
+- TOOLS-1289: Improved error messages when sysinfo-refresh fails for one or
+  more servers during agents update.
+- TOOLS-1076: Fixed help message for `post-setup zookeeper/binder`.
+- TOOLS-1191: Fixed PostgreSQL availability check.
+
 ## 1.8.5
 
 - TOOLS-905: Move `dc-maint` out of `experimental`. Now should be used just as
