@@ -13,6 +13,8 @@
 
 ## 1.8.6
 
+- TOOLS-1223: Set canmount=noauto for `zones/$ZONE_UUID/data/manatee` dataset
+  when setting to something else.
 - TOOLS-1287: Renamed `sdcadm post-setup zookeeper` to
   `sdcadm post-setup ha-binder` in order to make clear what type of VMs the
   command will create.
