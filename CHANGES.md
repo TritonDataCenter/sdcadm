@@ -11,6 +11,11 @@
 # sdcadm Changelog
 
 
+## 1.8.7
+
+- TOOLS-1293: Increase the timeout for the agents install step of `sdcadm
+  experimental update-agents` to 20 minutes (from 10).
+
 ## 1.8.6
 
 - TOOLS-1223: Set canmount=noauto for `zones/$ZONE_UUID/data/manatee` dataset
