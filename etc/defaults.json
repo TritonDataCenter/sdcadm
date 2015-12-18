@@ -41,7 +41,8 @@
         "cn-agent": "cn-agent",
         "vm-agent": "vm-agent",
         "net-agent": "net-agent",
-        "config-agent": "config-agent"
+        "config-agent": "config-agent",
+        "dockerlogger": "dockerlogger"
     },
     "svcMinImages": {
         "binder": "20140731T211135Z",

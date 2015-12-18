@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+# 1.9.0
+
+- TOOLS-1219: `sdcadm experimental update dockerlogger` will install/update
+  dockerlogger service into setup servers.
 
 ## 1.8.7
 
