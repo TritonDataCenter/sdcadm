@@ -12,6 +12,8 @@
 
 ## 1.9.0
 
+- TOOLS-1298: Support for Underlay NICs provided by aggregations for `sdcadm
+  post-setup underlay-nics`
 - TOOLS-1219: `sdcadm experimental update dockerlogger` will install/update
   dockerlogger service into setup servers.
 
