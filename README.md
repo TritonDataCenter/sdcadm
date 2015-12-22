@@ -160,9 +160,10 @@ instances for services "HA Ready", using the same procedure as for moray:
 
 # Manage SDC upgrades with sdcadm
 
-The following is a detailed list of the required steps in order to verify that
-a given SDC setup can be updated using `sdcadm` and, if possible, how to
-proceed.
+The document [docs/update.md] provides a detailed description on how to
+proceed with the update of a given SDC standup. The following are a set
+of tips you should consider reading before proceeding with such update
+process.
 
 ## Verify that we can perform the updates using sdcadm
 
@@ -176,20 +177,12 @@ The easier way to check if we're past these requirements is to invoke `sdcadm`.
 In the case that `sdcadm` finds any issue with any of the services VMs, it will
 notify you about the problem. Otherwise, you can continue onto the next step.
 
-The detailed list of commands to run in order to verify that we can proceed
-with the upgrade is:
-
-    sdcadm self-update
-    sdcadm update --all --just-images
-
-If you have not configured an SDC zookeeper cluster, you can skip
-the `update binder` step above.
 
 ## Download everything before running the upgrades
 
 It's a good idea to pre-download all the bits required for an upgrade before
-actually going through it. That's the reason we've run the previous
-`sdcadm update` commands with the `--just-images` option.
+actually going through it. That's the reason we can run the
+`sdcadm update` commands with `--just-images` option.
 
 It's also possible to pre-download some images for other SDC components, like
 agents or gz-tools, using `sdcadm`. Just proceed as follows:
@@ -216,114 +209,6 @@ the CNs you want to upgrade by running:
 This will only download and make the platform available for later usage, but
 will not assign it to any server.
 
-## Proceeding with the upgrade
-
-### Verify the DC is healthy
-
-In the future, you should only run `sdcadm check-health` in order to know if
-all the services on a given SDC setup are healthy. Until that happens, it's
-also recommended to run `sdc-healthcheck` to check if anything is out of
-order.
-
-The logical first step if something is not working properly would be to fix
-that issue before proceeding with the upgrade, unless you know the upgrade
-itself contains the fix for such problem.
-
-### Put the DC in maintenance
-
-    sdcadm dc-maint --start
-
-### Backup PostgreSQL
-
-    MANATEE0_UUID=$(vmadm lookup -1 alias=~manatee)
-    zfs snapshot zones/$MANATEE0_UUID/data/manatee@backup
-    zfs send zones/$MANATEE0_UUID/data/manatee@backup > /var/tmp/manatee-backup.zfs
-    zfs destroy zones/$MANATEE0_UUID/data/manatee@backup
-
-### Upgrade Global Zone Tools
-
-    sdcadm experimental update-gz-tools --latest
-
-### Upgrade other SDC minor pieces, if required
-
-    sdcadm experimental update-other
-
-### Upgrade agents
-
-    sdcadm experimental update-agents --latest --all
-
-### Upgrade all the non-HA services
-
-    sdcadm update --all
-
-### HA
-
-At this point, you should be able to either update the HA pieces of SDC, or (in
-case you haven't gone through HA setup yet) proceed with HA setup, taking
-advantage of the DC maintenance period.
-
-Of course, you can also complete the HA setup whenever you need to. Let's
-assume that you already went through the process described to complete the
-post-setup installation of SDC HA pieces, and we're going to just update an
-existing HA setup. In such case, you just need to run:
-
-    sdcadm update binder
-
-Then, run `sdc-healthcheck` to make sure everything is properly reconnected
-to moray. Once binder VMs have been updated, the next step is to update
-manatee by running:
-
-    sdcadm update manatee
-
-Again, some `sdcadm check-health`/`sdc-healthcheck` is highly recommended.
-
-#### Non-HA setup
-
-In case you don't want to run manatee HA, you can still update your manatee VM
-by running exactly the aforementioned command:
-
-    sdcadm update manatee
-
-and things should happen exactly the same way as for HA-manatee.
-
-### Assign platform and reboot accordingly
-
-Note that you only need to go through this step if you plan to upgrade the OS
-platform during the overall upgrade.
-
-You can assign the downloaded platform image to one or more servers using:
-
-      sdcadm platform assign PLATFORM SERVER_UUID
-      sdcadm platform assign PLATFORM --all
-
-where `PLATFORM` is the platform version. If you need to update more than one
-server, but don't want to update all of them, you'll need to run
-
-      sdcadm platform assign PLATFORM SERVER_UUID
-
-as many times as the servers you need to update.
-
-Once you're done with this procedure, reboot the servers so they're running with
-the updated platform assignment.
-
-In case you need to reboot the HeadNode:
-
-      init 6
-
-And, in order to reboot other CNs:
-
-      sdc-cnapi /servers/$CN_UUID/reboot -X POST
-
-### Take the DC out of maintenance
-
-    sdcadm dc-maint --stop
-
-And that's it. With this final step, the DC should be full operational again.
-It's a good idea to run the health check commands before stopping the
-maintenance window, just in case.
-
-Finally, if you have some Amon alarms raised during the upgrade period, this is
-a good moment to clear them all.
 
 # Developer notes
 
