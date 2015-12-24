@@ -88,6 +88,13 @@ to ensure that provisioning, starting, and docker attach are all working. If the
 
 ## Section 2: Updating Servers' Platforms
 
+### Important Prerequisites
+
+The instructions here assume that your manatee primary is on the headnode and
+that the manatee sync and async are on separate compute nodes. If this is not
+the case, these instructions from step 2 onward will not work for you without
+modification.
+
 ### Step 1: Update the target platform
 
 Generally this requires doing:
