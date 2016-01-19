@@ -16,6 +16,7 @@
   post-setup underlay-nics`
 - TOOLS-1219: `sdcadm experimental update dockerlogger` will install/update
   dockerlogger service into setup servers.
+- TOOLS-1025: Use newest `manatee-adm` subcommands when possible.
 
 ## 1.8.7
 
