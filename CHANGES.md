@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.9.1
+
+- TOOLS-1311: Updated to latest `cmdln` and `dashdash` for better CLI
+  completion.
+
 ## 1.9.0
 
 - TOOLS-1298: Support for Underlay NICs provided by aggregations for `sdcadm
