@@ -5,7 +5,7 @@
 #
 
 #
-# Copyright (c) 2015, Joyent, Inc.
+# Copyright 2016 Joyent, Inc.
 #
 
 #
@@ -91,8 +91,12 @@ dumpvar:
 # Ensure all version-carrying files have the same version.
 .PHONY: check-version
 check-version:
-	@echo version is: $(shell cat package.json | json version)
-	[[ `cat package.json | json version` == `grep '^## ' CHANGES.md | head -1 | awk '{print $$2}'` ]]
+	@echo version is: $(shell json -f package.json version)
+	@if [[ $$(json -f package.json version) != \
+	    $$(awk '/^## / { print $$2; exit 0 }' CHANGES.md) ]]; then \
+		printf 'package.json version does not match CHANGES.md\n' >&2; \
+		exit 1; \
+	fi
 	@echo Version check ok.
 
 check:: check-version

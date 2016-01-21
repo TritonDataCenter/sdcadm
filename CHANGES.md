@@ -5,10 +5,15 @@
 -->
 
 <!--
-    Copyright (c) 2015, Joyent, Inc.
+    Copyright 2016 Joyent, Inc.
 -->
 
 # sdcadm Changelog
+
+## 1.9.2
+
+- TOOLS-1301: sdcadm update cannot call method reprovFailLock_Lock of undefined
+- TOOLS-1320: "sdcadm update dockerlogger" failed against multiple CNs
 
 ## 1.9.1
 
