@@ -15,6 +15,8 @@
 - TOOLS-1301: sdcadm update cannot call method reprovFailLock_Lock of undefined
 - TOOLS-1320: "sdcadm update dockerlogger" failed against multiple CNs
 - TOOLS-1318: Added `--message` and `--eta` options to `dc-maint --start`
+- TOOLS-1324: Added `--docker-only` and `--cloudapi-only` options to
+  `dc-maint --start`.
 
 ## 1.9.1
 
