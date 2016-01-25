@@ -708,9 +708,9 @@ new jobs could come in.
 
 Usage:
 
-     sdcadm experimental dc-maint status [-j]           # show DC maint status
-     sdcadm experimental dc-maint start                 # start DC maint
-     sdcadm experimental dc-maint stop                  # stop DC maint
+     sdcadm dc-maint status [-j]           # show DC maint status
+     sdcadm dc-maint start                 # start DC maint
+     sdcadm dc-maint stop                  # stop DC maint
 
 ## sdcadm experimental command
 
