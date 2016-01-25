@@ -85,7 +85,7 @@ binder service instances.
 
 In case this is a setup already being used by non-administrator users, it's a
 good idea to put the DC in maintenance first
-(`sdcadm dc-maint --start`). Then:
+(`sdcadm dc-maint start`). Then:
 
     sdcadm post-setup ha-binder \
         --servers=`CN1_UUID` \
@@ -102,7 +102,7 @@ the *"cluster"*, manatee and moray will be restarted to begin using this
 setup immediately.
 
 If you put the DC into maintenance, remember to recover it from such state
-by using `sdcadm dc-maint --stop`, unless you want to proceed
+by using `sdcadm dc-maint stop`, unless you want to proceed
 with ha-manatee too.
 
 

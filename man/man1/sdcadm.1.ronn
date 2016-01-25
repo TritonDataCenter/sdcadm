@@ -809,6 +809,72 @@ be included using JSON format and all the other options will
 be ignored
 
 
+
+### sdcadm dc-maint \[options\] command
+
+Show and modify the DC maintenance mode.
+
+"Maintenance mode" for an SDC means that Cloud API is in read-only
+mode. Modifying requests will return "503 Service Unavailable".
+Workflow API will be drained on entering maint mode. When Docker service
+is also installed, it'll behave the same way than Cloud API.
+
+Limitation: This does not current wait for config changes to be made
+and cloudapi instances restarted. That means there is a window after
+starting that new jobs could come in.
+
+`-h, --help`
+    Show this help message and exit.
+
+### sdcadm dc-maint status [-j]
+
+Show DC maint status.
+
+    sdcadm dc-maint status [-j]
+
+`-h, --help`
+    Show this help message and exit.
+
+`-j, --json`
+    Show status as JSON.
+
+### sdcadm dc-maint start \[options\]
+
+Start DC Maintenance. Optionally, start maintenance only for CloudAPI or Docker
+services.
+
+     sdcadm dc-maint start
+
+
+`-h, --help`
+    Show this help message and exit.
+
+`--docker-only`
+    Start maintenance mode only for Docker service.
+
+`--cloudapi-only`
+    Start maintenance mode only for CloudAPI service.
+
+`--message=ARG`
+    Maintenance message to be used until the DC is restored to full operation.
+
+`--eta=DATE`
+    Expected time to get the DC restored to full operation
+    (to be used in Retry-After HTTP headers).Epoch seconds,
+    e.g. 1396031701, or ISO 8601 format YYYY-MM-DD[THH:MM:SS[.sss][Z]], e.g.
+    "2014-03-28T18:35:01.489Z".
+
+
+### sdcadm dc-maint stop \[options\]
+
+Stop DC Maintenance
+
+     sdcadm dc-maint stop
+
+`-h, --help`
+    Show this help message and exit.
+
+
 ### sdcadm experimental \[options\] command \[args...\]
 
 Experimental, unsupported, temporary sdcadm commands.
@@ -874,37 +940,6 @@ Examples:
     # Update on setup servers, excluding those with a "internal=PKGSRC" trait.
     sdcadm experimental update-agents 8198c6c0-778c-11e5-8416-13cb06970b44 \
         $(sdc-server lookup setup=true 'traits.internal!~PKGSRC' | xargs)
-
-
-### sdcadm experimental dc-maint \[options\]
-
-Show and modify the DC maintenance mode.
-
-"Maintenance mode" for an SDC means that Cloud API is in read-only
-mode. Modifying requests will return "503 Service Unavailable".
-Workflow API will be drained on entering maint mode.
-
-Limitation: This does not current wait for config changes to be made
-and cloudapi instances restarted. That means there is a window after
-starting that new jobs could come in.
-
-     sdcadm experimental dc-maint [-j]           # show DC maint status
-     sdcadm experimental dc-maint [--start]      # start DC maint
-     sdcadm experimental dc-maint [--stop]       # stop DC maint
-
-
-`-h, --help`
-    Show this help message and exit.
-
-`-j, --json`
-    Show status as JSON.
-
-`--start`
-    Start maintenance mode.
-
-`--stop`
-    Stop maintenance mode (i.e. restore DC to full operation).
-
 
 ### sdcadm experimental update-other
 

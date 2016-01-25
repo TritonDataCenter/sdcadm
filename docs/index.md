@@ -694,17 +694,7 @@ if this option is present, `--force` option will be ignored.
       Unmounting USB key
       Done.
 
-
-## sdcadm experimental command
-
-The following are a set of temporary commands used as replacement of some of
-the [incr-upgrade
-scripts](https://github.com/joyent/sdc-headnode/blob/master/incr-upgrade-scripts/README.md)
-which will be eventually integrated into `sdcadm update --all` or moved into
-different sdcadm sub-commands. In the meanwhile, the following is the list
-of these experimental sub-commands involved into SDC update tasks.
-
-## sdcadm experimental dc-maint
+## sdcadm dc-maint
 
 Show and modify the DC maintenance mode.
 
@@ -718,10 +708,18 @@ new jobs could come in.
 
 Usage:
 
-     sdcadm experimental dc-maint [-j]           # show DC maint status
-     sdcadm experimental dc-maint [--start]      # start DC maint
-     sdcadm experimental dc-maint [--stop]       # stop DC maint
+     sdcadm experimental dc-maint status [-j]           # show DC maint status
+     sdcadm experimental dc-maint start                 # start DC maint
+     sdcadm experimental dc-maint stop                  # stop DC maint
 
+## sdcadm experimental command
+
+The following are a set of temporary commands used as replacement of some of
+the [incr-upgrade
+scripts](https://github.com/joyent/sdc-headnode/blob/master/incr-upgrade-scripts/README.md)
+which will be eventually integrated into `sdcadm update --all` or moved into
+different sdcadm sub-commands. In the meanwhile, the following is the list
+of these experimental sub-commands involved into SDC update tasks.
 
 ## sdcadm experimental add-new-agent-svcs
 

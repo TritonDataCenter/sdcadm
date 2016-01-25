@@ -35,7 +35,7 @@ The document is divided in two parts:
 
 NOTE: after performing this step, users of CloudAPI and Docker will not be able to perform write actions until the DC is taken out of maintenance.
 
-    sdcadm dc-maint --start
+    sdcadm dc-maint start
 
 ### Step 3: Update agents
 
@@ -75,7 +75,7 @@ ensure everything's `online` before taking the DC out of maint.
 ### Step 9: Take DC out of maint
 
 
-    sdcadm dc-maint --stop
+    sdcadm dc-maint stop
 
 
 ### Step 10: Test!
@@ -228,7 +228,7 @@ If there's a reason we need a new platform on the headnode the steps are:
 
 If other maint is complete and the DC is in maint you can take it out of maint with:
 
-    sdcadm dc-maint --stop
+    sdcadm dc-maint stop
 
 It would be good to perform the tests suggested on the steps 8-10 of the
 previous section at this point, in case you went from there into platform update

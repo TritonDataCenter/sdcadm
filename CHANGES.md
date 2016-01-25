@@ -10,6 +10,13 @@
 
 # sdcadm Changelog
 
+## 1.10.0
+
+- TOOLS-1323: Split `sdcadm dc-maint` command into three subcommands due
+  to incompatible options for each one of the tasks this command was trying
+  to perform: start/stop and display DC maintenance status.
+
+
 ## 1.9.2
 
 - TOOLS-1301: sdcadm update cannot call method reprovFailLock_Lock of undefined
