@@ -15,7 +15,8 @@
 - TOOLS-1323: Split `sdcadm dc-maint` command into three subcommands due
   to incompatible options for each one of the tasks this command was trying
   to perform: start/stop and display DC maintenance status.
-
+- TOOLS-1326: Do not exit when there's an unknown service in SAPI, just warn
+  about it.
 
 ## 1.9.2
 
