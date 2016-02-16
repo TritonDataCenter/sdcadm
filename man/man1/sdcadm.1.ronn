@@ -556,11 +556,11 @@ Examples:
 
     # Assign a specific platform  on setup servers with the "pkg=aegean" trait.
     sdcadm platform update-agents 20151021T183753Z \
-        $(sdc-server lookup setup=true traits.pkg=aegean | xargs)
+        $(sdc-server lookup setup=true traits.pkg=aegean)
 
     # Assign a platform, excluding those with a "internal=PKGSRC" trait.
     sdcadm platform update-agents 20151021T183753Z \
-        $(sdc-server lookup setup=true 'traits.internal!~PKGSRC' | xargs)
+        $(sdc-server lookup setup=true 'traits.internal!~PKGSRC')
 
 
 ### sdcadm platform list \[options\]
@@ -935,11 +935,11 @@ Examples:
 
     # Update a specific agentsshar on setup servers with the "pkg=aegean" trait.
     sdcadm experimental update-agents 8198c6c0-778c-11e5-8416-13cb06970b44 \
-        $(sdc-server lookup setup=true traits.pkg=aegean | xargs)
+        $(sdc-server lookup setup=true traits.pkg=aegean)
 
     # Update on setup servers, excluding those with a "internal=PKGSRC" trait.
     sdcadm experimental update-agents 8198c6c0-778c-11e5-8416-13cb06970b44 \
-        $(sdc-server lookup setup=true 'traits.internal!~PKGSRC' | xargs)
+        $(sdc-server lookup setup=true 'traits.internal!~PKGSRC')
 
 ### sdcadm experimental update-other
 
