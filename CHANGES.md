@@ -10,6 +10,19 @@
 
 # sdcadm Changelog
 
+## 1.11.0
+
+- TOOLS-1359: `sdcadm` no longer logs JSON-formatted bunyan logs to `stderr`,
+  preferring instead to emit actionable information formatted for human
+  readability.  The log data is still available in `/var/log/sdcadm`.
+- TOOLS-1342: `sdcadm` now correctly respects longer execution timeouts
+  for agent updates and docker deployments.
+- TOOLS-1367: `sdcadm` now connects more reliably to RabbitMQ when
+  communicating with remote `ur` agents.
+- TOOLS-1335: `sdcadm` will now retry DNS resolution for SAPI updates,
+  avoiding one failure mode for any service updated immediately after
+  a `binder` update.
+
 ## 1.10.0
 
 - TOOLS-1323: Split `sdcadm dc-maint` command into three subcommands due
