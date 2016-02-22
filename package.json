@@ -26,7 +26,7 @@
     "strsplit": "1.0.0",
     "tabula": "1.2.2",
     "tape": "3.5.0",
-    "urclient": "git+https://github.com/joyent/node-urclient.git#e214dc9",
+    "urclient": "^1.1.0",
     "vasync": "1.4.3",
     "verror": "1.6.0",
     "wf-client": "git+https://github.com/joyent/sdc-wf-client.git#9bcb3a0ebec7cd5b4052acaacde8fd6e3e2dfcf9"
