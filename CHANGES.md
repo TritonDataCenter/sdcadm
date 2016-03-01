@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.11.1
+
+- TOOLS-1380: 'sdcadm insts' (and other code paths) crash on gather dockerlogger instance info
+
 ## 1.11.0
 
 - TOOLS-1359: `sdcadm` no longer logs JSON-formatted bunyan logs to `stderr`,
