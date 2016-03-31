@@ -66,5 +66,23 @@
         "sdc": "20140725T191132Z",
         "cloudapi": "20140731T175858Z",
         "ufds": "20140728T173339Z"
+    },
+    "updatedSizeParameters": {
+        "manatee": {
+            "max_lwps": 4000
+        },
+        "binder": {
+            "max_physical_memory": 1024,
+            "max_locked_memory": 1024,
+            "max_swap": 2048
+        },
+        "ca": {
+            "max_physical_memory": 4096,
+            "max_locked_memory": 4096,
+            "max_swap": 8192,
+            "zfs_io_priority": 20,
+            "cpu_cap": 400,
+            "package_name": "sdc_4096"
+        }
     }
 }
