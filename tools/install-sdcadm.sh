@@ -132,6 +132,11 @@ echo "Importing and starting sdcadm-setup service"
 cp $DESTDIR/smf/manifests/sdcadm-setup.xml /var/svc/manifest/site/sdcadm-setup.xml
 svccfg import /var/svc/manifest/site/sdcadm-setup.xml
 
+# Import sdcadm-reboot-plan runner service and start it
+echo "Importing and starting sdcadm-reboot-plan service"
+cp $DESTDIR/smf/manifests/sdcadm-reboot-plan.xml /var/svc/manifest/site/sdcadm-reboot-plan.xml
+svccfg import /var/svc/manifest/site/sdcadm-reboot-plan.xml
+
 [[ -d $OLDDIR ]] && rm -rf $OLDDIR
 
 echo "Successfully upgraded to sdcadm $(cat $DESTDIR/etc/buildstamp)"
