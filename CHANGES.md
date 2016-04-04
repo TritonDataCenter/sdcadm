@@ -10,6 +10,9 @@
 
 # sdcadm Changelog
 
+## 1.16.0
+
+- TOOLS-1421: `sdcadm experimental volapi` to setup Volumes API service
 
 ## 1.16.0
 
