@@ -12,14 +12,10 @@ Here-in random TODOs and scratchpad notes for sdcadm.
 
 # reboot-plan pending
 
-- `sdcdm reboot-plan next` subcommand
-- Trap 'CTRL+C' for `sdcadm reboot-plan watch` and explain that it will not
-stop the reboots and how to re-attach
-- Same thing when the reboot plan includes a reboot of the headnode and
-`--watch` option is given to `run` or to `create --run`.
-- an option to reboot only empty CNs
-- Man page updates
-- Documentation
+- `sdcadm reboot-plan next` subcommand
+- Provide an option to reboot only empty CNs
+- Merge sdcadm-setup and sdcadm-reboot-plan into a single `sdcadm-agent` svc
+
 
 # now
 
