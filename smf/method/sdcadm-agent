@@ -6,11 +6,13 @@
 #
 
 #
-# Copyright (c) 2015, Joyent, Inc.
+# Copyright (c) 2016, Joyent, Inc.
 #
 
 #
-# "sdcadm-setup" service for restoring sdcadm GZ settings on server reboot.
+# "sdcadm-agent" service for restoring sdcadm GZ settings on headnode reboot
+# (setup) and running reboot plans in case the reboot has been fired by reboot
+# plan execution.
 #
 
 set -o xtrace
@@ -48,5 +50,7 @@ fi
 
 cd /etc/bash/bash_completion.d
 ln -s /opt/smartdc/sdcadm/etc/sdcadm.completion sdcadm
+
+exec "/usr/bin/ctrun -l child -o noorphan /opt/smartdc/sdcadm/node/bin/node --abort_on_uncaught_exception /opt/smartdc/sdcadm/lib/reboot-plan-runner.js &"
 
 exit $SMF_EXIT_OK
