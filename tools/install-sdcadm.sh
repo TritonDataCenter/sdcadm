@@ -133,7 +133,13 @@ cp $DESTDIR/smf/manifests/sdcadm-agent.xml /var/svc/manifest/site/sdcadm-agent.x
 svccfg import /var/svc/manifest/site/sdcadm-agent.xml
 
 # Cleanup old sdcadm-setup service if exists
-svccfg delete -f sdcadm-setup
+reboot=$(svcs -H sdcadm-setup|wc -l|xargs)
+
+if [[ "${reboot}" == "1" ]]; then
+	echo "Disabling and removing legacy sdcadm-setup service"
+	svcadm disable sdcadm-setup
+	svccfg delete -f sdcadm-setup
+fi
 
 [[ -d $OLDDIR ]] && rm -rf $OLDDIR
 
