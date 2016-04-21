@@ -173,6 +173,11 @@
 - TOOLS-1365: `sdcadm platform available` provides feedback when latest platform
   is already installed
 - TOOLS-1258: better error feedback for `common-external-nics`
+=======
+## 1.12.0
+
+-  TOOLS-1421: `sdcadm experimental volapi` to setup Volumes API service
+>>>>>>> changes according to code review
 
 ## 1.11.1
 
