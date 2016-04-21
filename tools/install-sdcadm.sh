@@ -127,15 +127,13 @@ SERVER_UUID=$(sysinfo | json UUID)
 json -f $CONFIG_PATH -e "this.serverUuid = '$SERVER_UUID'" >$CONFIG_PATH.new
 mv $CONFIG_PATH.new $CONFIG_PATH
 
-# Import the sdcadm-setup service and gracefully start it.
-echo "Importing and starting sdcadm-setup service"
-cp $DESTDIR/smf/manifests/sdcadm-setup.xml /var/svc/manifest/site/sdcadm-setup.xml
-svccfg import /var/svc/manifest/site/sdcadm-setup.xml
+# Import the sdcadm-agent service and gracefully start it.
+echo "Importing and starting sdcadm-agent service"
+cp $DESTDIR/smf/manifests/sdcadm-agent.xml /var/svc/manifest/site/sdcadm-agent.xml
+svccfg import /var/svc/manifest/site/sdcadm-agent.xml
 
-# Import sdcadm-reboot-plan runner service and start it
-echo "Importing and starting sdcadm-reboot-plan service"
-cp $DESTDIR/smf/manifests/sdcadm-reboot-plan.xml /var/svc/manifest/site/sdcadm-reboot-plan.xml
-svccfg import /var/svc/manifest/site/sdcadm-reboot-plan.xml
+# Cleanup old sdcadm-setup service if exists
+svccfg delete -f sdcadm-setup
 
 [[ -d $OLDDIR ]] && rm -rf $OLDDIR
 

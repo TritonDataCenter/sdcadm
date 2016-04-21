@@ -10,26 +10,23 @@
     Copyright (c) 2016, Joyent, Inc.
 -->
 
-<service_bundle type='manifest' name='sdcadm-reboot-plan'>
-  <service name='smartdc/sdcadm-reboot-plan' type='service' version='0'>
+<service_bundle type='manifest' name='sdcadm-agent'>
+  <service name='smartdc/sdcadm-agent' type='service' version='0'>
     <create_default_instance enabled='true'/>
     <single_instance/>
     <dependency name='filesystem' grouping='require_all' restart_on='none' type='service'>
       <service_fmri value='svc:/system/filesystem/local'/>
     </dependency>
-    <dependency name='network' grouping='require_all' restart_on='error' type='service'>
-      <service_fmri value='svc:/milestone/network:default'/>
-    </dependency>
-    <exec_method name='start' type='method' exec='/usr/bin/ctrun -l child -o noorphan /opt/smartdc/sdcadm/node/bin/node --abort_on_uncaught_exception /opt/smartdc/sdcadm/lib/reboot-plan-runner.js &amp;' timeout_seconds='60'/>
+    <exec_method name='start' type='method' exec='/opt/smartdc/sdcadm/smf/method/sdcadm-agent' timeout_seconds='60'/>
     <exec_method name='stop' type='method' exec=':true' timeout_seconds='0'/>
-    <exec_method name='refresh' type='method' exec='/usr/bin/ctrun -l child -o noorphan /opt/smartdc/sdcadm/node/bin/node --abort_on_uncaught_exception /opt/smartdc/sdcadm/lib/reboot-plan-runner.js &amp;' timeout_seconds='60'/>
+    <exec_method name='refresh' type='method' exec='/opt/smartdc/sdcadm/smf/method/sdcadm-agent' timeout_seconds='60'/>
     <property_group name='startd' type='framework'>
       <propval name='duration' type='astring' value='transient'/>
     </property_group>
     <stability value='Unstable'/>
     <template>
       <common_name>
-        <loctext xml:lang='C'>sdcadm reboot-plan runner</loctext>
+        <loctext xml:lang='C'>sdcadm agent</loctext>
       </common_name>
     </template>
   </service>
