@@ -51,6 +51,6 @@ fi
 cd /etc/bash/bash_completion.d
 ln -s /opt/smartdc/sdcadm/etc/sdcadm.completion sdcadm
 
-exec "/usr/bin/ctrun -l child -o noorphan /opt/smartdc/sdcadm/node/bin/node --abort_on_uncaught_exception /opt/smartdc/sdcadm/lib/reboot-plan-runner.js &"
+/usr/bin/ctrun -l child -o noorphan /opt/smartdc/sdcadm/node/bin/node --abort_on_uncaught_exception /opt/smartdc/sdcadm/lib/reboot-plan-runner.js &
 
 exit $SMF_EXIT_OK
