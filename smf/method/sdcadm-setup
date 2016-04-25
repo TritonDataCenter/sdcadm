@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+#
+# Copyright (c) 2016, Joyent, Inc.
+#
+
+#
+# "sdcadm-setup" legacy service. This service has been replaced by
+# "sdcadm-agent". This file is used in order to successfully run the
+# old service right before we remove it from SMF catalog.
+#
+
+set -o xtrace
+
+. /lib/svc/share/smf_include.sh
+
+exit $SMF_EXIT_OK

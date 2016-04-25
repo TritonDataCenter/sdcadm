@@ -14,8 +14,6 @@ Here-in random TODOs and scratchpad notes for sdcadm.
 
 - `sdcadm reboot-plan next` subcommand
 - Provide an option to reboot only empty CNs
-- Merge sdcadm-setup and sdcadm-reboot-plan into a single `sdcadm-agent` svc
-
 
 # now
 

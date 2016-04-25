@@ -137,7 +137,7 @@ reboot=$(svcs -H sdcadm-setup|wc -l|xargs)
 
 if [[ "${reboot}" == "1" ]]; then
 	echo "Disabling and removing legacy sdcadm-setup service"
-	svcadm disable sdcadm-setup
+	svcadm disable -s sdcadm-setup
 	svccfg delete -f sdcadm-setup
 fi
 
