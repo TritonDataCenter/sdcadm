@@ -139,6 +139,7 @@ if [[ "${reboot}" == "1" ]]; then
 	echo "Disabling and removing legacy sdcadm-setup service"
 	svcadm disable -s sdcadm-setup
 	svccfg delete -f sdcadm-setup
+	rm /var/svc/manifest/site/sdcadm-setup.xml
 fi
 
 [[ -d $OLDDIR ]] && rm -rf $OLDDIR
