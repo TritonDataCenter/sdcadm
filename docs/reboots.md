@@ -270,13 +270,13 @@ trying to find the reason for a server's reboot failure).
   * `GET /reboot-plans/:reboot_plan_uuid/reboots/:reboot_uuid`
   * `PUT /reboot-plans/:reboot_plan_uuid/reboots/:reboot_uuid`
 - Make a decision on archiving or not reboot-plans information:
-  a. Keep all the reboot-plan information in moray, do not archive?
-  b. Keep information in moray, but delete some data after a given time period?
-  c. Archive this information and just keep the latest plan in moray?
-  d. Put archived information in manta?
-  e. Use sdcadm to put info in manta? Means adding a dependency to sdcadm +
+  * Keep all the reboot-plan information in moray, do not archive?
+  * Keep information in moray, but delete some data after a given time period?
+  * Archive this information and just keep the latest plan in moray?
+  * Put archived information in manta?
+  * Use sdcadm to put info in manta? Means adding a dependency to sdcadm +
      we may have SDC setups w/o manta - what to do on these cases?
-  f. Archive reboot plans information from `sdc` zone?
+  * Archive reboot plans information from `sdc` zone?
 - Depending on this decision on archiving or not information, we may want to
   provide `sdcadm reboot-plan` with some extra tool set to report information
   regarding previous reboot plans, reboots for a given server, ...
