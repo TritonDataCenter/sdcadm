@@ -42,7 +42,8 @@
         "vm-agent": "vm-agent",
         "net-agent": "net-agent",
         "config-agent": "config-agent",
-        "dockerlogger": "dockerlogger"
+        "dockerlogger": "dockerlogger",
+        "volapi": "volapi"
     },
     "svcMinImages": {
         "binder": "20140731T211135Z",

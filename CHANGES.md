@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.12.0
+
+-  TOOLS-1421: `sdcadm experimental volapi` to setup Volumes API service
+
 ## 1.11.1
 
 - TOOLS-1380: 'sdcadm insts' (and other code paths) crash on gather dockerlogger instance info
