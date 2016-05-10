@@ -1050,15 +1050,20 @@ Examples:
 
 `-h, --help`
     Show this help.
+
 `-y, --yes`
     Answer yes to all confirmations.
+
 `-n, --dry-run`
     Go through the motions without actually rebooting.
+
 `-N N, --rate=N`
     Number of servers to reboot simultaneously. Default: 5.
+
 `-W, --ignore-warnings`
     Create the reboot plan despite of emiting warnings for servers already
     on the target platform (or other warnings).
+
 `-s, --skip-current`
     Use to skip reboot of servers already on target boot platform.
 
@@ -1067,12 +1072,16 @@ Server selection:
 `--core`
     Reboot the servers with SDC core components.Note that this will
     include the headnode.
+
 `--non-core`
     Reboot the servers without SDC core components.
+
 `-a, --all`
     Reboot all the servers.
+
 `-r, --run`
     Run the reboot-plan right after create it.
+
 `-w, --watch`
     Watch the reboot plan execution.
 
@@ -1085,8 +1094,23 @@ Execute/continue the current reboot plan.
 
 `-h, --help`
     Show this help.
+
 `-w, --watch`
     Watch for execution of the plan once it has been started.
+
+
+### sdcadm experimental reboot-plan \[options\] next
+
+Execute a single iteration of the current reboot plan.
+
+    sdcadm experimental reboot-plan next [OPTIONS]
+
+`-h, --help`
+    Show this help.
+
+`-w, --watch`
+    Watch for execution of the plan's step.
+
 
 ### sdcadm experimental reboot-plan \[options\] status
 
