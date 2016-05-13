@@ -1133,9 +1133,9 @@ Watch (and wait for) the currently running reboot plan.
 `-h, --help`
     Show this help.
 
-### sdcadm experimental reboot-plan \[options\] stop
+### sdcadm experimental reboot-plan \[options\] pause
 
-Stop execution of the currently running reboot plan.
+Pause execution of the currently running reboot plan.
 
     sdcadm experimental reboot-plan stop [OPTIONS]
 
