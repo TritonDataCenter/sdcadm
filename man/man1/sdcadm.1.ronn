@@ -1057,8 +1057,11 @@ Examples:
 `-n, --dry-run`
     Go through the motions without actually rebooting.
 
-`-N N, --rate=N`
+`-C N, --concurrency=N`
     Number of servers to reboot simultaneously. Default: 5.
+
+`--name=ARG`
+    Optional descriptive name for the reboot plan.
 
 `-W, --ignore-warnings`
     Create the reboot plan despite of emiting warnings for servers already
