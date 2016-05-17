@@ -290,14 +290,27 @@ trying to find the reason for a server's reboot failure).
 
 ## sdcadm reboot-plan man page excerpt
 
+     sdcadm experimental reboot-plan [options] command [args...]
+         Reboot plan related sdcadm commands.
+
+         CLI commands for working towards controlled and safe reboots of selected servers in
+         a typical SDC setup.
+
+           sdcadm experimental reboot-plan [OPTIONS] COMMAND [ARGS...]
+           sdcadm experimental reboot-plan help COMMAND
+
+         -h, --help
+             Show this help message and exit.
+
      sdcadm experimental reboot-plan [options] create [args...]
          Create a reboot plan.
 
            sdcadm experimental reboot-plan create [OPTIONS] [SERVER] [SERVER]...
 
-         Use "--all" to reboot all the non-core setup servers or pass a specific set of SERVERs. A "SERVER"  is  a
-         server UUID or hostname. In a larger datacenter, getting a list of the wanted servers can be a chore. The
-         "sdc-server lookup ..." tool is useful for this.
+         Use  "--all"  to  reboot  all  the non-core setup servers or pass a specific set of
+         SERVERs. A "SERVER" is a server UUID or hostname. In a larger datacenter, getting a
+         list of the wanted servers can be a chore. The "sdc-server lookup ..." tool is use-
+         ful for this.
 
          Examples:
 
@@ -317,48 +330,76 @@ trying to find the reason for a server's reboot failure).
 
          -h, --help
              Show this help.
+
          -y, --yes
-             Answer yes to all confirmations.i
+             Answer yes to all confirmations.
+
          -n, --dry-run
              Go through the motions without actually rebooting.
-         -N N, --rate=N
+
+         -C N, --concurrency=N
              Number of servers to reboot simultaneously. Default: 5.
+
+         --name=ARG
+             Optional descriptive name for the reboot plan.
+
          -W, --ignore-warnings
              Create the reboot plan despite of emiting warnings for servers already
              on the target platform (or other warnings).
+
          -s, --skip-current
              Use to skip reboot of servers already on target boot platform.
-
-
-         -r, --run
-             Run the reboot-plan right after create it.
-         -w, --watch
-             Watch the reboot plan execution.
 
          Server selection:
 
          --core
              Reboot the servers with SDC core components.Note that this will
              include the headnode.
+
          --non-core
              Reboot the servers without SDC core components.
+
          -a, --all
              Reboot all the servers.
 
-     sdcadm experimental reboot-plan [options] run
-         Execute/continue the current reboot plan.
+         -r, --run
+             Run the reboot-plan right after create it.
 
-           sdcadm experimental reboot-plan run [OPTIONS]
+         -w, --watch
+             Watch the reboot plan execution.
+
+     sdcadm experimental reboot-plan [options] run
+         Execute the given reboot plan.
+
+         Note that only a single plan can be running at time.
+
+           sdcadm experimental reboot-plan run PLAN_UUID [OPTIONS]
 
          -h, --help
              Show this help.
+
          -w, --watch
              Watch for execution of the plan once it has been started.
 
-     sdcadm experimental reboot-plan [options] status
-         Show status of the current reboot plan.
+     sdcadm experimental reboot-plan [options] next
+         Execute the next step of the given reboot plan.
 
-           sdcadm experimental reboot-plan status [OPTIONS]
+         Like "run" but only the next step of the reboot plan will be executed.
+
+         Note that only a single plan can be running at time.
+
+           sdcadm experimental reboot-plan next PLAN_UUID [OPTIONS]
+
+         -h, --help
+             Show this help.
+
+         -w, --watch
+             Watch for execution of the plan's step.
+
+     sdcadm experimental reboot-plan [options] status
+         Show status of the given reboot plan.
+
+           sdcadm experimental reboot-plan status PLAN_UUID [OPTIONS]
 
          -h, --help
              Show this help.
@@ -371,25 +412,24 @@ trying to find the reason for a server's reboot failure).
          -h, --help
              Show this help.
 
-     sdcadm experimental reboot-plan [options] stop
-         Stop execution of the currently running reboot plan.
+     sdcadm experimental reboot-plan [options] pause
+         Pause execution of the currently running reboot plan.
 
-           sdcadm experimental reboot-plan stop [OPTIONS]
+           sdcadm experimental reboot-plan pause [OPTIONS]
 
          -h, --help
              Show this help.
 
      sdcadm experimental reboot-plan [options] cancel
-         Cancel the current reboot plan.
+         Cancel the given reboot plan.
 
-           sdcadm experimental reboot-plan cancel [OPTIONS]
+           sdcadm experimental reboot-plan cancel PLAN_UUID [OPTIONS]
 
          -h, --help
              Show this help.
 
 ## TODO
 
-- Add check for minimal `CNAPI` version including `/reboot-plans` end-point.
 - Add the following end-points documentation to `CNAPI`:
   * `GET /reboot-plans`
   * `POST /reboot-plans`

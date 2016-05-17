@@ -1091,9 +1091,11 @@ Server selection:
 
 ### sdcadm experimental reboot-plan \[options\] run
 
-Execute/continue the current reboot plan.
+Execute the given reboot plan.
 
-    sdcadm experimental reboot-plan run [OPTIONS]
+Note that only a single plan can be running at time.
+
+    sdcadm experimental reboot-plan run PLAN_UUID [OPTIONS]
 
 `-h, --help`
     Show this help.
@@ -1104,9 +1106,13 @@ Execute/continue the current reboot plan.
 
 ### sdcadm experimental reboot-plan \[options\] next
 
-Execute a single iteration of the current reboot plan.
+Execute the next step of the given reboot plan.
 
-    sdcadm experimental reboot-plan next [OPTIONS]
+Like "run" but only the next step of the reboot plan will be executed.
+
+Note that only a single plan can be running at time.
+
+    sdcadm experimental reboot-plan next PLAN_UUID [OPTIONS]
 
 `-h, --help`
     Show this help.
@@ -1117,9 +1123,9 @@ Execute a single iteration of the current reboot plan.
 
 ### sdcadm experimental reboot-plan \[options\] status
 
-Show status of the current reboot plan.
+Show status of the given reboot plan.
 
-    sdcadm experimental reboot-plan status [OPTIONS]
+    sdcadm experimental reboot-plan status PLAN_UUID [OPTIONS]
 
 `-h, --help`
     Show this help.
@@ -1137,7 +1143,7 @@ Watch (and wait for) the currently running reboot plan.
 
 Pause execution of the currently running reboot plan.
 
-    sdcadm experimental reboot-plan stop [OPTIONS]
+    sdcadm experimental reboot-plan pause [OPTIONS]
 
 `-h, --help`
     Show this help.
@@ -1145,9 +1151,9 @@ Pause execution of the currently running reboot plan.
 
 ### sdcadm experimental reboot-plan \[options\] cancel
 
-Cancel the current reboot plan.
+Cancel the given reboot plan.
 
-    sdcadm experimental reboot-plan cancel [OPTIONS]
+    sdcadm experimental reboot-plan cancel PLAN_UUID [OPTIONS]
 
 `-h, --help`
     Show this help.
