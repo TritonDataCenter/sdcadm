@@ -18,6 +18,7 @@ Here-in random TODOs and scratchpad notes for sdcadm.
 - Provide an option to reboot only empty CNs
 - Disallow resume a stopped reboot-plan if there are still running reboots from a previous
 step (will prevent reboot two core servers in parallel).
+- Add an option to exclude headnode (`--exclude-headnode`) from a reboot plan
 
 # now
 

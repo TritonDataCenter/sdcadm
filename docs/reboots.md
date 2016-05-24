@@ -32,6 +32,7 @@ the "update plan" used by `sdcadm` to drive updates of SDC components.
 This __"reboot plan"__ object has the following properties:
 
 - `uuid`: Unique identifier for the reboot plan.
+- `name`: Uninterpreted plan name or description.
 - `state` of the reboot plan. One of `created`, `stopped`, `running`,
   `canceled`, `complete`
 - `concurrency`: maximum number of servers that can be offline at once
@@ -40,20 +41,22 @@ This __"reboot plan"__ object has the following properties:
 Each one of these reboot elements can have, in turn, the following properties:
 
 - `server_uuid`: UUID of the server to be rebooted
-- `server_hostname`: hostname of the server
 - `boot_platform`: target platform version for the server to be rebooted into
 - `current_platform`: the platform version of the server when the reboot plan
   is created.
-- `headnode`: Boolean value. `true` only for a headnode.
 - `job_uuid`: UUID of the reboot job, once it has been created through CNAPI
-- `started_at`: ISO 8601 timestamp. When the reboot job has started.
-- `finished_at`: ISO 8601 timestamp. When the reboot job finished, or
-  technically speaking, when the reboot command was sent to the server.
-- `operational_at`: ISO 8601 timestamp. When the server reboot has been
-  completed and all the core services are up and running in the Global Zone
-  (GZ) and any non-GZ.
-- `canceled_at`: ISO 8601 timestamp. When the reboot failed or was canceled
-  by the user.
+- `state`: Current reboot state, one of `created`, `initiated`, `rebooting`,
+  `complete`, `canceled`, `failed`.
+- `events`: Array of (free form) reboot events like
+
+        [{
+            type: 'reboot_job_started',
+            time: ISO 8601 timestamp
+        },{
+            type: 'reboot_job_finished',
+            time: ISO 8601 timestamp
+        }
+
 
 An excerpt of the sdcadm man page including all the `reboot-plan`
 [subcommands](#sdcadm-reboot-plan-man-page-excerpt) can be found at the bottom
@@ -92,9 +95,10 @@ following are the options for this command:
 
 Here are more details about some of these options:
 
-- `rate`: This is the maximum number of servers included on the plan which can
-  be offline simultaneously. In other words, the reboots of the plan's servers
-  take place in _batches_, each one of them including up to `rate` servers.
+- `concurrency`: This is the maximum number of servers included on the plan
+  which can be offline simultaneously. In other words, the reboots of the
+  plan's servers take place in _batches_, each one of them including up to
+  `concurrency` servers.
   However, there is an exception to this rule: __if the plan include any core
   servers, these servers will be rebooted before the others, one at a time__.
   The rationale for this arrangement is that the reboot plan is usually executed
@@ -133,7 +137,7 @@ in the `reboot-plan create` or `reboot-plan run` subcommands.
 
 Sample output for `reboot-plan run --watch`:
 
-        [root@headnode (coal) ~]# sdcadm experimental reboot-plan run --watch
+        [root@headnode (coal) ~]# sdcadm experimental reboot-plan run $UUID --watch
         Plan execution has been started
         - Rebooted: 0 servers, pending to reboot: 1 servers
         ...servers, 5 max concurrency): [                                                          ]   0%        0
@@ -147,7 +151,7 @@ Sample output for `reboot-plan run --watch`:
 
 Without `--watch`, `reboot-plan run` will not wait for reboot completion:
 
-        [root@headnode (coal) ~]# sdcadm experimental reboot-plan run
+        [root@headnode (coal) ~]# sdcadm experimental reboot-plan run $UUID
         Plan execution has been started
         [root@headnode (coal) ~]#
 
@@ -161,7 +165,7 @@ Therefore, any attempt to abort a `reboot-plan` execution using `CTRL + C`
 cancel the execution of a reboot plan.
 
 If the execution of a reboot plan needs to be interrupted or completely aborted,
-`reboot-plan stop` or `reboot-plan cancel` subcommands should be used instead.
+`reboot-plan pause` or `reboot-plan cancel` subcommands should be used instead.
 
 Cancelation of a reboot plan means that the plan will finish its execution as
 soon as the reboots in progress finish and no more pending reboots will be
@@ -175,7 +179,7 @@ will be aborted in the middle of the reboot job or while checking for services
 availability after system reboot.
 
 In other words, once we've sent CNAPI the order to reboot some servers - as many
-as we specify through the `rate` option - we'll wait for the successful or
+as we specify through the `concurrency` option - we'll wait for the successful or
 failed completion of these servers, despite any interruption attempts. Of course,
 once these _"in-progress reboots"_ are finished, the plan will not attempt to
 reboot any more servers.
