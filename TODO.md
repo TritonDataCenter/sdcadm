@@ -12,9 +12,6 @@ Here-in random TODOs and scratchpad notes for sdcadm.
 
 # reboot-plan pending
 
-- Add IMGAPI like error messages for reboots.
-- Report events per reboot instead of timestamp.
-- Add "POST /servers/:uuid/reboot" failed error (reboot for the same server on a different plan)
 - Provide an option to reboot only empty CNs
 - Disallow resume a stopped reboot-plan if there are still running reboots from a previous
 step (will prevent reboot two core servers in parallel).
