@@ -10,6 +10,12 @@
 
 # sdcadm Changelog
 
+## 1.11.2
+
+- TOOLS-1439: removed hostvolumes from `update-docker`. Drop `--servers` option
+- TOOLS-1440: remove hostvolume service and hostvolume instances as part of
+  `update-other`.
+
 ## 1.11.1
 
 - TOOLS-1380: 'sdcadm insts' (and other code paths) crash on gather dockerlogger instance info
