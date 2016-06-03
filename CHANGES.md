@@ -13,8 +13,12 @@
 ## 1.11.2
 
 - TOOLS-1439: removed hostvolumes from `update-docker`. Drop `--servers` option
-- TOOLS-1440: remove hostvolume service and hostvolume instances as part of
+- TOOLS-1440: removed hostvolume service and hostvolume instances as part of
   `update-other`.
+- TOOLS-1441: removed nat setup from `update-docker` (Already into
+  `post-setup fabrics`).
+- TOOLS-1438: replaced `sdcadm experimental update-docker` with `sdcadm post-setup docker`
+  and `sdcadm update docker`. Emit deprecation warning when using the former update cmd.
 
 ## 1.11.1
 

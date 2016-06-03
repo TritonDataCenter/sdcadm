@@ -11,7 +11,7 @@ apisections: Updating SDC components, Update of Servers' Platform
 -->
 
 <!--
-    Copyright (c) 2015, Joyent, Inc.
+    Copyright (c) 2016, Joyent, Inc.
 -->
 
 
@@ -47,38 +47,34 @@ If there is a new shar, the grep will find nothing, and you'll need to run the f
 
     sdcadm experimental update-agents --latest --all --yes
 
-### Step 4: Update docker and hostvolume zones
-
-    sdcadm experimental update-docker --servers=cns,headnode
-
-### Step 5: Update other and gz-tools
+### Step 4: Update other and gz-tools
 
     sdcadm experimental update-other
     sdcadm experimental update-gz-tools --latest
 
-### Step 6: Update all other SDC zones
+### Step 5: Update all other SDC zones
 
     sdcadm up -y --all --force-data-path
 
-### Step 7: (Optional) Update platforms
+### Step 6: (Optional) Update platforms
 
 If you are going to update the platform in this maint, this is where I usually do it.
 Details described in the next section. Otherwise, continue with steps 8-10.
 
-### Step 8: Do a healthcheck
+### Step 7: Do a healthcheck
 
     sdc-healthcheck
     sdcadm health
 
 ensure everything's `online` before taking the DC out of maint.
 
-### Step 9: Take DC out of maint
+### Step 8: Take DC out of maint
 
 
     sdcadm dc-maint stop
 
 
-### Step 10: Test!
+### Step 9: Test!
 
 It's good to at minimum do a:
 

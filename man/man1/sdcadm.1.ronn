@@ -470,6 +470,11 @@ fabrics and, if docker is setup, update docker config to use fabrics.
     Update fabrics configuration with the provided one.
 
 
+### sdcadm post-setup docker
+
+Create the docker service and the docker instance on the headnode.
+
+
 ### sdcadm post-setup dev-headnode-prov
 
 Make the headnode provisionable, for development and testing.
@@ -981,17 +986,6 @@ The eventual goal is to integrate all of this into "sdcadm update".
 `-h, --help`
     Show this help message and exit.
 
-### sdcadm experimental update-docker \[options\]
-
-Add/update the docker service.
-
-
-`-h, --help`
-    Show this help message and exit.
-
-`-f, --force`
-    Allow update to proceed even if already at latest image.
-
 ### sdcadm experimental install-docker-cert -k key -c cert
 
 Installs a custom TLS certificate to be used by sdc-docker.
@@ -1009,4 +1003,4 @@ Installs a custom TLS certificate to be used by sdc-docker.
 
 ## COPYRIGHT
 
-sdcadm Copyright (c) 2015 Joyent Inc., All rights reserved.
+sdcadm Copyright (c) 2016 Joyent Inc., All rights reserved.
