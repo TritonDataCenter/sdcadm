@@ -23,6 +23,7 @@
   Cleanup legacy CN UUIDs being used by dockerlogger instances before.
   Add server, hostname and server_ip to dockerlogger instance list (same than for other agents).
   Fixed typo which was preventing cabase and cainstsvc to be updated through `sdcadm experimental update`.
+- TOOLS-1365: `sdcadm platform available` provides feedback when latest platform is already installed
 
 ## 1.11.1
 
