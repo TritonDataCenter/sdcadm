@@ -19,11 +19,13 @@
   `post-setup fabrics`).
 - TOOLS-1438: replaced `sdcadm experimental update-docker` with `sdcadm post-setup docker`
   and `sdcadm update docker`. Emit deprecation warning when using the former update cmd.
+  Setup `dockerlogger` as part of `sdcadm post-setup docker`.
 - TOOLS-1381: Use dockerlogger instances created during dockerlogger setup.
   Cleanup legacy CN UUIDs being used by dockerlogger instances before.
   Add server, hostname and server_ip to dockerlogger instance list (same than for other agents).
   Fixed typo which was preventing cabase and cainstsvc to be updated through `sdcadm experimental update`.
 - TOOLS-1365: `sdcadm platform available` provides feedback when latest platform is already installed
+- TOOLS-1258: better error feedback for `common-external-nics`
 
 ## 1.11.1
 
