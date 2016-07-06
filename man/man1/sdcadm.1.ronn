@@ -207,11 +207,6 @@ Update SDC services and instances.
     image is unknown or it does not fulfil the
     minimum image requirements for updates.
 
-`--ufds-backup-timeout=T`
-    Timeout (in seconds) for the creation of the
-    backup of all the UFDS data during ufds updates.
-    Default: 600secs.
-
 `-C, --channel=ARG`
     Use the given channel to fetch the image(s), even if
     it is not the default one.
