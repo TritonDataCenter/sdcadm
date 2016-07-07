@@ -27,6 +27,23 @@ The document is divided in two parts:
 
 ## Section 1: Updating SDC components
 
+### Step 0: available updates
+
+Can get information about the available updates for the system using:
+
+    sdcadm avail
+    sdcadm platform avail
+
+The first command `sdcadm avail` will include available updates for every
+SDC component using VMs and `sdcadm` itself. The second command `sdcadm
+platform avail` will do something similar but, on this case, will list the
+available Platform Images to be installed.
+
+There's a new version of `sdcadm avail` being tested right now which adds
+available update images for the different agents:
+
+    sdcadm experimental avail
+
 ### Step 1: self-update sdcadm
 
     sdcadm self-update --latest
@@ -36,6 +53,13 @@ The document is divided in two parts:
 NOTE: after performing this step, users of CloudAPI and Docker will not be able to perform write actions until the DC is taken out of maintenance.
 
     sdcadm dc-maint start
+
+Options `--message` and `--eta` are worth mentioning when starting a maintenance period.
+The provided `--message` would be used into HTTP requests error messages until the DC is
+restored to full operation, while the given `--eta` will be used in Retry-After HTTP
+headers. For example:
+
+    sdcadm dc-maint start --message='Daily Maintenance Time' --eta=2016-07-07T18:30:00
 
 ### Step 3: Update agents
 
@@ -52,9 +76,37 @@ If there is a new shar, the grep will find nothing, and you'll need to run the f
     sdcadm experimental update-other
     sdcadm experimental update-gz-tools --latest
 
-### Step 5: Update all other SDC zones
+Note that there is no need to run `update-other` if we haven't updated `sdcadm` itself.
+
+### Step 5: Update all other SDC VMs
+
+It's possible to upgrade of every SDC service running in VMS at once by running:
 
     sdcadm up -y --all --force-data-path
+
+
+It's also known that the update of some components may experience issues which
+may cause the system upgrade to fail in the middle of the process, leaving some
+services untouched or into an unexpcted state as a result of the update failures.
+
+An alternate approach to upgrading SDC services _all at once_ is to postpone the
+update of some key services until everything else has been updated. These key
+services are, in turn: `SAPI`, `moray`, `binder` and `manatee`.
+
+The way to proceed consist on the following commands:
+
+    sdcadm up -y --all --force-data-path -x sapi -x moray -x binder -x manatee
+
+    # run `sdcadm health` between commands to make sure we can move forward
+
+    sdcadm up sapi -y
+
+    sdcadm up moray -y
+
+    sdcadm up binder -y
+
+    sdcadm up manatee -y
+
 
 ### Step 6: (Optional) Update platforms
 
