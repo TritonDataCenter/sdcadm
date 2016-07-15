@@ -18,15 +18,22 @@ var assert = require('assert-plus');
 var CURRENT_GZ_TOOLS_VERSION = null;
 var LATEST_GZ_TOOLS_UUID = null;
 
-test('setup', function (t) {
+function getGzToolsVersion(t, cb) {
     fs.readFile('/opt/smartdc/etc/gz-tools.image', {
         encoding: 'utf8'
     }, function (err, data) {
         t.ifError(err);
         t.ok(data);
+        cb(data.trim());
+    });
+}
+
+
+test('setup', function (t) {
+    getGzToolsVersion(t, function (data) {
         CURRENT_GZ_TOOLS_VERSION = data;
-        var updatesCmd = '/opt/smartdc/bin/updates-imgadm list name=gz-tools ' +
-            '--latest -o uuid -H';
+        var updatesCmd = '/opt/smartdc/bin/updates-imgadm list ' +
+            'name=gz-tools --latest -o uuid -H';
         exec(updatesCmd, function (err2, stdout, stderr) {
             t.ifError(err2);
             LATEST_GZ_TOOLS_UUID = stdout.trim();
@@ -44,7 +51,10 @@ test('update-gz-tools --latest --just-download', function (t) {
         t.ifError(err);
         console.log(stdout);
         t.equal(stderr, '');
-        t.end();
+        getGzToolsVersion(t, function (data) {
+            t.equal(CURRENT_GZ_TOOLS_VERSION, data);
+            t.end();
+        });
     });
 });
 
@@ -69,7 +79,10 @@ test('update-gz-tools --latest --concurrency=3', function (t) {
         t.ifError(err);
         console.log(stdout);
         t.equal(stderr, '');
-        t.end();
+        getGzToolsVersion(t, function (data) {
+            t.equal(LATEST_GZ_TOOLS_UUID, data);
+            t.end();
+        });
     });
 });
 
@@ -83,9 +96,24 @@ test('update-gz-tools --latest w/o --force-reinstall', function (t) {
     });
 });
 
+test('update-gz-tools /path/to/installer', function (t) {
+    var cmd = util.format('sdcadm experimental update-gz-tools ' +
+        '/var/tmp/backup-gz-tools-%s.tgz ' +
+        '--force-reinstall', LATEST_GZ_TOOLS_UUID);
+    exec(cmd, function (err, stdout, stderr) {
+        t.ifError(err);
+        console.log(stdout);
+        t.equal(stderr, '');
+        t.end();
+    });
+});
+
+
 // The final test case must consist on leaving the system running exactly
 // the same gz-tools version it was before we began running these tests:
-test('update-gz-tools IMAGE-UUID', function (t) {
+test('update-gz-tools IMAGE-UUID', {
+    skip: CURRENT_GZ_TOOLS_VERSION === LATEST_GZ_TOOLS_UUID
+}, function (t) {
     var cmd = 'sdcadm experimental update-gz-tools ' +
         '--force-reinstall ' +
         CURRENT_GZ_TOOLS_VERSION;
@@ -93,7 +121,10 @@ test('update-gz-tools IMAGE-UUID', function (t) {
         t.ifError(err);
         console.log(stdout);
         t.equal(stderr, '');
-        t.end();
+        getGzToolsVersion(t, function (data) {
+            t.equal(CURRENT_GZ_TOOLS_VERSION, data);
+            t.end();
+        });
     });
 });
 
