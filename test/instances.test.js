@@ -5,12 +5,14 @@
  */
 
 /*
- * Copyright (c) 2015, Joyent, Inc.
+ * Copyright 2016 Joyent, Inc.
  */
 
 
 var test = require('tape').test;
 var exec = require('child_process').exec;
+var util = require('util');
+var format = util.format;
 var common = require('./common');
 
 
@@ -98,7 +100,6 @@ function checkInstancesDetails(t, instancesDetails) {
 
 
 // ---
-
 
 test('sdcadm instances --help', function (t) {
     checkHelp(t, 'instances');
@@ -223,5 +224,52 @@ test('sdcadm instances -s', function (t) {
         t.deepEqual(vms, sortedVms);
 
         t.end();
+    });
+});
+
+
+test('dockerlogger insts of removed servers', function (t) {
+    var svcCmd = 'sdc-sapi /services?name=dockerlogger|json -H';
+    exec(svcCmd, function (err, stdout, stderr) {
+        t.ifError(err);
+        t.equal(stderr, '');
+        var services = JSON.parse(stdout.trim());
+        t.ok(Array.isArray(services));
+        t.ok(services[0].uuid);
+
+        var instCmd = 'sdc-sapi /instances -X POST -d \'{' +
+            '"uuid": "f189fd84-740d-4558-b2ea-36c62570e383",' +
+            format('"service_uuid": "%s",', services[0].uuid) +
+            '"params": {' +
+            '    "server_uuid": "44454c4c-4400-1057-804e-b5c04f383432"' +
+            '},' +
+            '"type": "agent"' +
+        '}\'';
+
+        exec(instCmd, function (err2, stdout2, stderr2) {
+            t.ifError(err2);
+            t.equal(stderr2, '');
+
+            // TOOLS-1492: Orphan server instances should not throw exceptions
+            // and sdcadm should just ignore them:
+            var listCmd = 'sdcadm insts svc=dockerlogger -j';
+            exec(listCmd, function (err3, stdout3, stderr3) {
+                t.ifError(err3);
+                t.equal(stderr3, '');
+
+                var listOfInsts = JSON.parse(stdout.trim());
+                t.ok(Array.isArray(listOfInsts));
+
+                var delCmd = 'sdc-sapi ' +
+                    '/instances/f189fd84-740d-4558-b2ea-36c62570e383 ' +
+                    '-X DELETE';
+                exec(delCmd, function (err4, stdout4, stderr4) {
+                    t.ifError(err4);
+                    t.equal(stderr4, '');
+
+                    t.end();
+                });
+            });
+        });
     });
 });
