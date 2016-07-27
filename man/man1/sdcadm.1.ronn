@@ -982,6 +982,9 @@ The eventual goal is to integrate all of this into "sdcadm update".
 `--force-reinstall`
     Force reinstall of the current gz-tools image in use.
 
+`-C NAME, --channel=NAME`
+    Use the given channel to fetch the image, even if it is not the default one.
+
 ### sdcadm experimental add-new-agent-svcs
 
 Temporary grabbag for installing the SDC global zone new agents.

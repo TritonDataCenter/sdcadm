@@ -10,26 +10,69 @@
 
 # sdcadm Changelog
 
+## 1.12.0
+
+- TOOLS-1499: add -C channel command line option to sdcadm experimental
+  update-gz-tools.
+
 ## 1.11.2
 
-- TOOLS-1439: removed hostvolumes from `update-docker`. Drop `--servers` option
+- TOOLS-1429 sdcadm update-gz-tools /path/to/file does not work.
+- TOOLS-1336 sdcadm should also update USB keys.
+- TOOLS-1462: Modify update.md to reflect current update process reality.
+- TOOLS-1434: Clearly explain SAPI update impediments and how to proceed.
+- TOOLS-1272: Fix incorrect InternalError invocation.
+- TOOLS-1414: `sdcadm self-update` reports channel in use.
+- TOOLS-1464/TOOLS-1467: Fix regression.
+- TOOLS-1464/TOOLS-1467: `--ufds-backup-timeout` opt for `sdcadm up`.
+- TOOLS-1425: Added `-C|--channel` option to `sdcadm experimental
+  update-agents`.
+- TOOLS-1464: Added `--ufds-backup-timeout` option to `sdcadm up` (Set default
+  to 10 mins).
+- TOOLS-1466: `sdcadm create` validates provided server before printing summary.
+- TOOLS-1465: When updating individual instances, check if those are part of HA
+  setup.
+- TOOLS-1272/TOOLS-1019: Use `sdc-usbkey` when avail. Do not mount/unmount
+  usbkey when already mounted.
+- TOOLS-1405: Avoid errors emitted by ur client raise TypeError when trying to
+  log/print them.
+- TOOLS-1405: Prevent history raising "TypeError: Converting circular structure
+  to JSON".
+- TOOLS-1046: Make clear which API causes errors during `post-setup cloudapi`.
+- TOOLS-1384: Check for Ur availability when updating manatee instances not on
+  the HN.
+- TOOLS-1263/TOOLS-1046: Retry up to 5 times `platform assign|set-default` and
+  `post-setup cloudapi` on connection or SDCClient errors.
+- TOOLS-1454: `sdcadm health` "quiet" and "json" options should not be mutually
+  exclusive (Fixes GH-19).
+- TOOLS-1138/TOOLS-1263: Provided detailed information regarding APIs failing
+  during booter caches update after platform assignment.
+- TOOLS-1138/TOOLS-1263: Avoid false positive updating booter caches after
+  platform assignment.
+- TOOLS-1430: Added minimal validation of the presence of required files for
+  update-gz-tools tarball.
+- TOOLS-1439: removed hostvolumes from `update-docker`. Drop `--servers` option.
 - TOOLS-1440: removed hostvolume service and hostvolume instances as part of
   `update-other`.
 - TOOLS-1441: removed nat setup from `update-docker` (Already into
   `post-setup fabrics`).
-- TOOLS-1438: replaced `sdcadm experimental update-docker` with `sdcadm post-setup docker`
-  and `sdcadm update docker`. Emit deprecation warning when using the former update cmd.
-  Setup `dockerlogger` as part of `sdcadm post-setup docker`.
+- TOOLS-1438: replaced `sdcadm experimental update-docker` with `sdcadm
+  post-setup docker` and `sdcadm update docker`. Emit deprecation warning when
+  using the former update cmd. Setup `dockerlogger` as part of `sdcadm
+  post-setup docker`.
 - TOOLS-1381: Use dockerlogger instances created during dockerlogger setup.
-  Cleanup legacy CN UUIDs being used by dockerlogger instances before.
-  Add server, hostname and server_ip to dockerlogger instance list (same than for other agents).
-  Fixed typo which was preventing cabase and cainstsvc to be updated through `sdcadm experimental update`.
-- TOOLS-1365: `sdcadm platform available` provides feedback when latest platform is already installed
+  Cleanup legacy CN UUIDs being used by dockerlogger instances before. Add
+  server, hostname and server_ip to dockerlogger instance list (same than for
+  other agents). Fixed typo which was preventing cabase and cainstsvc to be
+  updated through `sdcadm experimental update`.
+- TOOLS-1365: `sdcadm platform available` provides feedback when latest platform
+  is already installed
 - TOOLS-1258: better error feedback for `common-external-nics`
 
 ## 1.11.1
 
-- TOOLS-1380: 'sdcadm insts' (and other code paths) crash on gather dockerlogger instance info
+- TOOLS-1380: 'sdcadm insts' (and other code paths) crash on gather dockerlogger
+  instance info
 
 ## 1.11.0
 
@@ -398,8 +441,9 @@ second manatee VM for HA.
 
 ## 1.1.0
 
-- First stab at `sdcadm update SERVICE`. Currently limited to most of the stateless
-  services (e.g. vmapi, cnapi) with just a single instance, and only on the headnode.
+- First stab at `sdcadm update SERVICE`. Currently limited to most of the
+  stateless services (e.g. vmapi, cnapi) with just a single instance, and only
+  on the headnode.
 
 ## 1.0.4
 
