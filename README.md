@@ -5,21 +5,22 @@
 -->
 
 <!--
-    Copyright (c) 2015, Joyent, Inc.
+    Copyright (c) 2016, Joyent, Inc.
 -->
 
 # sdcadm
 
-This repository is part of the Joyent SmartDataCenter project (SDC).  For
-contribution guidelines, issues, and general documentation, visit the main
-[SDC](http://github.com/joyent/sdc) project page.
+This repository is part of the Joyent Triton project. See the [contribution
+guidelines](https://github.com/joyent/triton/blob/master/CONTRIBUTING.md) --
+*Triton does not use GitHub PRs* -- and general documentation at the main
+[Triton project](https://github.com/joyent/triton) page.
 
-`sdcadm` is a tool that lives in the SmartDataCenter headnode's GZ, for
-handling SDC post-setup (i.e. setup steps after initial headnode setup),
-upgrades, listing of services and instances, health checks, and other SDC setup
+`sdcadm` is a tool that lives in the Triton headnode's GZ, for
+handling post-setup (i.e. setup steps after initial headnode setup),
+upgrades, listing of services and instances, health checks, and other setup
 duties.
 
-Please see docs/index.md for more details.
+Please see the [index](./docs/index.md) for more details.
 
 
 # Current status
