@@ -44,6 +44,7 @@ test('setup', function (t) {
     });
 });
 
+
 test('update-gz-tools --latest --just-download', function (t) {
     var cmd = 'sdcadm experimental update-gz-tools --latest ' +
         '--just-download --force-reinstall';
@@ -111,9 +112,11 @@ test('update-gz-tools /path/to/installer', function (t) {
 
 // The final test case must consist on leaving the system running exactly
 // the same gz-tools version it was before we began running these tests:
-test('update-gz-tools IMAGE-UUID', {
-    skip: CURRENT_GZ_TOOLS_VERSION === LATEST_GZ_TOOLS_UUID
-}, function (t) {
+test('update-gz-tools IMAGE-UUID', function (t) {
+    if (CURRENT_GZ_TOOLS_VERSION === LATEST_GZ_TOOLS_UUID) {
+        t.end();
+        return;
+    }
     var cmd = 'sdcadm experimental update-gz-tools ' +
         '--force-reinstall ' +
         CURRENT_GZ_TOOLS_VERSION;

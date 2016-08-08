@@ -5,31 +5,146 @@
  */
 
 /*
- * Copyright (c) 2015, Joyent, Inc.
+ * Copyright 2016, Joyent, Inc.
  */
 
 
 var test = require('tape').test;
+var vasync = require('vasync');
+
 var exec = require('child_process').exec;
 var readdirSync = require('fs').readdirSync;
+var util = require('util');
+
+var common = require('./common');
+
+var AVAILABLE_VERSION;
+var ORIGINAL_VERSION;
+
+var PAPI_SVC_UUID;
+var PAPI_INSTANCE_UUID;
+
+var SUCCESSFULLY_UPDATED = false;
 
 var PLAN_PATH = ''; // filled in by setup
 
+function getAvailableImage(cb) {
+    exec('sdcadm avail papi --json', function (err, stdout, stderr) {
+        if (err) {
+            cb(err);
+            return;
+        }
 
-// we do this to ensure we have a plan to work with
-test('setup', function (t) {
-    var cmd = 'sdcadm update papi --force-same-image --yes';
+        var jsonDetails = common.parseJsonOut(stdout);
+        if (!jsonDetails.length) {
+            cb(null);
+            return;
+        }
 
+        AVAILABLE_VERSION = jsonDetails[0].image;
+        cb(null);
+    });
+}
+
+function getPapiSvcUUID(cb) {
+    var cmd = 'sdc-sapi /services?name=papi|json -H';
     exec(cmd, function (err, stdout, stderr) {
-        t.ifError(err);
+        if (err) {
+            cb(err);
+            return;
+        }
 
-        t.ok(stdout.match('Updated successfully'));
-        t.equal(stderr, '');
+        PAPI_SVC_UUID = common.parseJsonOut(stdout)[0].uuid;
+        cb(null);
+    });
+}
 
-        var update = readdirSync('/var/sdcadm/updates').pop();
-        t.ok(update);
-        PLAN_PATH = '/var/sdcadm/updates/' + update + '/plan.json';
 
+function getPapiInstanceUUID(cb) {
+    var cmd = util.format('sdc-sapi /instances?service_uuid=%s | json -H',
+            PAPI_SVC_UUID);
+    exec(cmd, function (err, stdout, stderr) {
+        if (err) {
+            cb(err);
+            return;
+        }
+
+        var jsonDetails = common.parseJsonOut(stdout);
+        PAPI_INSTANCE_UUID = jsonDetails[0].uuid;
+        cb(null);
+    });
+}
+
+
+function getPapiImageUUID(cb) {
+    var cmd = util.format('sdc-vmapi /vms/%s | json -H',
+            PAPI_INSTANCE_UUID);
+    exec(cmd, function (err, stdout, stderr) {
+        if (err) {
+            cb(err);
+            return;
+        }
+
+        var jsonDetails = common.parseJsonOut(stdout);
+        cb(null, jsonDetails.image_uuid);
+    });
+}
+
+
+test('setup', function (t) {
+    vasync.pipeline({
+        funcs: [
+            function (_, next) {
+                getAvailableImage(function (err, availImg) {
+                    if (err) {
+                        next(err);
+                        return;
+                    }
+                    next();
+                });
+            },
+            function (_, next) {
+                getPapiSvcUUID(next);
+            },
+            function (_, next) {
+                getPapiInstanceUUID(next);
+            },
+            function (_, next) {
+                getPapiImageUUID(function (err, uuid) {
+                    if (err) {
+                        next(err);
+                        return;
+                    }
+
+                    ORIGINAL_VERSION = uuid;
+                    next();
+                });
+            },
+            function (_, next) {
+                if (!AVAILABLE_VERSION) {
+                    t.comment('No available image, skipping update');
+                    next();
+                    return;
+                }
+                var cmd = 'sdcadm update papi --yes';
+
+                exec(cmd, function (err, stdout, stderr) {
+                    t.ifError(err);
+
+                    t.ok(stdout.match('Updated successfully'));
+                    t.equal(stderr, '');
+
+                    var update = readdirSync('/var/sdcadm/updates').pop();
+                    t.ok(update);
+                    PLAN_PATH = '/var/sdcadm/updates/' + update + '/plan.json';
+                    SUCCESSFULLY_UPDATED = true;
+                    next();
+                });
+
+            }
+        ]
+    }, function (resErr) {
+        t.ifError(resErr);
         t.end();
     });
 });
@@ -60,6 +175,11 @@ test('sdcadm rollback', function (t) {
 
 
 test('sdcadm rollback -f', function (t) {
+    if (!SUCCESSFULLY_UPDATED) {
+        t.comment('Update did not happened. Skipping rollback');
+        t.end();
+        return;
+    }
     var cmd = 'sdcadm rollback -f ' + PLAN_PATH;
 
     exec(cmd, function (err, stdout, stderr) {
@@ -74,6 +194,11 @@ test('sdcadm rollback -f', function (t) {
 
 
 test('sdcadm rollback --dry-run -f', function (t) {
+    if (!SUCCESSFULLY_UPDATED) {
+        t.comment('Update did not happened. Skipping rollback');
+        t.end();
+        return;
+    }
     var cmd = 'sdcadm rollback --dry-run -f ' + PLAN_PATH;
 
     exec(cmd, function (err, stdout, stderr) {
@@ -88,6 +213,11 @@ test('sdcadm rollback --dry-run -f', function (t) {
 
 
 test('sdcadm rollback --dry-run --force --yes -f', function (t) {
+    if (!SUCCESSFULLY_UPDATED) {
+        t.comment('Update did not happened. Skipping rollback');
+        t.end();
+        return;
+    }
     var cmd = 'sdcadm rollback --dry-run --yes --force -f ' + PLAN_PATH;
 
     exec(cmd, function (err, stdout, stderr) {
@@ -103,8 +233,12 @@ test('sdcadm rollback --dry-run --force --yes -f', function (t) {
 });
 
 
-// TODO: check the vm was properly rolled back (somehow)
 test('sdcadm rollback --force --yes -f', function (t) {
+    if (!SUCCESSFULLY_UPDATED) {
+        t.comment('Update did not happened. Skipping rollback');
+        t.end();
+        return;
+    }
     var cmd = 'sdcadm rollback --force --yes -f ' + PLAN_PATH;
 
     exec(cmd, function (err, stdout, stderr) {
@@ -124,7 +258,26 @@ test('sdcadm rollback --force --yes -f', function (t) {
                 }
             });
 
-            t.end();
+            getPapiImageUUID(function (err3, uuid) {
+                t.ifError(err3);
+                t.equal(ORIGINAL_VERSION, uuid);
+
+                t.end();
+
+            });
         });
+    });
+});
+
+
+test('teardown', function (t) {
+    var cmd = util.format('sdc-imgadm delete %s', AVAILABLE_VERSION);
+    exec(cmd, function (err, stdout, stderr) {
+        t.ifError(err, 'Execution error');
+        t.equal(stderr, '', 'Empty stderr');
+
+        var str = util.format('Deleted image %s', AVAILABLE_VERSION);
+        t.notEqual(stdout.indexOf(str), -1, 'check image deleted');
+        t.end();
     });
 });

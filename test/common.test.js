@@ -9,7 +9,7 @@
  */
 
 var test = require('tape').test;
-var common = require('/opt/smartdc/sdcadm/lib/common.js');
+var common = require('../lib/common.js');
 
 test('safeCycles', function (t) {
     var a = {

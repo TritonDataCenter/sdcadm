@@ -10,19 +10,18 @@
 
 
 var test = require('tape').test;
+var vasync = require('vasync');
+
 var exec = require('child_process').exec;
 var util = require('util');
 
 
 var HEADNODE_UUID = '';
-var NAPI_UUID = '';
-var NAPI_UUID_2 = '';
-var NUM_NAPI = 0;
+var NUM_INSTS = 0;
 
-
-function getNumNapi(cb) {
-    // space before napi is intentional
-    exec('vmadm list | grep " napi"', function (err, stdout, stderr) {
+function getNumInsts(cb) {
+    // JSSTYLED
+    exec('vmadm lookup alias=~"^amonredis\d$"', function (err, stdout, stderr) {
         if (err) {
             return cb(err);
         }
@@ -34,7 +33,7 @@ function getNumNapi(cb) {
 
 
 function getLatestImgAvail(cb) {
-    var cmd = 'updates-imgadm list name=napi --latest --json';
+    var cmd = 'updates-imgadm list name=amonredis --latest --json';
     exec(cmd, function (err, stdout, stderr) {
         if (err) {
             return cb(err);
@@ -53,10 +52,10 @@ test('setup', function (t) {
         t.equal(stderr, '', 'Empty stderr');
         HEADNODE_UUID = stdout.trim();
 
-        getNumNapi(function (err2, numNapi) {
+        getNumInsts(function (err2, numInsts) {
             t.ifError(err2, 'vmadm list error');
-            t.ok(numNapi >= 1, 'at least one napi instance exists');
-            NUM_NAPI = numNapi;
+            t.ok(numInsts >= 1, 'at least one amonredis instance exists');
+            NUM_INSTS = numInsts;
 
             t.end();
         });
@@ -77,8 +76,8 @@ test('sdcadm create --help', function (t) {
 
 
 // Mandatory --server arg:
-test('sdcadm create napi', function (t) {
-    exec('sdcadm create napi', function (err, stdout, stderr) {
+test('sdcadm create amonredis', function (t) {
+    exec('sdcadm create amonredis', function (err, stdout, stderr) {
         t.ok(err, 'Execution error');
 
         t.notEqual(stderr.indexOf('Must specify server uuid'), -1);
@@ -89,8 +88,8 @@ test('sdcadm create napi', function (t) {
 
 
 // Mandatory --skip-ha-check for non HA service:
-test('sdcadm create napi --dry-run --server', function (t) {
-    var cmd = 'sdcadm create napi --dry-run --server=' + HEADNODE_UUID;
+test('sdcadm create amonredis --dry-run --server', function (t) {
+    var cmd = 'sdcadm create amonredis --dry-run --server=' + HEADNODE_UUID;
 
     exec(cmd, function (err, stdout, stderr) {
         t.ok(err, 'Execution error');
@@ -103,8 +102,8 @@ test('sdcadm create napi --dry-run --server', function (t) {
 
 
 // Test --dry-run:
-test('sdcadm create napi --dry-run --skip-ha-check -y --server', function (t) {
-    var cmd = 'sdcadm create napi --dry-run --skip-ha-check --yes --server=' +
+test('sdcadm create amonredis --dry-run --skip-ha-check -y --s', function (t) {
+    var cmd = 'sdcadm create amonredis --dry-run --skip-ha-check --yes -s ' +
               HEADNODE_UUID;
 
     exec(cmd, function (err, stdout, stderr) {
@@ -113,9 +112,9 @@ test('sdcadm create napi --dry-run --skip-ha-check -y --server', function (t) {
         t.notEqual(stdout.indexOf('Created successfully'), -1);
         t.equal(stderr, '', 'Empty stderr');
 
-        getNumNapi(function (err2, numNapi) {
+        getNumInsts(function (err2, numInsts) {
             t.ifError(err2);
-            t.equal(numNapi, NUM_NAPI);
+            t.equal(numInsts, NUM_INSTS);
             t.end();
         });
     });
@@ -123,68 +122,96 @@ test('sdcadm create napi --dry-run --skip-ha-check -y --server', function (t) {
 
 
 // Real create test:
-test('sdcadm create napi --skip-ha-check --yes --server', function (t) {
-    var cmd = 'sdcadm create napi --skip-ha-check --yes --server=' +
-              HEADNODE_UUID;
+test('sdcadm create amonredis --skip-ha-check --yes --server', function (t) {
 
-    exec(cmd, function (err, stdout, stderr) {
-        t.ifError(err, 'Execution error');
-        t.equal(stderr, '', 'Empty stderr');
+    vasync.pipeline({
+        arg: {},
+        funcs: [
+            function createAmonRedis(ctx, next) {
+                var cmd = 'sdcadm create amonredis --skip-ha-check ' +
+                    '--yes --server=' + HEADNODE_UUID;
+                exec(cmd, function (err, stdout, stderr) {
+                    t.ifError(err, 'Execution error');
+                    t.equal(stderr, '', 'Empty stderr');
+                    console.log(stdout);
+                    t.notEqual(stdout.indexOf('Created successfully'), -1);
+                    ctx.stdout = stdout;
+                    next();
+                });
+            },
+            function countAmonRedisInsts(ctx, next) {
+                getNumInsts(function (err2, numInsts) {
+                    t.ifError(err2, 'vmadm list error');
 
-        t.notEqual(stdout.indexOf('Created successfully'), -1);
+                    t.equal(numInsts, NUM_INSTS + 1);
+                    // JSSTYLED
+                    ctx.uuid = ctx.stdout.match(/Instance "(.+?)"/)[1];
+                    next();
+                });
+            },
+            function deleteAmonRedis(ctx, next) {
+                var cmd = util.format('sdc-sapi /instances/%s -X DELETE',
+                        ctx.uuid);
+                exec(cmd, function (err, stdout, stderr) {
+                    t.ifError(err, 'Execution error');
+                    t.equal(stderr, '', 'Empty stderr');
+                    next();
+                });
 
-        getNumNapi(function (err2, numNapi) {
-            t.ifError(err2, 'vmadm list error');
-
-            t.equal(numNapi, NUM_NAPI + 1);
-            // JSSTYLED
-            NAPI_UUID = stdout.match(/Instance "(.+?)"/)[1];
-
-            t.end();
-        });
+            }
+        ]
+    }, function () {
+        t.end();
     });
+
 });
 
 
 // Create test with latest available image:
-test('sdcadm create napi --skip-ha-check -y -s --image', function (t) {
-    getLatestImgAvail(function (updatesErr, latestImageUuid) {
-        t.ifError(updatesErr, 'updates-imgadm list error');
+test('sdcadm create amonredis --skip-ha-check -y -s --image', function (t) {
+    vasync.pipeline({
+        arg: {},
+        funcs: [
+            function getLatestImg(ctx, next) {
+                getLatestImgAvail(function (updatesErr, imageUuid) {
+                    t.ifError(updatesErr, 'updates-imgadm list error');
+                    ctx.image_uuid = imageUuid;
+                    next();
+                });
+            },
+            function createAmonRedis(ctx, next) {
+                var cmd = 'sdcadm create amonredis --skip-ha-check --yes -s ' +
+                          HEADNODE_UUID + ' --image=' + ctx.image_uuid;
+                exec(cmd, function (err, stdout, stderr) {
+                    t.ifError(err, 'Execution error');
+                    t.equal(stderr, '', 'Empty stderr');
+                    console.log(stdout);
+                    t.notEqual(stdout.indexOf('Created successfully'), -1);
+                    ctx.stdout = stdout;
+                    next();
+                });
+            },
+            function countAmonRedisInsts(ctx, next) {
+                getNumInsts(function (err2, numInsts) {
+                    t.ifError(err2, 'vmadm list error');
+                    t.equal(numInsts, NUM_INSTS + 1);
+                    // JSSTYLED
+                    ctx.uuid = ctx.stdout.match(/Instance "(.+?)"/)[1];
+                    next();
+                });
+            },
+            function deleteAmonRedis(ctx, next) {
+                var cmd = util.format('sdc-sapi /instances/%s -X DELETE',
+                        ctx.uuid);
+                exec(cmd, function (err, stdout, stderr) {
+                    t.ifError(err, 'Execution error');
+                    t.equal(stderr, '', 'Empty stderr');
+                    next();
+                });
 
-        var cmd = 'sdcadm create napi --skip-ha-check --yes --server=' +
-                  HEADNODE_UUID + ' --image=' + latestImageUuid;
-        exec(cmd, function (err, stdout, stderr) {
-            t.ifError(err, 'Execution error');
-            t.equal(stderr, '', 'Empty stderr');
-
-            t.notEqual(stdout.indexOf('Created successfully'), -1);
-
-            getNumNapi(function (err2, numNapi) {
-                t.ifError(err2, 'vmadm list error');
-
-                t.equal(numNapi, NUM_NAPI + 2);
-
-                // JSSTYLED
-                NAPI_UUID_2 = stdout.match(/Instance "(.+?)"/)[1];
-
-                t.end();
-            });
-        });
-    });
-});
-
-test('teardown', function (t) {
-    var cmd = 'sdc-sapi /instances/%s -X DELETE';
-
-    exec(util.format(cmd, NAPI_UUID), function (err, stdout, stderr) {
-        t.ifError(err, 'Execution error');
-        t.equal(stderr, '', 'Empty stderr');
-
-        exec(util.format(cmd, NAPI_UUID_2), function (err2, stdout2, stderr2) {
-            t.ifError(err2, 'Execution error');
-            t.equal(stderr2, '', 'Empty stderr');
-
-            t.end();
-        });
+            }
+        ]
+    }, function (resErr) {
+        t.end();
     });
 });

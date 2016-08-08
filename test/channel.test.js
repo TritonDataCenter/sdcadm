@@ -5,13 +5,25 @@
  */
 
 /*
- * Copyright (c) 2015, Joyent, Inc.
+ * Copyright (c) 2016, Joyent, Inc.
  */
 
-
+var util = require('util');
 var test = require('tape').test;
 var exec = require('child_process').exec;
 
+var CURR_CHANNEL = null;
+
+test('setup', function (t) {
+    exec('sdcadm channel get', function (err, stdout, stderr) {
+        t.ifError(err);
+        t.equal(stderr, '');
+        if (stdout) {
+            CURR_CHANNEL = stdout.trim();
+        }
+        t.end();
+    });
+});
 
 test('sdcadm channel --help', function (t) {
     exec('sdcadm channel --help', function (err, stdout, stderr) {
@@ -45,7 +57,6 @@ test('sdcadm channel list', function (t) {
         var lines = stdout.split('\n');
         var titles = lines[0].split(/\s+/);
         t.deepEqual(titles, ['NAME', 'DEFAULT', 'DESCRIPTION']);
-
         t.end();
     });
 });
@@ -54,24 +65,26 @@ test('sdcadm channel list', function (t) {
 test('sdcadm channel set', function (t) {
     exec('sdcadm channel set release', function (err, stdout, stderr) {
         t.ifError(err);
-
-        t.equal(stdout, 'Update channel has been successfully set to: ' +
-                        '\'release\'\n');
+        t.equal(stdout.trim(),
+                'Update channel has been successfully set to: \'release\'');
         t.equal(stderr, '');
-
         t.end();
     });
 });
 
 
-test('sdcadm channel set', function (t) {
-    exec('sdcadm channel set dev', function (err, stdout, stderr) {
+test('sdcadm channel reset',  function (t) {
+    if (CURR_CHANNEL === null) {
+        t.end();
+        return;
+    }
+    var cmd = util.format('sdcadm channel set %s', CURR_CHANNEL);
+    exec(cmd, function (err, stdout, stderr) {
         t.ifError(err);
 
-        t.equal(stdout, 'Update channel has been successfully set to: ' +
-                        '\'dev\'\n');
+        t.equal(stdout.trim(), 'Update channel has been successfully set to: ' +
+                        '\'' + CURR_CHANNEL + '\'');
         t.equal(stderr, '');
-
         t.end();
     });
 });

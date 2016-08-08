@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright (c) 2015, Joyent, Inc.
+ * Copyright 2016, Joyent, Inc.
  */
 
 
@@ -15,7 +15,7 @@ var exec = require('child_process').exec;
 
 test('sdcadm', function (t) {
     exec('sdcadm', function (err, stdout, stderr) {
-        t.ok(err);
+        t.ok(err, 'usage error');
         t.equal(err.code, 1);
 
         t.ok(stdout.match('Usage'));
@@ -28,7 +28,7 @@ test('sdcadm', function (t) {
 
 test('sdcadm --help', function (t) {
     exec('sdcadm --help', function (err, stdout, stderr) {
-        t.ifError(err);
+        t.ifError(err, 'no help error');
 
         t.ok(stdout.match('Usage'));
         t.equal(stderr, '');
@@ -40,9 +40,8 @@ test('sdcadm --help', function (t) {
 
 test('sdcadm --version', function (t) {
     exec('sdcadm --version', function (err, stdout, stderr) {
-        t.ifError(err);
-
-        t.ok(stdout.match(/^sdcadm \d\.\d\.\d \(master-\d+T\d+Z-.+\)/));
+        t.ifError(err, 'no version error');
+        t.ok(stdout.match(/^sdcadm \d+\.\d+\.\d+ \(master-\d+T\d+Z-.+\)/));
         t.equal(stderr, '');
 
         t.end();

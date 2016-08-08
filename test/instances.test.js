@@ -13,9 +13,12 @@ var test = require('tape').test;
 var exec = require('child_process').exec;
 var util = require('util');
 var format = util.format;
+
+
 var common = require('./common');
 
-
+var serverHostnamesFromUUID = {};
+var serviceNamesFromUUID = {};
 var INSTANCE_TITLES = ['INSTANCE', 'SERVICE', 'HOSTNAME', 'VERSION', 'ALIAS'];
 var INSTANCES_DETAILS = [];
 
@@ -40,66 +43,64 @@ function parseInstancesOutput(t, output, expectedTitles) {
     t.deepEqual(titles, expectedTitles || INSTANCE_TITLES,
                 'check column titles');
 
-    return instancesDetails.filter(function (r) {
-        // TODO: we should check everything, not just VMs
-        return r[4] !== '-';
-    });
+    return instancesDetails;
 }
 
 
-/*
- * Recursive function to check the existence of a VM, and its alias and version
- * are correct.
- */
 function checkInstancesDetails(t, instancesDetails) {
-    if (instancesDetails.length === 0) {
-        return t.end();
-    }
-
-    function recur() {
-        checkInstancesDetails(t, instancesDetails); // recursive call
-    }
-
-    var instanceDetails = instancesDetails.pop();
-    var vmUuid  = instanceDetails[0];
-    var version = instanceDetails[3];
-    var alias   = instanceDetails[4];
-
-    var cmd = 'sdc-vmapi /vms/' + vmUuid + ' | json -H';
-
-    exec(cmd, function (err, stdout, stderr) {
-        t.ifError(err);
-
-        var vmInfo = common.parseJsonOut(stdout);
-        if (!vmInfo) {
-            t.ok(false, 'failed to parse JSON for cmd ' + cmd);
-            return recur();
-        }
-
-        t.equal(vmInfo.alias, alias, 'check VM alias is ' + alias);
-        t.notEqual(vmInfo.state, 'failed', 'check state for VM ' + vmUuid);
-
-        var imgUuid = vmInfo.image_uuid;
-        var cmd2 = 'sdc-imgapi /images/' + imgUuid + ' | json -H';
-
-        exec(cmd2, function (err2, stdout2, stderr2) {
-            t.ifError(err2);
-
-            var imgInfo = common.parseJsonOut(stdout2);
-            if (!imgInfo) {
-                t.ok(false, 'failed to parse JSON for cmd ' + cmd2);
-                return recur();
-            }
-
-            t.equal(imgInfo.version, version, 'check version for VM ' + vmUuid);
-
-            recur();
+    instancesDetails = instancesDetails.map(function (item) {
+        return ({
+            instance: item[0],
+            service: item[1],
+            hostname: item[2],
+            version: item[3],
+            alias: item[4]
         });
+    });
+
+    common.checkInsts(t, {
+        inputs: instancesDetails,
+        serviceNamesFromUUID: serviceNamesFromUUID,
+        serverHostnamesFromUUID: serverHostnamesFromUUID
+    }, function () {
+        t.end();
     });
 }
 
 
 // ---
+
+
+// Preload Servers and SAPI services
+test('setup', function (t) {
+    var cmd = 'sdc-sapi /services | json -H';
+    exec(cmd, function (err, stdout, stderr) {
+        t.ifError(err, 'No error preloading SAPI services');
+
+        var svcs = common.parseJsonOut(stdout);
+        if (!svcs) {
+            t.ok(false, 'failed to parse JSON for cmd ' + cmd);
+            return t.end();
+        }
+        svcs.forEach(function (svc) {
+            serviceNamesFromUUID[svc.uuid] = svc.name;
+        });
+        var cmd2 = 'sdc-cnapi /servers?setup=true|json -H';
+        exec(cmd2, function (err2, stdout2, stderr2) {
+            t.ifError(err2, 'No error preloading CNAPI servers');
+
+            var servers = common.parseJsonOut(stdout2);
+            if (!servers) {
+                t.ok(false, 'failed to parse JSON for cmd ' + cmd2);
+                return t.end();
+            }
+            servers.forEach(function (server) {
+                serverHostnamesFromUUID[server.uuid] = server.hostname;
+            });
+            t.end();
+        });
+    });
+});
 
 test('sdcadm instances --help', function (t) {
     checkHelp(t, 'instances');
@@ -116,7 +117,7 @@ test('sdcadm instances', function (t) {
         t.ifError(err);
         t.equal(stderr, '');
 
-        common.DEFAULT_SERVICES.forEach(function (svcName) {
+        common.DEFAULT_VM_SERVICES.forEach(function (svcName) {
             var found = stdout.indexOf(svcName) !== -1;
             t.ok(found, svcName + ' in instances output');
         });
@@ -164,19 +165,27 @@ test('sdcadm instances --json', function (t) {
             return t.end();
         }
 
-        var vmsDetails = {};
-        details.forEach(function (vm) {
-            vmsDetails[vm.zonename] = vm;
+        var instDetails = {};
+        details.forEach(function (inst) {
+            instDetails[inst.instance] = inst;
         });
 
         INSTANCES_DETAILS.forEach(function (oldDetails) {
-            var vmUuid = oldDetails[0];
-            var jsonDetails = vmsDetails[vmUuid];
-            t.equal(jsonDetails.type,    'vm',           vmUuid + ' type');
-            t.equal(jsonDetails.service,  oldDetails[1], vmUuid + ' service');
-            t.equal(jsonDetails.hostname, oldDetails[2], vmUuid + ' hostname');
-            t.equal(jsonDetails.version,  oldDetails[3], vmUuid + ' version');
-            t.equal(jsonDetails.alias,    oldDetails[4], vmUuid + ' alias');
+            var id = oldDetails[0];
+            // No instance id
+            if (id === '-') {
+                return;
+            }
+            var jsonDetails = instDetails[id];
+            t.equal(jsonDetails.type, (
+                (oldDetails[4] !== '-') ? 'vm' : 'agent'
+            ), id + ' type');
+            t.equal(jsonDetails.service, oldDetails[1], id + ' service');
+            t.equal(jsonDetails.hostname, oldDetails[2], id + ' hostname');
+            t.equal(jsonDetails.version, oldDetails[3], id + ' version');
+            if (oldDetails[4] !== '-') {
+                t.equal(jsonDetails.alias, oldDetails[4], id + ' alias');
+            }
         });
 
         t.end();
@@ -193,18 +202,17 @@ test('sdcadm instances -o', function (t) {
         var expectedTitles = ['TYPE', 'INSTANCE', 'VERSION'];
         var data = parseInstancesOutput(t, stdout, expectedTitles);
 
-        // TODO: should check more than just vms
-        var vms = data.filter(function (r) {
-            return r[0] === 'vm';
+        var insts = data.filter(function (r) {
+            return true;
         }).map(function (r) {
             return [ r[1], r[2] ];
         });
 
-        var prevVms = INSTANCES_DETAILS.map(function (r) {
+        var prevInsts = INSTANCES_DETAILS.map(function (r) {
             return [ r[0], r[3] ];
         });
 
-        t.deepEqual(vms, prevVms);
+        t.deepEqual(insts, prevInsts);
 
         t.end();
     });
@@ -216,12 +224,14 @@ test('sdcadm instances -s', function (t) {
         t.ifError(err);
         t.equal(stderr, '');
 
-        var vms = parseInstancesOutput(t, stdout);
-        var sortedVms = common.deepCopy(vms).sort(function (a, b) {
+        var insts = parseInstancesOutput(t, stdout).filter(function (item) {
+            return item[0] !== '-';
+        });
+        var sortedInsts = common.deepCopy(insts).sort(function (a, b) {
             return (a[0] < b[0]) ? -1 : 1;
         });
 
-        t.deepEqual(vms, sortedVms);
+        t.deepEqual(insts, sortedInsts);
 
         t.end();
     });

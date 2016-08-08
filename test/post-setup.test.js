@@ -5,11 +5,22 @@
  */
 
 /*
- * Copyright (c) 2015, Joyent, Inc.
+ * Copyright 2016, Joyent, Inc.
+ */
+
+/*
+ * PENDING TESTS:
+ *
+ * - Complete ha-manatee setup
+ * - Complete ha-bider setup
+ * - post-setup fabrics
+ * - post-setup underlay-nics
  */
 
 
 var test = require('tape').test;
+var vasync = require('vasync');
+
 var exec = require('child_process').exec;
 var checkHelp = require('./common').checkHelp;
 
@@ -34,23 +45,28 @@ test('sdcadm post-setup common-external-nics', function (t) {
             t.ifError(err);
             t.equal(stderr, '');
 
-            var svcs = JSON.parse(stdout);
+            var vms = JSON.parse(stdout);
 
-            // TODO: change to work in HA environment
-            var external = svcs[0].nics.filter(function (nic) {
-                return nic.nic_tag === 'external';
+            vasync.forEachPipeline({
+                func: function (vm, nextVm) {
+                    var external = vm.nics.filter(function (nic) {
+                        return nic.nic_tag === 'external';
+                    });
+
+                    t.equal(external.length, 1, svcName + ' missing external');
+                    nextVm();
+                },
+                inputs: vms
+            }, function (resErr) {
+                cb();
             });
-
-            t.equal(external.length, 1, svcName + ' missing external');
-
-            cb();
         });
     }
 
     exec('sdcadm post-setup common-external-nics',
          function (err, stdout, stderr) {
-        t.ifError(err);
-        t.equal(stderr, '');
+        t.ifError(err, 'Execution error');
+        t.equal(stderr, '', 'Empty stderr');
 
         t.ok(stdout.indexOf('Added external nic to adminui') !== 1 ||
              stdout.indexOf('AdminUI already has an external nic') !== 1);
@@ -82,6 +98,35 @@ test('sdcadm post-setup cloudapi', function (t) {
              stdout.indexOf('Already have') !== 1);
 
         var cmd = 'sdc-vmapi /vms?alias=cloudapi | json -H';
+        exec(cmd, function (err2, stdout2, stderr2) {
+            t.ifError(err2);
+            t.equal(stderr2, '');
+
+            var svcs = JSON.parse(stdout2);
+
+            t.ok(svcs.length >= 1);
+
+            t.end();
+        });
+    });
+});
+
+
+test('sdcadm post-setup help docker', function (t) {
+    checkHelp(t, 'post-setup docker',
+        'Create the docker service and the docker instance on the headnode.');
+});
+
+
+test('sdcadm post-setup docker', function (t) {
+    exec('sdcadm post-setup docker', function (err, stdout, stderr) {
+        t.ifError(err);
+        t.equal(stderr, '');
+
+        t.ok(stdout.indexOf('docker0 zone created') !== 1 ||
+             stdout.indexOf('Already have') !== 1);
+
+        var cmd = 'sdc-vmapi /vms?alias=docker | json -H';
         exec(cmd, function (err2, stdout2, stderr2) {
             t.ifError(err2);
             t.equal(stderr2, '');
@@ -177,8 +222,8 @@ test('sdcadm post-setup dev-sample-data', function (t) {
 
         var cmd = 'sdc-papi /packages/' + pkgUuid + ' | json -H';
         exec(cmd, function (err, stdout, stderr) {
-            t.ifError(err);
-            t.equal(stderr, '');
+            t.ifError(err, 'PAPI error');
+            t.equal(stderr, '', 'Empty stderr');
 
             var pkg = JSON.parse(stdout);
             t.equal(pkg.uuid, pkgUuid, 'PAPI has package ' + pkgUuid);
@@ -196,8 +241,8 @@ test('sdcadm post-setup dev-sample-data', function (t) {
 
         var cmd = 'sdc-imgapi /images/' + imgUuid + ' | json -H';
         exec(cmd, function (err, stdout, stderr) {
-            t.ifError(err);
-            t.equal(stderr, '');
+            t.ifError(err, 'IMGAPI error');
+            t.equal(stderr, '', 'Empty stderr');
 
             var img = JSON.parse(stdout);
             t.equal(img.uuid, imgUuid, 'imgapi has image ' + imgUuid);
@@ -207,8 +252,8 @@ test('sdcadm post-setup dev-sample-data', function (t) {
     }
 
     exec('sdcadm post-setup dev-sample-data', function (err, stdout, stderr) {
-        t.ifError(err);
-        t.equal(stderr, '');
+        t.ifError(err, 'Execution error');
+        t.equal(stderr, '', 'Empty stderr');
 
         var pkgUuids = packageNames.map(function (pkg) {
             var added_re = 'Added package ' + pkg + ' \\((.+?)\\)';
@@ -223,7 +268,6 @@ test('sdcadm post-setup dev-sample-data', function (t) {
         var imgUuids = imageNames.map(function (img) {
             var added_re = 'Imported image (.+?) \\(' + img;
             var exist_re = 'Already have image (.+?) \\(' + img;
-
             var match = stdout.match(added_re) || stdout.match(exist_re);
             t.ok(match, 'image added or exists: ' + img);
 
@@ -245,8 +289,8 @@ test('sdcadm post-setup help dev-sample-data', function (t) {
 });
 
 
-test('sdcadm post-setup zookeeper', function (t) {
-    exec('sdcadm post-setup zookeeper', function (err, stdout, stderr) {
+test('sdcadm post-setup ha-binder', function (t) {
+    exec('sdcadm post-setup ha-binder', function (err, stdout, stderr) {
         t.ok(err);
 
         t.equal(stdout, '');
@@ -257,8 +301,8 @@ test('sdcadm post-setup zookeeper', function (t) {
 });
 
 
-test('sdcadm post-setup zookeeper --members', function (t) {
-    exec('sdcadm post-setup zookeeper -m 4', function (err, stdout, stderr) {
+test('sdcadm post-setup ha-binder --members', function (t) {
+    exec('sdcadm post-setup ha-binder -m 4', function (err, stdout, stderr) {
         t.ok(err);
 
         t.equal(stdout, '');
@@ -269,10 +313,10 @@ test('sdcadm post-setup zookeeper --members', function (t) {
 });
 
 
-test('sdcadm post-setup zookeeper --servers', function (t) {
+test('sdcadm post-setup ha-binder --servers', function (t) {
     var serverUuids = '';
 
-    exec('sdcadm post-setup zookeeper -s ' + serverUuids,
+    exec('sdcadm post-setup ha-binder -s ' + serverUuids,
          function (err, stdout, stderr) {
         // TODO
         t.end();
@@ -280,9 +324,9 @@ test('sdcadm post-setup zookeeper --servers', function (t) {
 });
 
 
-test('sdcadm post-setup help zookeeper', function (t) {
-    checkHelp(t, 'post-setup zookeeper',
-              'Create a zookeeper cluster, known as an ensemble');
+test('sdcadm post-setup help ha-binder', function (t) {
+    checkHelp(t, 'post-setup ha-binder',
+        'HA setup for binder/zookeeper services using binder instances');
 });
 
 
@@ -312,4 +356,16 @@ test('sdcadm post-setup ha-manatee --servers', function (t) {
 test('sdcadm post-setup help ha-manatee', function (t) {
     checkHelp(t, 'post-setup ha-manatee',
               'Create 2nd and 3rd manatee instances');
+});
+
+
+test('sdcadm post-setup help fabrics', function (t) {
+    checkHelp(t, 'post-setup fabrics',
+              'Create portolan instance and setup fabrics');
+});
+
+
+test('sdcadm post-setup help underlay-nics', function (t) {
+    checkHelp(t, 'post-setup underlay-nics',
+              'Provisions underlay NICs on the provided underlay network');
 });

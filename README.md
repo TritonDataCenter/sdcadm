@@ -219,6 +219,9 @@ This should only be done by developers, and only in dev or test environments.
 Tests will muck around with the sdc setup, doing terrible and unholy things to
 your data.
 
+Note that tests are expected to run on a fresh setup, since the test suite
+will go through all the `post-setup` subcommands.
+
 In order to run sdcadm tests, you'll first need to signal to the tests that
 you really do want them to run:
 

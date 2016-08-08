@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright (c) 2015, Joyent, Inc.
+# Copyright 2016, Joyent, Inc.
 #
 
 #
@@ -25,8 +25,6 @@ if [ "$TRACE" != "" ]; then
 fi
 set -o errexit
 set -o pipefail
-
-
 
 #---- guard
 
@@ -72,7 +70,6 @@ TOP=$(cd $(dirname $0)/../; pwd)
 NODE_INSTALL=$TOP/node
 OUTPUT_DIR=/var/tmp/sdcadmtest
 TAPE=$TOP/node_modules/.bin/tape
-FAILING_LIST=$OUTPUT_DIR/failing-tests.txt
 
 
 # Options.
@@ -99,10 +96,29 @@ do
 done
 
 
+if [[ "${TOP}" == '/opt/smartdc/sdcadm' ]]; then
+  echo "Copying test files to ${OUTPUT_DIR}"
+  DESTDIR=/var/tmp/sdcadmtest
+  rm -rf $OUTPUT_DIR
+  mkdir -p $OUTPUT_DIR
+  cp -PR \
+      $TOP/test \
+      $TOP/node_modules \
+      $TOP/node \
+      $TOP/lib \
+      $TOP/etc \
+      $TOP/package.json \
+      $OUTPUT_DIR
+  sh $DESTDIR/test/runtests "${@}"
+  exit $?
+fi
+
+RESULTS=$OUTPUT_DIR/results
 # Setup a clean output dir.
-echo "# Setup a clean output dir ($OUTPUT_DIR)."
-rm -rf $OUTPUT_DIR
-mkdir -p /$OUTPUT_DIR
+echo "# Setup a clean output dir ($RESULTS)."
+rm -rf $RESULTS
+mkdir -p /$RESULTS
+FAILING_LIST=$RESULTS/failing-tests.txt
 touch $FAILING_LIST
 
 cd $TOP
@@ -121,9 +137,9 @@ for file in $test_files; do
     test_file=$(basename $file)
     echo "# $test_file"
     PATH=$NODE_INSTALL/bin:$PATH $TAPE $file \
-        | tee $OUTPUT_DIR/$test_file.tap
+        | tee $RESULTS/$test_file.tap
     if [[ "$?" != "0" ]]; then
-        echo $file >> $OUTPUT_DIR/failing-tests.txt
+        echo $file >> $FAILING_LIST
         [[ -n "$opt_stop_on_failure" ]] && break
     fi
 done
@@ -131,8 +147,8 @@ done
 set -o errexit
 
 echo ""
-echo "# test output in $OUTPUT_DIR:"
-cd $OUTPUT_DIR
+echo "# test output in $RESULTS:"
+cd $RESULTS
 ls *.tap
 
 
@@ -143,8 +159,8 @@ echo "# test results:"
 end_time=$(date +%s)
 elapsed=$((${end_time} - ${start_time}))
 
-tests=$(grep "^# tests [0-9]" $OUTPUT_DIR/*.tap | cut -d ' ' -f3 | xargs | tr ' ' '+' | bc)
-passed=$(grep "^# pass  [0-9]" $OUTPUT_DIR/*.tap | tr -s ' ' | cut -d ' ' -f3 | xargs | tr ' ' '+' | bc)
+tests=$(grep "^# tests [0-9]" $RESULTS/*.tap | cut -d ' ' -f3 | xargs | tr ' ' '+' | bc)
+passed=$(grep "^# pass  [0-9]" $RESULTS/*.tap | tr -s ' ' | cut -d ' ' -f3 | xargs | tr ' ' '+' | bc)
 [[ -z ${tests} ]] && tests=0
 [[ -z ${passed} ]] && passed=0
 fail=$((${tests} - ${passed}))

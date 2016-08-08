@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright (c) 2015, Joyent, Inc.
+ * Copyright 2016, Joyent, Inc.
  */
 
 
@@ -32,7 +32,7 @@ test('sdcadm help', function (t) {
 
 
 test('sdcadm help self-update', function (t) {
-    checkHelp(t, 'self-update', 'sdcadm self-update [<options>]');
+    checkHelp(t, 'self-update', 'sdcadm self-update --latest [<options>]');
 });
 
 

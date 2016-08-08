@@ -5,18 +5,37 @@
  */
 
 /*
- * Copyright (c) 2015, Joyent, Inc.
+ * Copyright (c) 2016, Joyent, Inc.
  */
 
 
-var test = require('tape').test;
-var exec = require('child_process').exec;
+/*
+ * PENDING TESTS:
+ *
+ * - Update more than one service at once
+ * - Test --exclude
+ * - Test channels
+ */
 
+var test = require('tape').test;
+
+var exec = require('child_process').exec;
+var readdirSync = require('fs').readdirSync;
+var util = require('util');
+
+var SUCCESSFULLY_UPDATED = false;
+
+// We'll try to restore the system to its original state once we're done
+// testing updates
+var PLAN_PATH;
+
+var PAPI_IMG_UUID;
 
 test('setup', function (t) {
-    exec('sdcadm post-setup common-external-nics',
-         function (err, stdout, stderr) {
-        t.ifError(err);
+    var cmd = 'sdcadm post-setup common-external-nics';
+    exec(cmd, function (err, stdout, stderr) {
+        t.ifError(err, 'Execution error');
+        t.equal(stderr, '', 'Empty stderr');
         t.end();
     });
 });
@@ -62,22 +81,24 @@ test('sdcadm update --just-images', function (t) {
         t.notEqual(stdout.indexOf('Finding candidate update images'), -1);
 
         if (stdout.indexOf('Up-to-date') !== -1) {
-            return t.end();
+            t.end();
+            return;
         }
 
         var findRegex = [
             'This update will make the following changes',
-            'Downloading image .+ \(papi',
-            'Imported image .+ \(papi',
+            'Downloading image .+\n.*papi',
+            'Imported image .+\n.*papi',
             'Updated successfully'
         ];
 
         findRegex.forEach(function (regex) {
-            t.ok(regex.match(stdout), 'check update regex present');
+            t.ok(stdout.match(regex), 'check update regex present');
         });
 
         // JSSTYLED
-        var imgUuid = stdout.match(/Imported image (.+?) \(/)[0];
+        var imgUuid = stdout.match(/Imported image (.+?)/)[0];
+        PAPI_IMG_UUID = imgUuid;
 
         var cmd = 'sdc-imgapi /images/' + imgUuid + ' | json -H';
         exec(cmd, function (err2, stdout2, stderr2) {
@@ -101,7 +122,8 @@ test('sdcadm update', function (t) {
         t.ok(stdout.match('Finding candidate update images .+ "papi"'));
 
         if (stdout.match('Up-to-date')) {
-            return t.end();
+            t.end();
+            return;
         }
 
         var findRegex = [
@@ -115,6 +137,11 @@ test('sdcadm update', function (t) {
             t.ok(stdout.match(regex), 'check update string present:' + regex);
         });
 
+        SUCCESSFULLY_UPDATED = true;
+        var update = readdirSync('/var/sdcadm/updates').pop();
+        t.ok(update);
+        PLAN_PATH = '/var/sdcadm/updates/' + update + '/plan.json';
+
         var papiUuid = stdout.match('papi instance (.+?) to come up')[1];
 
         var cmd = 'sdc-vmapi /vms/' + papiUuid + ' | json -H';
@@ -123,12 +150,8 @@ test('sdcadm update', function (t) {
             t.equal(stderr2, '');
 
             var papi = JSON.parse(stdout2);
-
-            // TODO: should be papi.state, but there's a bug (?) right now where
-            // vmapi gets the state wedged in 'provisioning', even if it's done
-            t.equal(papi.zone_state, 'running');
-
-            return t.end();
+            t.equal(papi.image_uuid, PAPI_IMG_UUID);
+            t.end();
         });
     });
 });
@@ -158,30 +181,45 @@ test('sdcadm update --force-same-image', function (t) {
             'Finding candidate update images for the "papi"',
             'update "papi" service to image',
             'Reprovisioning papi VM',
-            'Wait (60s) for papi instance',
+            'Waiting for papi instance',
             'Updated successfully'
         ];
 
         findStrings.forEach(function (str) {
-            t.notEqual(stdout.indexOf(str), -1, 'check update string present');
+            t.notEqual(stdout.indexOf(str), -1,
+                    util.format('check update string present %s', str));
         });
+        t.end();
 
-        var papiUuid = stdout.match('papi instance (.+?) to come up')[1];
-
-        cmd = 'sdc-vmapi /vms/' + papiUuid + ' | json -H';
-        exec(cmd, function (err2, stdout2, stderr2) {
-            t.ifError(err2);
-            t.equal(stderr2, '');
-
-            var papi = JSON.parse(stdout2);
-
-            // TODO: papi.state bug (see other TODO above)
-            t.equal(papi.zone_state, 'running');
-
-            return t.end();
-        });
     });
 });
 
 
-// TODO: channels
+// As part of teardown, we'll not only rollback the updates, but also remove
+// the images we imported, since this is the only way to test the whole
+// update process for real, despite of slowness:
+test('teardown', function (t) {
+    if (!PLAN_PATH) {
+        t.end();
+        return;
+    }
+
+    var cmd = 'sdcadm rollback --force --yes -f ' + PLAN_PATH;
+    exec(cmd, function (err, stdout, stderr) {
+        t.ifError(err);
+
+        t.ok(stdout.match('rollback "papi" service to image'));
+        t.ok(stdout.match('Rolledback successfully'));
+
+        t.equal(stderr, '');
+        cmd = util.format('sdc-imgadm delete %s', PAPI_IMG_UUID);
+        exec(cmd, function (err2, stdout2, stderr2) {
+            t.ifError(err2, 'Execution error');
+            t.equal(stderr2, '', 'Empty stderr');
+
+            var str = util.format('Deleted image %s', PAPI_IMG_UUID);
+            t.notEqual(stdout2.indexOf(str), -1, 'check image deleted');
+            t.end();
+        });
+    });
+});

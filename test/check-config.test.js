@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright (c) 2015, Joyent, Inc.
+ * Copyright 2016, Joyent, Inc.
  */
 
 
@@ -26,8 +26,6 @@ test('sdcadm check-config --help', function (t) {
 
 
 test('sdcadm check-config', function (t) {
-    // TODO: huge todo here; should intentionally break something and see if
-    // check-config picks it up
     exec('sdcadm check-config', function (err, stdout, stderr) {
         t.ifError(err);
 
