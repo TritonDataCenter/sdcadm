@@ -5,11 +5,14 @@
  */
 
 /*
- * Copyright (c) 2015, Joyent, Inc.
+ * Copyright 2016, Joyent, Inc.
  */
 
 
 var test = require('tape').test;
+var vasync = require('vasync');
+
+var fs = require('fs');
 var exec = require('child_process').exec;
 var common = require('./common');
 
@@ -47,59 +50,65 @@ test('sdcadm history', function (t) {
     var beforeUpdate = new Date();
     var afterUpdate;
 
-    function getOldHistory() {
-        exec('sdcadm history', function (err, stdout, stderr) {
-            t.ifError(err);
-            t.equal(stderr, '');
+    vasync.pipeline({
+        funcs: [
+            function getOldHistory(_, next) {
+                exec('sdcadm history', function (err, stdout, stderr) {
+                    t.ifError(err);
+                    t.equal(stderr, '');
 
-            origHistory = parseHistory(stdout);
-            origHistory.shift(); // remove column titles
+                    origHistory = parseHistory(stdout);
+                    origHistory.shift(); // remove column titles
+                    next();
+                });
+            },
 
-            updatePapi();
-        });
-    }
+            function updateOther(_, next) {
+                // A command that we can re-run as many times as we need
+                var cmd = 'sdcadm experimental update-other';
 
-    function updatePapi() {
-        var cmd = 'sdcadm update papi --force-same-image -y';
+                exec(cmd, function (err, stdout, stderr) {
+                    t.ifError(err);
+                    t.equal(stderr, '');
 
-        exec(cmd, function (err, stdout, stderr) {
-            t.ifError(err);
-            t.equal(stderr, '');
+                    afterUpdate = new Date();
+                    next();
+                });
+            },
 
-            afterUpdate = new Date();
+            function getNewHistory(_, next) {
+                exec('sdcadm history', function (err, stdout, stderr) {
+                    t.ifError(err);
+                    t.equal(stderr, '');
 
-            getNewHistory();
-        });
-    }
+                    var newHistory = parseHistory(stdout);
+                    newHistory.shift(); // remove column titles
 
-    function getNewHistory() {
-        exec('sdcadm history', function (err, stdout, stderr) {
-            t.ifError(err);
-            t.equal(stderr, '');
+                    t.equal(origHistory.length + 1, newHistory.length);
 
-            var newHistory = parseHistory(stdout);
-            newHistory.shift(); // remove column titles
+                    var newest = newHistory[0];
+                    t.ok(newest);
 
-            t.equal(origHistory.length + 1, newHistory.length);
+                    HISTORY_UUID = newest[0];
+                    t.equal(newest[1], 'root');
 
-            var newest = newHistory[0];
-            t.ok(newest);
+                    t.ok(new Date(newest[2]) <= new Date(newest[3]));
+                    t.ok(new Date(newest[2]) >= beforeUpdate);
+                    t.ok(new Date(newest[3]) <= afterUpdate);
 
-            HISTORY_UUID = newest[0];
-            t.equal(newest[1], 'root');
+                    t.notEqual(newest[4].indexOf('update-service-cfg'), -1);
+                    t.equal(newest[5], '-');
 
-            t.ok(new Date(newest[2]) <= new Date(newest[3]));
-            t.ok(new Date(newest[2]) >= beforeUpdate);
-            t.ok(new Date(newest[3]) <= afterUpdate);
+                    next();
+                });
+            }
 
-            t.equal(newest[4], 'update-service(papi)');
-            t.equal(newest[5], '-');
+        ]
+    }, function (resErr) {
+        t.ifError(resErr);
+        t.end();
+    });
 
-            t.end();
-        });
-    }
-
-    getOldHistory();
 });
 
 
@@ -116,7 +125,7 @@ test('sdcadm history --json', function (t) {
             t.ok(entry.uuid.match(common.UUID_RE), entry.uuid + ' is a UUID');
             t.ok(Array.isArray(entry.changes), 'changes is an array');
             // TODO: no username?
-            t.ok(entry.username == 'root' || !entry.username);
+            t.ok(entry.username === 'root' || !entry.username);
             t.ok(new Date(entry.started));
             t.ok(new Date(entry.finished));
         });
@@ -143,8 +152,7 @@ test('sdcadm history <uuid>', function (t) {
         t.equal(typeof (entry.started),  'number');
         t.equal(typeof (entry.finished), 'number');
         t.ok(Array.isArray(entry.changes));
-
-        t.equal(entry.changes[0].service.name, 'papi');
+        t.equal(entry.changes[entry.changes.length - 1].service.name, 'assets');
 
         t.end();
     });
@@ -208,9 +216,8 @@ test('sdcadm history --since', function (t) {
 
         var entries = parseHistory(stdout);
         entries.shift(); // remove column titles
-
         entries.forEach(function (entry) {
-            t.ok(entry[3] >= minimumDate);
+            t.ok(entry[2] >= minimumDate);
         });
 
         t.end();
@@ -234,5 +241,26 @@ test('sdcadm history --until', function (t) {
         });
 
         t.end();
+    });
+});
+
+
+test('sdcadm history bogus files', function (t) {
+    // Create bogus file manually
+    var histDir = '/var/sdcadm/history/';
+    var fpath = histDir + '9887ef12-32f9-4a05-9e38-e99ca15a5758.json';
+
+    fs.writeFile(fpath, 'null', {
+        encoding: 'utf8'
+    }, function (ferr) {
+        t.ifError(ferr);
+
+        // Now verify that this will not cause any error:
+        var cmd = 'sdcadm experimental update-other';
+        exec(cmd, function (err, stdout, stderr) {
+            t.ifError(err, 'Execution error');
+            t.equal(stderr, '', 'Empty stderr');
+            t.end();
+        });
     });
 });
