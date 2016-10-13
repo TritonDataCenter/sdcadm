@@ -22,7 +22,37 @@ var test = require('tape').test;
 var vasync = require('vasync');
 
 var exec = require('child_process').exec;
-var checkHelp = require('./common').checkHelp;
+var common = require('./common');
+var checkHelp = common.checkHelp;
+
+var externalNicsExist = false;
+var vmsWithExternalNics = [];
+
+function haveCommonExternalNics(t, cb) {
+    var cmd = 'sdc-vmapi /vms?query=\'(|(alias=adminui*)(alias=imgapi*))\'|' +
+        'json -H';
+    exec(cmd, function (err, stdout, stderr) {
+        t.ifError(err, 'Execution error');
+        t.equal(stderr, '', 'Empty stderr');
+        var vms = common.parseJsonOut(stdout);
+        vms = vms.filter(function (vm) {
+            return vm.nics.some(function (nic) {
+                return nic.nic_tag === 'external';
+            });
+        });
+        if (vms.length) {
+            externalNicsExist = true;
+        }
+        cb();
+    });
+}
+
+
+test('setup', function (t) {
+    haveCommonExternalNics(t, function () {
+        t.end();
+    });
+});
 
 
 test('sdcadm post-setup --help', function (t) {
@@ -52,6 +82,10 @@ test('sdcadm post-setup common-external-nics', function (t) {
                     var external = vm.nics.filter(function (nic) {
                         return nic.nic_tag === 'external';
                     });
+
+                    if (!externalNicsExist) {
+                        vmsWithExternalNics.push(vm);
+                    }
 
                     t.equal(external.length, 1, svcName + ' missing external');
                     nextVm();
@@ -368,4 +402,33 @@ test('sdcadm post-setup help fabrics', function (t) {
 test('sdcadm post-setup help underlay-nics', function (t) {
     checkHelp(t, 'post-setup underlay-nics',
               'Provisions underlay NICs on the provided underlay network');
+});
+
+
+test('teardown', function (t) {
+    if (vmsWithExternalNics.length === 0) {
+        t.end();
+        return;
+    }
+
+    vasync.forEachPipeline({
+        func: function removeNics(vm, next) {
+            var macs = vm.nics.filter(function (nic) {
+                return nic.nic_tag === 'external';
+            }).map(function (nic) {
+                return nic.mac;
+            });
+            var command = 'sdc-vmapi /vms/' + vm.uuid +
+                '?action=remove_nics -d \'{"macs" : [' +
+                macs.join(', ') + ']}\'';
+            exec(command, function (err, stdout, stderr) {
+                t.ifError(err, 'Execution error');
+                t.equal(stderr, '', 'Empty stderr');
+                next();
+            });
+        },
+        inputs: vmsWithExternalNics
+    }, function (resErr) {
+        t.end();
+    });
 });
