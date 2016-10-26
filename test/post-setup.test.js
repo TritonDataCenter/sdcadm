@@ -429,6 +429,23 @@ test('teardown', function (t) {
         },
         inputs: vmsWithExternalNics
     }, function (resErr) {
-        t.end();
+        vasync.forEachParallel({
+            func: function updateParamsNetworks(svc, next) {
+                var command = 'echo \'{"params": {"networks": ["admin"]}}\'|' +
+                    'sapiadm update $(sdc-sapi /services?name=' + svc +
+                    '|json -Ha uuid)';
+                exec(command, function (err, stdout, stderr) {
+                    t.ifError(err, 'Execution error');
+                    t.equal(stderr, '', 'Empty stderr');
+                    next();
+                });
+
+            },
+            inputs: vmsWithExternalNics.map(function (vm) {
+                return vm.tags.smartdc_role;
+            })
+        }, function (paraRes) {
+            t.end();
+        });
     });
 });
