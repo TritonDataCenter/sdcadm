@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.13.0
+
+- TOOLS-1610 Bump ver as a workaround to get 'sdcadm self-update --latest'
+  working.
+
 ## 1.12.0
 
 - TOOLS-1499: add -C channel command line option to sdcadm experimental
