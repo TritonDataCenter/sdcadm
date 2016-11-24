@@ -10,6 +10,12 @@
 
 # sdcadm Changelog
 
+## 1.14.0
+
+- TOOLS-1610 Drop the "-$buildstamp" suffix on the sdcadm image version field
+  that was added by TOOLS-1599, because it breaks 'sdcadm self-update
+  --latest'.
+
 ## 1.13.0
 
 - TOOLS-1610 Bump ver as a workaround to get 'sdcadm self-update --latest'
