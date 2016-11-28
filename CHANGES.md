@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.14.1
+
+- joyent/sdcadm#28 Allow 'sdcadm create portolan --skip-ha-check' to work.
+
 ## 1.14.0
 
 - TOOLS-1610 Drop the "-$buildstamp" suffix on the sdcadm image version field
