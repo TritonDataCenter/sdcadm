@@ -10,6 +10,13 @@
 
 # sdcadm Changelog
 
+## 1.15.0
+
+- TOOLS-1591: 'sdcadm up' of a number of core Triton services (the simple
+  "stateless" ones, e.g. vmapi, napi, papi, etc.) will ensure the instance
+  has a delegate dataset if required (if the SAPI service says it should
+  have one).
+
 ## 1.14.1
 
 - joyent/sdcadm#28 Allow 'sdcadm create portolan --skip-ha-check' to work.
