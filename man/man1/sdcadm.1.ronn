@@ -388,9 +388,9 @@ into the same network for any CN.
     Show this help and exit.
 
 
-### sdcadm post-setup zookeeper \[options\]
+### sdcadm post-setup ha-binder \[options\]
 
-Create a zookeeper cluster, known as an ensemble, using Headnode's
+Create a binder cluster, known as an ensemble, using the headnode's
 binder as the first member and leader of the cluster.
 
 Given that the existing binder instance will be included into the
@@ -402,7 +402,7 @@ instances.
 Remember that you need to specify the -s option as many times as
 different servers UUIDs you need to provide:
 
-sdcadm post-setup zookeeper -s SERVER\_UUID1 -s SERVER\_UUID2
+sdcadm post-setup ha-binder -s SERVER\_UUID1 -s SERVER\_UUID2
 
 
 `-h, --help`
@@ -478,6 +478,23 @@ fabrics and, if docker is setup, update docker config to use fabrics.
 ### sdcadm post-setup docker
 
 Create the docker service and the docker instance on the headnode.
+
+`-h, --help`
+    Show this help.
+
+`-f, --force`
+    Allow update to proceed even if already at latest image.
+
+
+### sdcadm post-setup cmon
+
+Create the "cmon" service and a first instance on the headnode.
+
+`-h, --help`
+    Show this help.
+
+`-C CHANNEL, --channel=CHANNEL`
+    Update channel in which to look for the cmon image.
 
 
 ### sdcadm post-setup dev-headnode-prov
@@ -778,10 +795,10 @@ the start of the update, before changes are made, and later upon completion.
 We attempt to write that completion even when the update failed, but the
 initial write at the start allows for detection of update *crashes*.
 
-The same thing happens for other commands, like `sdcadm self-update`,
-`sdcadm post-setup zookeeper`, or `sdcadm post-setup cloudapi`. In general,
-any sdcadm subcommand causing a modification of the system will call history
-and save such change into the aforementioned 'sdcadm\_history' bucket.
+The same thing happens for other commands, like `sdcadm self-update`
+or `sdcadm post-setup cloudapi`. In general, any sdcadm subcommand causing a
+modification of the system will call history and save such change into the
+aforementioned 'sdcadm\_history' bucket.
 
 The `-j|--json` option allows retrieving such changes in raw JSON format
 (with the same structure than update plan.json). If the UUID of a given change
