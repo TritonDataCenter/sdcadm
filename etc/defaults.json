@@ -39,6 +39,7 @@
         "cainstsvc": "cainstsvc",
         "amon-relay": "amon-relay",
         "smartlogin": "smartlogin",
+        "cmon-agent": "cmon-agent",
         "cn-agent": "cn-agent",
         "vm-agent": "vm-agent",
         "net-agent": "net-agent",
