@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.15.1
+
+- TOOLS-1633: Fix 'sdcadm up' of the assets zone. It was broken in
+  version 1.15.0.
+
 ## 1.15.0
 
 - TOOLS-1591: 'sdcadm up' of a number of core Triton services (the simple
