@@ -488,14 +488,26 @@ Create the docker service and the docker instance on the headnode.
 
 ### sdcadm post-setup cmon
 
-Create the "cmon" service and a first instance on the headnode.
+Setup the Container Monitor (CMON) system.
+
+This command will setup the "cmon" and "cmon-agent" services
+and create an initial instance of "cmon" on the headnode and
+"cmon-agent" on the specify (or all setup) servers.
 
 `-h, --help`
     Show this help.
 
 `-C CHANNEL, --channel=CHANNEL`
-    Update channel in which to look for the cmon image.
+    Update channel from which to get the "cmon" and "cmon-agent" images.
 
+`-j N, --concurrency=N`
+    Number of concurrent servers to which to install cmon-agent simultaneously.
+    Default: 5.
+
+`-s ARG, --servers=ARG`
+    Comma-separate list of servers (hostname or UUID) on which cmon-agent will
+    be setup. If not specified, then cmon-agent will be setup on all setup
+    servers.
 
 ### sdcadm post-setup dev-headnode-prov
 
@@ -1028,4 +1040,4 @@ Installs a custom TLS certificate to be used by sdc-docker.
 
 ## COPYRIGHT
 
-sdcadm Copyright (c) 2016 Joyent Inc., All rights reserved.
+sdcadm Copyright (c) 2017 Joyent Inc., All rights reserved.
