@@ -5,10 +5,15 @@
 -->
 
 <!--
-    Copyright 2016 Joyent, Inc.
+    Copyright 2017 Joyent, Inc.
 -->
 
 # sdcadm Changelog
+
+## 1.15.2
+
+- TOOLS-1662: Fix 'sdcadm experimental add-new-agent-svcs' when adding new
+  services.
 
 ## 1.15.1
 
