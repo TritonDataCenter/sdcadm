@@ -5,7 +5,7 @@
 -->
 
 <!--
-    Copyright (c) 2016, Joyent, Inc.
+    Copyright (c) 2017, Joyent, Inc.
 -->
 
 # sdcadm
@@ -157,7 +157,27 @@ instances for services "HA Ready", using the same procedure as for moray:
     sdcadm create mahi --server=CN1_UUID
     sdcadm create mahi --server=CN2_UUID
 
---
+## Setup fabrics
+
+You can setup "fabrics" (Triton's network virtualization system) using the
+command:
+
+    sdcadm post-setup fabrics -c /path/to/config.file
+
+where `conf` is a required configuration file. In order to understand the
+format of this configuration file there is detailed information about
+[fabrics setup in CoaL](https://github.com/joyent/triton/blob/master/docs/developer-guide/coal-post-setup-fabrics.md) and general purpose information on fabrics from the
+[Triton networking and fabric operations guide](https://docs.joyent.com/private-cloud/networks/sdn).
+
+### Create portolan HA instances
+
+Once `fabrics` setup has finished and the first `portolan0` instance
+has been created into the Headnode, additional HA instances can be
+created using `sdcadm create` subcommand:
+
+    sdcadm create portolan --server=CN1_UUID
+    sdcadm create portolan --server=CN2_UUID
+
 
 # Manage SDC upgrades with sdcadm
 
