@@ -721,12 +721,6 @@ which will be eventually integrated into `sdcadm update --all` or moved into
 different sdcadm sub-commands. In the meanwhile, the following is the list
 of these experimental sub-commands involved into SDC update tasks.
 
-## sdcadm experimental add-new-agent-svcs
-
-Create SAPI services for new global zone agents, if required.
-
-    sdcadm experimental add-new-agent-svcs
-
 ## sdcadm experimental update-other
 
 This subcommand is used to perform little modifications of SDC setups,
