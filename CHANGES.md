@@ -10,6 +10,13 @@
 
 # sdcadm Changelog
 
+## 1.15.3
+
+- Deprecate 'sdcadm experimental add-new-agent-svcs' and roll its functionality
+  into 'sdcadm experimental update-other' and 'sdcadm experimental
+  update-agent'. This allows the documented upgrade procedure to work
+  unchanged, and not hit TOOLS-1665.
+
 ## 1.15.2
 
 - TOOLS-1662: Fix 'sdcadm experimental add-new-agent-svcs' when adding new
