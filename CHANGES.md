@@ -24,6 +24,8 @@
   are several agent updates.
 - TOOLS-1644 'sdcadm create portolan' should be used for portolan HA setup.
 - TOOLS-1648 sdcadm post-setup cmon should setup cmon-agent.
+- TOOLS-1667 Deprecate 'sdcadm experimental cns' in favor of
+  'sdcadm post-setup cns'.
 
 ## 1.15.3
 

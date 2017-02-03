@@ -509,6 +509,14 @@ and create an initial instance of "cmon" on the headnode and
     be setup. If not specified, then cmon-agent will be setup on all setup
     servers.
 
+### sdcadm post-setup cns
+
+Create the "cns" service and a first instance.
+
+`-h, --help`
+    Show this help.
+
+
 ### sdcadm post-setup dev-headnode-prov
 
 Make the headnode provisionable, for development and testing.
