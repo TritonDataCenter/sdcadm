@@ -477,13 +477,24 @@ fabrics and, if docker is setup, update docker config to use fabrics.
 
 ### sdcadm post-setup docker
 
-Create the docker service and the docker instance on the headnode.
+Setup the Docker service.
+
+This command will create the "docker" and "dockerlogger" services,
+create the initial docker instance on the headnode, and install
+dockerlogger on all setup servers (or a subset if "-s" is used).
+
 
 `-h, --help`
     Show this help.
 
-`-f, --force`
-    Allow update to proceed even if already at latest image.
+`-j N, --concurrency=N`
+    Number of concurrent servers to which to install dockelogger simultaneously.
+    Default: 5.
+
+`-s ARG, --servers=ARG`
+    Comma-separate list of servers (hostname or UUID) on which dockelogger will
+    be setup. If not specified, dockelogger will be setup on all setup
+    servers.
 
 
 ### sdcadm post-setup cmon
