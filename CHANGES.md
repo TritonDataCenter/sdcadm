@@ -10,6 +10,16 @@
 
 # sdcadm Changelog
 
+## 1.15.4
+
+- TOOLS-1683 'sdcadm experimental update AGENT' should support updates of
+  individual instances.
+- TOOLS-1685 make 'sdcadm ex<TAB>' completion work.
+- TOOLS-1681 sdcadm experimental update doesn't summarize properly when there
+  are several agent updates.
+- TOOLS-1644 'sdcadm create portolan' should be used for portolan HA setup.
+- TOOLS-1648 sdcadm post-setup cmon should setup cmon-agent.
+
 ## 1.15.3
 
 - Deprecate 'sdcadm experimental add-new-agent-svcs' and roll its functionality
