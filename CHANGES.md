@@ -12,6 +12,7 @@
 
 ## 1.15.5
 
+- TOOLS-1651 sdcadm create should support agent instances.
 - TOOLS-1689 Fix a problem where `sdcadm` would hang on exit for many commands that
   used Ur.
 
