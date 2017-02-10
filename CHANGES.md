@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.15.5
+
+- TOOLS-1689 Fix a problem where `sdcadm` would hang on exit for many commands that
+  used Ur.
+
 ## 1.15.4
 
 - TOOLS-1683 'sdcadm experimental update AGENT' should support updates of
