@@ -2,7 +2,7 @@
 title: Update a SDC standup using sdcadm
 markdown2extras: tables, code-friendly, cuddled-lists, link-patterns
 markdown2linkpatternsfile: link-patterns.txt
-apisections: Updating SDC components, Update of Servers' Platform
+apisections:
 ---
 <!--
     This Source Code Form is subject to the terms of the Mozilla Public
@@ -11,21 +11,21 @@ apisections: Updating SDC components, Update of Servers' Platform
 -->
 
 <!--
-    Copyright (c) 2016, Joyent, Inc.
+    Copyright 2017 Joyent, Inc.
 -->
 
 
-# Update a SDC standup using sdcadm
+# Update a Triton standup using sdcadm
 
 This document is intended to be used as an example guide of the suggested
-procedure to update a SDC DC using `sdcadm`.
+procedure to update a Triton DC using `sdcadm`.
 
 The document is divided in two parts:
 
-1. Update of SDC components
+1. Update of Triton components
 2. Update of Servers' Platform
 
-## Section 1: Updating SDC components
+## Section 1: Updating Triton components
 
 ### Step 0: available updates
 
@@ -46,7 +46,51 @@ available update images for the different agents:
 
 ### Step 1: self-update sdcadm
 
-    sdcadm self-update --latest
+It's always recommended to run `sdcadm self-update --latest` before performing
+any sdcadm upgrade operations, especially because there could be critical
+bugfixes published since the last time sdcadm itself was updated.
+
+You can get the exact version of sdcadm running in your Triton setup using:
+
+        sdcadm --version
+
+The output of this command will include both the semver version, and the usual
+image version (referencing git branch, date and git SHA). For example:
+
+        [root@headnode (coal) ~]# sdcadm --version
+        sdcadm 1.3.9 (master-20141114T063621Z-g995ee7e)
+
+
+### Step 1b: Download everything before running the upgrades
+
+It's a good idea to pre-download all the bits required for an upgrade before
+actually going through it. That's the reason we can run the
+`sdcadm update` commands with `--just-images` option.
+
+It's also possible to pre-download some images for other Triton components, like
+agents or gz-tools, using `sdcadm`. Just proceed as follows:
+
+      sdcadm experimental update-gz-tools --latest --just-download
+      sdcadm experimental update-agents --latest --just-download --all
+
+Or, if you want to upgrade to a specific image version instead of the latest
+available image:
+
+      sdcadm experimental update-gz-tools <IMG_UUID> --just-download
+      sdcadm experimental update-agents <IMG_UUID> --just-download --all
+
+
+Either way, the `sdcadm experimental` subcommands we mention below should be
+able to download and install the required images, or to proceed with the path
+given to an image file as documented in `docs/index.md`.
+
+You can download and *"install"* the OS platform for later assignation to
+the CNs you want to upgrade by running:
+
+      sdcadm platform install --latest
+
+This will only download and make the platform available for later usage, but
+will not assign it to any server.
 
 ### Step 2: put the DC in maint
 
@@ -78,20 +122,16 @@ If there is a new shar, the grep will find nothing, and you'll need to run the f
 
 Note that there is no need to run `update-other` if we haven't updated `sdcadm` itself.
 
-### Step 5: Update all other SDC VMs
+### Step 5: Update all other Triton VMs
 
-It's possible to upgrade of every SDC service running in VMS at once by running:
+It's possible to upgrade of every Triton service running in VMs at once by running:
 
     sdcadm up -y --all --force-data-path
 
 
-It's also known that the update of some components may experience issues which
-may cause the system upgrade to fail in the middle of the process, leaving some
-services untouched or into an unexpcted state as a result of the update failures.
-
-An alternate approach to upgrading SDC services _all at once_ is to postpone the
+An alternate approach to upgrading Triton services _all at once_ is to postpone the
 update of some key services until everything else has been updated. These key
-services are, in turn: `SAPI`, `moray`, `binder` and `manatee`.
+services are, in turn: `sapi`, `moray`, `binder` and `manatee`.
 
 The way to proceed consist on the following commands:
 
@@ -132,7 +172,8 @@ It's good to at minimum do a:
 
     docker run -it ubuntu
 
-to ensure that provisioning, starting, and docker attach are all working. If they are, things are probably not too bad.
+to ensure that provisioning, starting, and docker attach are all working.
+If they are, things are probably not too bad.
 
 ## Section 2: Updating Servers' Platforms
 
