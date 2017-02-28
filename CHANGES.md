@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+
+## 1.15.6
+
+- TOOLS-1704 'sdcadm post-setup cmon' requires CNS being setup
+
 ## 1.15.5
 
 - TOOLS-1651 sdcadm create should support agent instances.
