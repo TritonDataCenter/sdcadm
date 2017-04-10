@@ -42,11 +42,15 @@
 
 ## 1.15.2
 
+- TOOLS-1642: Use cueball HttpAgent to connect to Triton HTTP services.
+- TOOLS-1648 sdcadm post-setup cmon should setup cmon-agent
 - TOOLS-1662: Fix 'sdcadm experimental add-new-agent-svcs' when adding new
   services.
 
 ## 1.15.1
 
+- TOOLS-1574, TOOLS-1631: Fix `sdcadm experimental update AGENT` when there are
+  no agent instances or missing service image uuids.
 - TOOLS-1633: Fix 'sdcadm up' of the assets zone. It was broken in
   version 1.15.0.
 
