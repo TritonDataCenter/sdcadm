@@ -260,13 +260,12 @@ rollback the services/instances listed into the provided plan file.
 Create an instance for an existing SDC service.
 
 Note that in order to create an instance of some services the option
-`--skip-ha-ready` must be specified, given that those services are not
-supposed to have more than one instance. There are also some services
-which are not allowed to have more than one instance, or services
-whose instances should not be created using this tool, like manatee or
-zookeeper. Finally, the first instance of some services should not be
-created using this tool when there is an alternate choice provided by
-`post-setup` subcommand.
+--dev-allow-multiple-instances must be specified, given that those
+services are not supposed to have more than one instance. There are
+also some services whose instances should not be created using
+this tool, like manatee or binder. Finally, the first instance of some
+services should not be created using this tool when there is an
+alternate choice provided by post-setup subcommand.
 
 
 `-h, --help`
@@ -284,8 +283,9 @@ created using this tool when there is an alternate choice provided by
 `-y, --yes`
     Answer yes to all confirmations.
 
-`--skip-ha-check`
-    Allow create the instance even if the service is not HA ready.
+`--dev-allow-multiple-instances`
+    Allow additional instances to be created even if the service is not HA ready
+    (for development purposes).
 
 ### sdcadm check-config \[options\]
 
