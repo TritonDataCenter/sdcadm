@@ -11,6 +11,11 @@
 # sdcadm Changelog
 
 
+## 1.15.7
+
+- TOOLS-1731 'sdcadm post-setup common-external-nics' should set external
+  network as primary
+
 ## 1.15.6
 
 - TOOLS-1642: Use cueball HttpAgent to connect to Triton HTTP services.
