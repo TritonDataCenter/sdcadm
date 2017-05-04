@@ -11,6 +11,15 @@
 # sdcadm Changelog
 
 
+## 1.15.8
+
+- TOOLS-1634 'sdcadm up' parallel import of images can break when multiple
+  images share a new origin image
+- TOOLS-1728 sdcadm update for service with multiple instances should skip
+  up-to-date ones
+- TOOLS-1764 'sdcadm up SERVICE@VERSION' fails for services where the image
+  name differs from the service name
+
 ## 1.15.7
 
 - TOOLS-1731 'sdcadm post-setup common-external-nics' should set external
