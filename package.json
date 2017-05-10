@@ -1,7 +1,7 @@
 {
   "name": "sdcadm",
   "description": "Administer a SmartDataCenter (SDC) standup",
-  "version": "1.15.8",
+  "version": "1.15.9",
   "author": "Joyent (joyent.com)",
   "private": true,
   "dependencies": {
@@ -28,7 +28,7 @@
     "tape": "3.5.0",
     "urclient": "^1.1.0",
     "vasync": "^1.6.4",
-    "verror": "^1.6.1",
+    "verror": "^1.10.0",
     "wf-client": "git+https://github.com/joyent/sdc-wf-client.git#9bcb3a0ebec7cd5b4052acaacde8fd6e3e2dfcf9"
   },
   "devDependencies": {

@@ -11,6 +11,11 @@
 # sdcadm Changelog
 
 
+## 1.15.9
+
+- TOOLS-1767 Fix 'sdcadm up' to fail faster if there is a download error
+  with on in a number of images.
+
 ## 1.15.8
 
 - TOOLS-1634 'sdcadm up' parallel import of images can break when multiple
