@@ -11,6 +11,11 @@
 # sdcadm Changelog
 
 
+## 1.16.0
+
+- TOOLS-1798 'sdcadm post-setup dev-sample-data' will now add a few sample
+  packages for use with KVM instances.
+
 ## 1.15.9
 
 - TOOLS-1767 Fix 'sdcadm up' to fail faster if there is a download error
