@@ -257,7 +257,7 @@ rollback the services/instances listed into the provided plan file.
 
 ### sdcadm create \[options\] svc
 
-Create an instance for an existing SDC service.
+Create one or more instances for an existing SDC service.
 
 Note that in order to create an instance of some services the option
 --dev-allow-multiple-instances must be specified, given that those
@@ -277,8 +277,9 @@ alternate choice provided by post-setup subcommand.
 `-i ARG, --image=ARG`
     UUID of the Image to be used for the instance.
 
-`-s ARG, --server=ARG`
-    The UUID for the target server.
+`-s STRING, --servers=STRING`
+    Comma separated list of servers (either hostnames or uuids)
+    on which to create the instance(s).
 
 `-y, --yes`
     Answer yes to all confirmations.
