@@ -70,6 +70,13 @@
         "ufds": "20140728T173339Z"
     },
     "updatedSizeParameters": {
+        "dhcpd": {
+            "max_physical_memory": 512,
+            "max_locked_memory": 512,
+            "max_swap": 1024,
+            "cpu_cap": 200,
+            "package_name": "sdc_512"
+        },
         "manatee": {
             "max_lwps": 4000
         },
