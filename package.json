@@ -1,6 +1,6 @@
 {
   "name": "sdcadm",
-  "description": "Administer a SmartDataCenter (SDC) standup",
+  "description": "Administer a Triton DataCenter",
   "version": "1.16.1",
   "author": "Joyent (joyent.com)",
   "private": true,
@@ -24,7 +24,7 @@
     "sdc-clients": "9.0.2",
     "semver": "2.2.1",
     "strsplit": "1.0.0",
-    "tabula": "1.2.2",
+    "tabula": "1.9.0",
     "tape": "3.5.0",
     "urclient": "^1.1.0",
     "vasync": "^1.6.4",
