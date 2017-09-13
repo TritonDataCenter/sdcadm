@@ -12,7 +12,9 @@
 
 ## 1.16.0
 
-- TOOLS-1421: `sdcadm experimental volapi` to setup Volumes API service
+- Add `sdcadm post-setup volapi` to setup a core VOLAPI service.
+- Add `sdcadm experimental nfs-volumes` command to enable or disable various
+  feature flags related to NFS volumes support for CloudAPI and sdc-docker.
 
 ## 1.16.0
 
