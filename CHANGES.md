@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.16.1
+
+- TOOLS-1842 Fix 'sdcadm create SERVICE-NAME -s SERVER' which was failing
+  after TOOLS-1770 changes.
 
 ## 1.16.0
 
