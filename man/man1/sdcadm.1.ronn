@@ -1085,12 +1085,11 @@ Enables/disables support for various NFS volumes features.
     # Disable CloudAPI containers automatically mounting NFS volumes
     sdcadm experimental nfs-volumes nfs-volumes cloudapi-automount -d
 
+`-h, --help`
+    Show this help message and exit.
+
 `-d, --disable`
     Disable a given NFS volume feature instead of enabling it.
-
-`-f, --force`
-    Force enable/disable a given NFS volumes feature, regardless of
-    prerequisites
 
 ## COPYRIGHT
 
