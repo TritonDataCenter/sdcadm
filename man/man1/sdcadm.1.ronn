@@ -1062,28 +1062,28 @@ Installs a custom TLS certificate to be used by sdc-docker.
 Enables/disables support for various NFS volumes features.
 
     # Enable NFS volume support for sdc-docker
-    sdcadm experimental nfs-volumes nfs-volumes docker
+    sdcadm experimental nfs-volumes docker
 
     # Disable NFS volume support for sdc-docker
-    sdcadm experimental nfs-volumes nfs-volumes docker -d
+    sdcadm experimental nfs-volumes docker -d
 
     # Enable NFS volume support for CloudAPI
-    sdcadm experimental nfs-volumes nfs-volumes cloudapi
+    sdcadm experimental nfs-volumes cloudapi
 
     # Disable NFS volume support for CloudAPI
-    sdcadm experimental nfs-volumes nfs-volumes cloudapi -d
+    sdcadm experimental nfs-volumes cloudapi -d
 
     # Enable docker containers automatically mounting NFS volumes
-    sdcadm experimental nfs-volumes nfs-volumes docker-automount
+    sdcadm experimental nfs-volumes docker-automount
 
     # Disable docker containers automatically mounting NFS volumes
-    sdcadm experimental nfs-volumes nfs-volumes docker-automount -d
+    sdcadm experimental nfs-volumes docker-automount -d
 
     # Enable CloudAPI containers automatically mounting NFS volumes
-    sdcadm experimental nfs-volumes nfs-volumes cloudapi-automount
+    sdcadm experimental nfs-volumes cloudapi-automount
 
     # Disable CloudAPI containers automatically mounting NFS volumes
-    sdcadm experimental nfs-volumes nfs-volumes cloudapi-automount -d
+    sdcadm experimental nfs-volumes cloudapi-automount -d
 
 `-h, --help`
     Show this help message and exit.
