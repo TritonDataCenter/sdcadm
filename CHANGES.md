@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.16.2
+
+- TOOLS-1883 Allow 'sdcadm up manatee' to work correctly with newer MANATEE-346
+  changes which include multiple postgres versions.
+
 ## 1.16.1
 
 - TOOLS-1842 Fix 'sdcadm create SERVICE-NAME -s SERVER' which was failing
