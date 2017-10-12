@@ -22,7 +22,7 @@
     "progbar": "1.1.0",
     "read": "1.0.5",
     "restify-clients": "1.4.0",
-    "sdc-clients": "10.0.3",
+    "sdc-clients": "10.3.0",
     "semver": "2.2.1",
     "strsplit": "1.0.0",
     "tabula": "1.2.2",
