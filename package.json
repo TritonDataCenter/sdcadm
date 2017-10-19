@@ -15,7 +15,7 @@
     "kthxbai": "~0.4.0",
     "joyent-schemas": "git+https://github.com/joyent/schemas.git#385e6eb",
     "jsprim": "1.2.2",
-    "lockfd": "1.0.1",
+    "lockfd": "2.0.1",
     "mkdirp": "0.3.5",
     "node-uuid": "1.4.1",
     "once": "1.3.0",
