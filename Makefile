@@ -53,8 +53,8 @@ endif
 .PHONY: all
 all: | $(NPM_EXEC)
 	MAKE_OVERRIDES='CTFCONVERT=/bin/true CTFMERGE=/bin/true' $(NPM) install
-	./node_modules/.bin/kthxbai || true # work around trentm/node-kthxbai#1
-	./node_modules/.bin/kthxbai
+	$(NODE) ./node_modules/.bin/kthxbai || true # work around trentm/node-kthxbai#1
+	$(NODE) ./node_modules/.bin/kthxbai
 	rm -rf ./node_modules/.bin/kthxbai ./node_modules/kthxbai
 
 .PHONY: shar
