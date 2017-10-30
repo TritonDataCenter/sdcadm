@@ -27,10 +27,10 @@
     "tabula": "1.9.0",
     "tape": "3.5.0",
     "ufds": "1.3.0",
-    "urclient": "git+https://github.com/joyent/node-urclient.git#5f46ee41ed7d813018f8f84593fa8bf47120d4f7",
+    "urclient": "1.2.0",
     "vasync": "^1.6.4",
     "verror": "^1.10.0",
-    "wf-client": "0.2.1"
+    "wf-client": "0.3.0"
   },
   "devDependencies": {
     "marked-man": "0.1.4"
