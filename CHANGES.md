@@ -16,6 +16,10 @@
 - Add `sdcadm experimental nfs-volumes` command to enable or disable various
   feature flags related to NFS volumes support for CloudAPI and sdc-docker.
 
+## 1.16.3
+
+- TOOLS-1899 Update to using node v4.
+
 ## 1.16.2
 
 - TOOLS-1883 Allow 'sdcadm up manatee' to work correctly with newer MANATEE-346
