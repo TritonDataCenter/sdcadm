@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.17.1
+
+- TOOLS-1579 `sdcadm post-setup ha-binder` should update core zones' resolvers.
+- Add `sdcadm experimental fix-core-vm-resolvers` as part of TOOLS-1579.
+
 ## 1.17.0
 
 - Add `sdcadm post-setup volapi` to setup a core VOLAPI service.
