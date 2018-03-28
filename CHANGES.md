@@ -5,10 +5,16 @@
 -->
 
 <!--
-    Copyright 2017 Joyent, Inc.
+    Copyright 2018 Joyent, Inc.
 -->
 
 # sdcadm Changelog
+
+## 1.17.2
+
+- TOOLS-1387 `sdcadm platform install` should fail early if there's not enough
+  free space on the USB.
+- TOOLS-2006 `sdcadm platform usage` dumps core.
 
 ## 1.17.1
 
