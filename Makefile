@@ -21,7 +21,10 @@ EXTRA_DOC_DEPS += deps/restdown-brand-remora/.git
 RESTDOWN_FLAGS   = --brand-dir=deps/restdown-brand-remora
 JS_FILES	:= $(shell find lib test -name '*.js' | grep -v '/tmp/')
 ESLINT_FILES	= $(JS_FILES)
-CLEAN_FILES += ./node_modules ./build/sdcadm-*.sh ./build/sdcadm-*.imgmanifest ./build/shar-image ./man/man1/sdcadm.1 ./etc/sdcadm.completion
+BUILD = ./build
+CLEAN_FILES += ./node_modules ./build/sdcadm-*.sh ./build/sdcadm-*.imgmanifest ./build/shar-image ./man/man1/sdcadm.1 ./etc/sdcadm.completion $(BUILD)
+TAP_EXEC := ./node_modules/.bin/tap
+TEST_UNIT_JOBS ?= 4
 
 
 NODE_PREBUILT_VERSION=v6.14.0
@@ -48,11 +51,14 @@ endif
 # Targets
 #
 .PHONY: all
-all: | $(NPM_EXEC)
-	MAKE_OVERRIDES='CTFCONVERT=/bin/true CTFMERGE=/bin/true' $(NPM) install
+all:  | $(NPM_EXEC)
+	MAKE_OVERRIDES='CTFCONVERT=/bin/true CTFMERGE=/bin/true' $(NPM)  install
 	$(NODE) ./node_modules/.bin/kthxbai || true # work around trentm/node-kthxbai#1
 	$(NODE) ./node_modules/.bin/kthxbai
 	rm -rf ./node_modules/.bin/kthxbai ./node_modules/kthxbai
+
+$(BUILD):
+	mkdir $@
 
 .PHONY: shar
 shar:
@@ -61,6 +67,16 @@ shar:
 .PHONY: test
 test:
 	./test/runtests
+
+.PHONY: test-unit
+test-unit: | $(TAP_EXEC) $(BUILD)
+	$(TAP_EXEC) --jobs=$(TEST_UNIT_JOBS) --output-file=$(BUILD)/test.unit.tap \
+		test/unit/**/*.test.js
+
+.PHONY: test-coverage-unit
+test-coverage-unit: | $(TAP_EXEC) $(BUILD)
+	$(TAP_EXEC) --jobs=$(TEST_UNIT_JOBS) --output-file=$(BUILD)/test.unit.tap \
+		--coverage test/unit/**/*.test.js
 
 .PHONY: release
 release: all man completion shar

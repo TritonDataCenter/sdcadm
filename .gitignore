@@ -1,8 +1,10 @@
-/node_modules
-/tmp
-/docs/*.json
-/docs/*.html
-/build
-/sdcadm-*.sh
 *.vim
+/build
+/docs/*.html
+/docs/*.json
+/make_stamps
+/node_modules
+/npm-debug.log
+/sdcadm-*.sh
+/tmp
 man/man1/sdcadm.1

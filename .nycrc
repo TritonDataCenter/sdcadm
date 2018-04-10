@@ -1,0 +1,18 @@
+{
+    "all": true,
+    "include": [
+        "bin/**/*.js",
+        "cmd/**/*.js",
+        "lib/**/*.js"
+    ],
+    "report-dir": "./build/coverage",
+    "temp-directory": "./build/nyc_output",
+    "reporter": [
+      "cobertura",
+      "clover",
+      "json",
+      "json-summary",
+      "html",
+      "text"
+  ]
+}
