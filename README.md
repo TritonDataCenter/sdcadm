@@ -72,3 +72,18 @@ tests in a single file, instead of all test files, consider using the -f flag
 with the `runtests` command. For example, to run the tests in sdcadm.test.js:
 
     /opt/smartdc/sdcadm/test/runtests -f sdcadm.test.js
+
+
+### Unit Tests
+
+`sdcadm` includes some unit tests. At this time the coverage is significantly
+less than the integration tests.  Unit tests can be run with:
+
+    make test-unit
+
+Individual test files can be run with a command such as:
+
+    ./node_modules/.bin/tap test/unit/foo.js
+
+`node-tap` includes several flags that may be useful while developing, such as
+only running suites that match a certain name.

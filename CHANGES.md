@@ -5,10 +5,15 @@
 -->
 
 <!--
-    Copyright 2018 Joyent, Inc.
+    Copyright (c) 2018 Joyent, Inc.
 -->
 
 # sdcadm Changelog
+
+## 1.20.1
+
+- TOOLS-1958 / TOOLS-1959 `sdcadm experimental update-agents` Uses a consistent
+  name for the downloaded agents shars and only retains a finite number.
 
 ## 1.20.0
 
