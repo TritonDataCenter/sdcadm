@@ -5,15 +5,16 @@
  */
 
 /*
- * Copyright 2016, Joyent, Inc.
+ * Copyright 2018, Joyent, Inc.
  */
 
 
 var test = require('tape').test;
-var vasync = require('vasync');
 
 var exec = require('child_process').exec;
 var util = require('util');
+
+var shared = require('./shared');
 
 var DC_MAINT_START_TIME;
 
@@ -34,7 +35,7 @@ test('setup', function (t) {
     var d = new Date();
     var time = d.setHours(d.getHours() + 1);
     DC_MAINT_START_TIME = new Date(time).toISOString();
-    t.end();
+    shared.prepare(t, {docker: true});
 });
 
 
@@ -67,7 +68,8 @@ test('sdcadm dc-maint status help', function (t) {
  * "No cloudapi instances to update"
  *
  * But, given that on that case putting the DC on maintenance will have no
- * sense, we'll just assume we have cloudapi and docker installed
+ * sense, we'll just assume we have cloudapi and docker installed.
+ *
  */
 test('sdcadm dc-maint start', function (t) {
 

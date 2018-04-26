@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2016, Joyent, Inc.
+ * Copyright 2018, Joyent, Inc.
  */
 
 
@@ -67,7 +67,7 @@ test('sdcadm history', function (t) {
                 // A command that we can re-run as many times as we need
                 var cmd = 'sdcadm experimental update-other';
 
-                exec(cmd, function (err, stdout, stderr) {
+                exec(cmd, function execCb(err, stdout, stderr) {
                     t.ifError(err);
                     t.equal(stderr, '');
 
@@ -211,13 +211,13 @@ test('sdcadm history --since', function (t) {
     var cmd = 'sdcadm history --since=' + minimumDate;
 
     exec(cmd, function (err, stdout, stderr) {
-        t.ifError(err);
-        t.equal(stderr, '');
+        t.ifError(err, 'History since err');
+        t.equal(stderr, '', 'History since stderr');
 
         var entries = parseHistory(stdout);
         entries.shift(); // remove column titles
         entries.forEach(function (entry) {
-            t.ok(entry[2] >= minimumDate);
+            t.ok(entry[2] >= minimumDate, 'History since entry ' + entry[0]);
         });
 
         t.end();
@@ -230,14 +230,14 @@ test('sdcadm history --until', function (t) {
     var cmd = 'sdcadm history --until=' + maximumDate;
 
     exec(cmd, function (err, stdout, stderr) {
-        t.ifError(err);
-        t.equal(stderr, '');
+        t.ifError(err, 'History until err');
+        t.equal(stderr, '', 'History until stderr');
 
         var entries = parseHistory(stdout);
         entries.shift(); // remove column titles
 
         entries.forEach(function (entry) {
-            t.ok(entry[3] <= maximumDate);
+            t.ok(entry[3] <= maximumDate, 'History until entry ' + entry[0]);
         });
 
         t.end();
@@ -257,7 +257,7 @@ test('sdcadm history bogus files', function (t) {
 
         // Now verify that this will not cause any error:
         var cmd = 'sdcadm experimental update-other';
-        exec(cmd, function (err, stdout, stderr) {
+        exec(cmd, function execCb(err, stdout, stderr) {
             t.ifError(err, 'Execution error');
             t.equal(stderr, '', 'Empty stderr');
             t.end();

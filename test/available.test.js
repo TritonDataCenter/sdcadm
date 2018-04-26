@@ -5,31 +5,39 @@
  */
 
 /*
- * Copyright 2016, Joyent, Inc.
+ * Copyright 2018, Joyent, Inc.
  */
 
 
 var test = require('tape').test;
 
 var exec = require('child_process').exec;
-var util = require('util');
 
 var common = require('./common');
+var shared = require('./shared');
 
 var AVAIL_TITLES = ['SERVICE', 'IMAGE', 'VERSION'];
-
 
 function parseAvailOutput(t, output, expectedTitles) {
     var availDetails = common.parseTextOut(output);
     t.ok(availDetails.length > 0);
 
-    var titles = availDetails.shift();
-    t.deepEqual(titles, expectedTitles || AVAIL_TITLES,
-                'check column titles');
+    if (availDetails.length > 1) {
+        var titles = availDetails.shift();
+        t.deepEqual(titles, expectedTitles || AVAIL_TITLES,
+                    'check column titles');
 
-    return availDetails;
+        return availDetails;
+    } else {
+        var up2Date = availDetails.shift();
+        t.deepEqual(up2Date, ['Up-to-date.'], 'check column titles');
+        return availDetails;
+    }
 }
 
+test('setup', function (t) {
+    shared.prepare(t, {external_nics: true});
+});
 
 test('sdcadm available --help', function (t) {
     exec('sdcadm available --help', function (err, stdout, stderr) {
@@ -81,7 +89,6 @@ test('sdcadm avail -a manta', function (t) {
     exec('sdcadm avail -a manta', function (err, stdout, stderr) {
         t.ifError(err, 'Execution error');
         t.equal(stderr, '', 'Empty stderr');
-
         var availDetails = parseAvailOutput(t, stdout);
         availDetails.forEach(function (svc) {
             t.equal(svc.length, 3, 'Service version and image');

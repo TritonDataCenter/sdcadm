@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2016, Joyent, Inc.
+ * Copyright 2018, Joyent, Inc.
  */
 
 /*
@@ -17,6 +17,7 @@
  * - post-setup underlay-nics
  */
 
+var util = require('util');
 
 var test = require('tape').test;
 var vasync = require('vasync');
@@ -24,32 +25,16 @@ var vasync = require('vasync');
 var exec = require('child_process').exec;
 var common = require('./common');
 var checkHelp = common.checkHelp;
+var shared = require('./shared');
+var haveCommonExternalNics = shared.haveCommonExternalNics;
 
 var externalNicsExist = false;
 var vmsWithExternalNics = [];
 
-function haveCommonExternalNics(t, cb) {
-    var cmd = 'sdc-vmapi /vms?query=\'(|(alias=adminui*)(alias=imgapi*))\'|' +
-        'json -H';
-    exec(cmd, function (err, stdout, stderr) {
-        t.ifError(err, 'Execution error');
-        t.equal(stderr, '', 'Empty stderr');
-        var vms = common.parseJsonOut(stdout);
-        vms = vms.filter(function (vm) {
-            return vm.nics.some(function (nic) {
-                return nic.nic_tag === 'external';
-            });
-        });
-        if (vms.length) {
-            externalNicsExist = true;
-        }
-        cb();
-    });
-}
-
-
 test('setup', function (t) {
-    haveCommonExternalNics(t, function () {
+    haveCommonExternalNics(t, function haveNicsCb(err, externalNics) {
+        t.ifError(err, 'haveExternalNics error');
+        externalNicsExist = externalNics;
         t.end();
     });
 });
@@ -57,7 +42,7 @@ test('setup', function (t) {
 
 test('sdcadm post-setup --help', function (t) {
     exec('sdcadm post-setup --help', function (err, stdout, stderr) {
-        t.ifError(err);
+        t.ifError(err, 'post-setup help error');
 
         t.ok(stdout.indexOf('sdcadm post-setup [OPTIONS] COMMAND') !== -1);
         t.equal(stderr, '');
@@ -148,7 +133,7 @@ test('sdcadm post-setup cloudapi', function (t) {
 
 test('sdcadm post-setup help docker', function (t) {
     checkHelp(t, 'post-setup docker',
-        'Create the docker service and the docker instance on the headnode.');
+        'Setup the Docker service.');
 });
 
 
@@ -188,7 +173,8 @@ test('sdcadm post-setup dev-headnode-prov', function (t) {
 
         if (numPolls === 0) {
             t.ok(false, 'CNAPI SAPI metadata did not update');
-            return t.end();
+            t.end();
+            return;
         }
 
         var cmd = 'sdc-sapi /services?name=cnapi | json -H';
@@ -201,7 +187,8 @@ test('sdcadm post-setup dev-headnode-prov', function (t) {
 
             if (svc.metadata.ALLOC_FILTER_HEADNODE === false &&
                 svc.metadata.ALLOC_FILTER_MIN_RESOURCES === false) {
-                return t.end();
+                t.end();
+                return;
             }
 
             setTimeout(poll, 500); // recur in .5s
@@ -228,7 +215,12 @@ test('sdcadm post-setup help dev-headnode-prov', function (t) {
 });
 
 
-test('sdcadm post-setup dev-sample-data', function (t) {
+// Will skip until we add a search for confirmation of things happening,
+// either running `sdcadm -v ...` and checking for confirmation in
+// stderr, or just checking for confirmation in the system itself, figuring
+// out a way of verifying things actually happening w/o using output, but
+// system elements:
+test.skip('sdcadm post-setup dev-sample-data', function (t) {
     var packageNames = [
         'sample-128M',
         'sample-256M',
@@ -251,7 +243,8 @@ test('sdcadm post-setup dev-sample-data', function (t) {
         var pkgUuid = pkgUuids.shift();
 
         if (!pkgUuid) {
-            return cb();
+            cb();
+            return;
         }
 
         var cmd = 'sdc-papi /packages/' + pkgUuid + ' | json -H';
@@ -270,7 +263,8 @@ test('sdcadm post-setup dev-sample-data', function (t) {
         var imgUuid = imgUuids.shift();
 
         if (!imgUuid) {
-            return cb();
+            cb();
+            return;
         }
 
         var cmd = 'sdc-imgapi /images/' + imgUuid + ' | json -H';
@@ -299,10 +293,13 @@ test('sdcadm post-setup dev-sample-data', function (t) {
             return match[1]; // uuid
         });
 
-        var imgUuids = imageNames.map(function (img) {
-            var added_re = 'Imported image (.+?) \\(' + img;
+        var imgUuids = imageNames.map(function printImgDetails(img) {
+            console.log(img);
+            console.log(util.inspect(stdout, false, 8, true));
+            var added_re = 'Imported image (.+?) \n\t\\(' + img;
             var exist_re = 'Already have image (.+?) \\(' + img;
-            var match = stdout.match(added_re) || stdout.match(exist_re);
+            var match = stdout.match(new RegExp(added_re, 'g')) ||
+                stdout.match(new RegExp(exist_re, 'g'));
             t.ok(match, 'image added or exists: ' + img);
 
             return match[1]; // uuid
@@ -352,6 +349,9 @@ test('sdcadm post-setup ha-binder --servers', function (t) {
 
     exec('sdcadm post-setup ha-binder -s ' + serverUuids,
          function (err, stdout, stderr) {
+             console.log(err);
+             console.log(stdout);
+             console.log(stderr);
         // TODO
         t.end();
     });
@@ -381,6 +381,9 @@ test('sdcadm post-setup ha-manatee --servers', function (t) {
 
     exec('sdcadm post-setup ha-manatee -s' + serverUuids,
          function (err, stdout, stderr) {
+             console.log(err);
+             console.log(stdout);
+             console.log(stderr);
         // TODO
         t.end();
     });
@@ -421,7 +424,7 @@ test('teardown', function (t) {
             var command = 'sdc-vmapi /vms/' + vm.uuid +
                 '?action=remove_nics -d \'{"macs" : [' +
                 macs.join(', ') + ']}\'';
-            exec(command, function (err, stdout, stderr) {
+            exec(command, function execCb(err, stdout, stderr) {
                 t.ifError(err, 'Execution error');
                 t.equal(stderr, '', 'Empty stderr');
                 next();
@@ -434,7 +437,7 @@ test('teardown', function (t) {
                 var command = 'echo \'{"params": {"networks": ["admin"]}}\'|' +
                     'sapiadm update $(sdc-sapi /services?name=' + svc +
                     '|json -Ha uuid)';
-                exec(command, function (err, stdout, stderr) {
+                exec(command, function execCb(err, stdout, stderr) {
                     t.ifError(err, 'Execution error');
                     t.equal(stderr, '', 'Empty stderr');
                     next();
@@ -444,8 +447,8 @@ test('teardown', function (t) {
             inputs: vmsWithExternalNics.map(function (vm) {
                 return vm.tags.smartdc_role;
             })
-        }, function (paraRes) {
-            t.end();
+        }, function (paraErr) {
+            t.end(paraErr);
         });
     });
 });

@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2016 Joyent, Inc.
+ * Copyright 2018 Joyent, Inc.
  */
 
 
@@ -16,6 +16,7 @@ var format = util.format;
 
 
 var common = require('./common');
+var shared = require('./shared');
 
 var serverHostnamesFromUUID = {};
 var serviceNamesFromUUID = {};
@@ -71,28 +72,34 @@ function checkInstancesDetails(t, instancesDetails) {
 // ---
 
 
+test('prepare', function (t) {
+    shared.prepare(t, {docker: true});
+});
+
 // Preload Servers and SAPI services
 test('setup', function (t) {
     var cmd = 'sdc-sapi /services | json -H';
-    exec(cmd, function (err, stdout, stderr) {
+    exec(cmd, function execCb(err, stdout) {
         t.ifError(err, 'No error preloading SAPI services');
 
         var svcs = common.parseJsonOut(stdout);
         if (!svcs) {
             t.ok(false, 'failed to parse JSON for cmd ' + cmd);
-            return t.end();
+            t.end();
+            return;
         }
         svcs.forEach(function (svc) {
             serviceNamesFromUUID[svc.uuid] = svc.name;
         });
         var cmd2 = 'sdc-cnapi /servers?setup=true|json -H';
-        exec(cmd2, function (err2, stdout2, stderr2) {
+        exec(cmd2, function execCb2(err2, stdout2) {
             t.ifError(err2, 'No error preloading CNAPI servers');
 
             var servers = common.parseJsonOut(stdout2);
             if (!servers) {
                 t.ok(false, 'failed to parse JSON for cmd ' + cmd2);
-                return t.end();
+                t.end();
+                return;
             }
             servers.forEach(function (server) {
                 serverHostnamesFromUUID[server.uuid] = server.hostname;
@@ -162,7 +169,8 @@ test('sdcadm instances --json', function (t) {
         var details = common.parseJsonOut(stdout);
         if (!details) {
             t.ok(false, 'failed to parse JSON');
-            return t.end();
+            t.end();
+            return;
         }
 
         var instDetails = {};
@@ -202,9 +210,7 @@ test('sdcadm instances -o', function (t) {
         var expectedTitles = ['TYPE', 'INSTANCE', 'VERSION'];
         var data = parseInstancesOutput(t, stdout, expectedTitles);
 
-        var insts = data.filter(function (r) {
-            return true;
-        }).map(function (r) {
+        var insts = data.map(function (r) {
             return [ r[1], r[2] ];
         });
 
@@ -240,7 +246,7 @@ test('sdcadm instances -s', function (t) {
 
 test('dockerlogger insts of removed servers', function (t) {
     var svcCmd = 'sdc-sapi /services?name=dockerlogger|json -H';
-    exec(svcCmd, function (err, stdout, stderr) {
+    exec(svcCmd, function execCb(err, stdout, stderr) {
         t.ifError(err);
         t.equal(stderr, '');
         var services = JSON.parse(stdout.trim());
@@ -256,14 +262,14 @@ test('dockerlogger insts of removed servers', function (t) {
             '"type": "agent"' +
         '}\'';
 
-        exec(instCmd, function (err2, stdout2, stderr2) {
+        exec(instCmd, function execCb2(err2, stdout2, stderr2) {
             t.ifError(err2);
             t.equal(stderr2, '');
 
             // TOOLS-1492: Orphan server instances should not throw exceptions
             // and sdcadm should just ignore them:
             var listCmd = 'sdcadm insts svc=dockerlogger -j';
-            exec(listCmd, function (err3, stdout3, stderr3) {
+            exec(listCmd, function execCb3(err3, stdout3, stderr3) {
                 t.ifError(err3);
                 t.equal(stderr3, '');
 
@@ -273,7 +279,7 @@ test('dockerlogger insts of removed servers', function (t) {
                 var delCmd = 'sdc-sapi ' +
                     '/instances/f189fd84-740d-4558-b2ea-36c62570e383 ' +
                     '-X DELETE';
-                exec(delCmd, function (err4, stdout4, stderr4) {
+                exec(delCmd, function execCb4(err4, stdout4, stderr4) {
                     t.ifError(err4);
                     t.equal(stderr4, '');
 

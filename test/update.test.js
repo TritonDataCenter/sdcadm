@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright (c) 2016, Joyent, Inc.
+ * Copyright (c) 2018, Joyent, Inc.
  */
 
 
@@ -17,13 +17,14 @@
  * - Test channels
  */
 
+
+var shared = require('./shared');
+
 var test = require('tape').test;
 
 var exec = require('child_process').exec;
 var readdirSync = require('fs').readdirSync;
 var util = require('util');
-
-var SUCCESSFULLY_UPDATED = false;
 
 // We'll try to restore the system to its original state once we're done
 // testing updates
@@ -32,12 +33,7 @@ var PLAN_PATH;
 var PAPI_IMG_UUID;
 
 test('setup', function (t) {
-    var cmd = 'sdcadm post-setup common-external-nics';
-    exec(cmd, function (err, stdout, stderr) {
-        t.ifError(err, 'Execution error');
-        t.equal(stderr, '', 'Empty stderr');
-        t.end();
-    });
+    shared.prepare(t, {external_nics: true});
 });
 
 
@@ -137,7 +133,6 @@ test('sdcadm update', function (t) {
             t.ok(stdout.match(regex), 'check update string present:' + regex);
         });
 
-        SUCCESSFULLY_UPDATED = true;
         var update = readdirSync('/var/sdcadm/updates').pop();
         t.ok(update);
         PLAN_PATH = '/var/sdcadm/updates/' + update + '/plan.json';
@@ -180,7 +175,7 @@ test('sdcadm update --force-same-image', function (t) {
         var findStrings = [
             'Finding candidate update images for the "papi"',
             'update "papi" service to image',
-            'Reprovisioning papi VM',
+            'Reprovisioning VM',
             'Waiting for papi instance',
             'Updated successfully'
         ];

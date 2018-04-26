@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright (c) 2016, Joyent, Inc.
+ * Copyright (c) 2018, Joyent, Inc.
  */
 
 
@@ -256,48 +256,11 @@ test('sdcadm experimental update-other', function (t) {
                                 vm.name + ' name has maintain_resolvers');
                     });
 
-                    t.end();
+                    next();
                 });
             }
         ]
     }, function (resErr) {
         t.end();
-    });
-});
-
-
-test('sdcadm experimental add-new-agent-svcs --help', function (t) {
-    var expected = 'Temporary grabbag for installing the SDC global zone new';
-    checkHelp(t, 'add-new-agent-svcs', expected);
-});
-
-
-test('sdcadm experimental add-new-agent-svcs', function (t) {
-    exec('sdcadm experimental add-new-agent-svcs',
-         function (err, stdout, stderr) {
-        t.ifError(err, 'Execution error');
-        t.equal(stderr, '', 'Empty stderr');
-
-        var expected = [
-            'Checking for minimum SAPI version',
-            'Checking if service \'vm-agent\' exists',
-            'Checking if service \'net-agent\' exists',
-            'Checking if service \'cn-agent\' exists',
-            'Add new agent services finished'
-        ];
-
-        expected.forEach(function (str) {
-            t.notEqual(stdout.indexOf(str), -1, 'output contains: ' + str);
-        });
-
-        exec('svcs | grep online', function (err2, stdout2, stderr2) {
-            t.ifError(err2);
-
-            t.ok(stdout.match('vm-agent'),  'vm-agent SMF service exists');
-            t.ok(stdout.match('cn-agent'),  'cn-agent SMF service exists');
-            t.ok(stdout.match('net-agent'), 'net-agent SMF service exists');
-
-            t.end();
-        });
     });
 });

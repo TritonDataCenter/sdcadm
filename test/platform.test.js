@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2016, Joyent, Inc.
+ * Copyright 2018, Joyent, Inc.
  */
 
 
@@ -41,25 +41,27 @@ var INSTALLED_PLATFORMS = [];
 
 test('setup', function (t) {
     var cmd = 'sdc-cnapi /platforms | json -H';
-    exec(cmd, function (err2, stdout2, stderr2) {
+    exec(cmd, function execCb(err2, stdout2) {
         t.ifError(err2);
 
         var platformsInfo = common.parseJsonOut(stdout2);
         if (!platformsInfo) {
             t.ok(false, 'failed to parse /platforms JSON');
-            return t.end();
+            t.end();
+            return;
         }
 
         CNAPI_PLATFORMS = platformsInfo;
 
         var cmd2 = 'sdc-cnapi /servers | json -H';
-        exec(cmd2, function (err3, stdout3, stderr3) {
+        exec(cmd2, function execCb3(err3, stdout3) {
             t.ifError(err3);
 
             var servers = common.parseJsonOut(stdout3);
             if (!servers) {
                 t.ok(false, 'failed to parse /servers JSON');
-                return t.end();
+                t.end();
+                return;
             }
 
             CNAPI_SERVERS = servers;
@@ -194,9 +196,17 @@ test('sdcadm platform available', function (t) {
         t.equal(stderr, '');
 
         var platformsDetails = common.parseTextOut(stdout);
+        if (platformsDetails.length > 1) {
+            var titles = platformsDetails.shift();
 
-        var titles = platformsDetails.shift();
-        t.deepEqual(titles, AVAIL_TITLES, 'check column titles');
+            t.deepEqual(titles, AVAIL_TITLES, 'check column titles');
+        } else {
+            t.equal(platformsDetails.shift().join(' '),
+                'The latest platform image for "dev"' +
+                ' channel is already installed.',
+                'Up to date platform'
+            );
+        }
 
         platformsDetails.forEach(function (p) {
             t.ok(p[0].match(ISO_DATE_RE), 'platform has timestamp');
@@ -209,7 +219,7 @@ test('sdcadm platform available', function (t) {
 
 
 test('sdcadm platform usage', function (t) {
-    exec('sdcadm platform usage', function (err, stdout, stderr) {
+    exec('sdcadm platform usage', function execCb(err, stdout, stderr) {
         t.ok(err, 'usage error');
         t.notEqual(stderr.indexOf('platform name is required'), -1);
 
@@ -266,7 +276,7 @@ test('sdcadm platform usage VERSION -j', function (t) {
 
 
 test('sdcadm platform install', function (t) {
-    exec('sdcadm platform install', function (err, stdout, stderr) {
+    exec('sdcadm platform install', function execCb(err, stdout, stderr) {
         t.ok(err, 'Execution error');
         t.notEqual(stderr.indexOf(
                     'must specify Platform Image UUID or --latest'), -1);
@@ -380,7 +390,7 @@ test('sdcadm platform assign', function (t) {
                 });
             }
         ]
-    }, function (pipeErr) {
+    }, function () {
         t.end();
     });
 
@@ -409,7 +419,7 @@ test('sdcadm platform set-default', function (t) {
                     next();
                 });
             },
-            function changeBootParams(ctx, next) {
+            function changeBootParams(_, next) {
                 var cmd = 'sdcadm platform set-default ' +
                     LATEST_AVAIL_PLATFORM.version;
                 exec(cmd, function (err2, stdout2, stderr2) {
@@ -460,7 +470,7 @@ test('sdcadm platform set-default', function (t) {
                 });
             }
         ]
-    }, function (pipeErr) {
+    }, function () {
         t.end();
     });
 

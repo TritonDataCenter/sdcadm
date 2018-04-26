@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2016, Joyent, Inc.
+ * Copyright 2018, Joyent, Inc.
  */
 
 
@@ -29,7 +29,7 @@ var SUCCESSFULLY_UPDATED = false;
 var PLAN_PATH = ''; // filled in by setup
 
 function getAvailableImage(cb) {
-    exec('sdcadm avail papi --json', function (err, stdout, stderr) {
+    exec('sdcadm avail papi --json', function execCb(err, stdout) {
         if (err) {
             cb(err);
             return;
@@ -48,7 +48,7 @@ function getAvailableImage(cb) {
 
 function getPapiSvcUUID(cb) {
     var cmd = 'sdc-sapi /services?name=papi|json -H';
-    exec(cmd, function (err, stdout, stderr) {
+    exec(cmd, function execCb(err, stdout) {
         if (err) {
             cb(err);
             return;
@@ -63,7 +63,7 @@ function getPapiSvcUUID(cb) {
 function getPapiInstanceUUID(cb) {
     var cmd = util.format('sdc-sapi /instances?service_uuid=%s | json -H',
             PAPI_SVC_UUID);
-    exec(cmd, function (err, stdout, stderr) {
+    exec(cmd, function execCb(err, stdout) {
         if (err) {
             cb(err);
             return;
@@ -79,7 +79,7 @@ function getPapiInstanceUUID(cb) {
 function getPapiImageUUID(cb) {
     var cmd = util.format('sdc-vmapi /vms/%s | json -H',
             PAPI_INSTANCE_UUID);
-    exec(cmd, function (err, stdout, stderr) {
+    exec(cmd, function execCb(err, stdout) {
         if (err) {
             cb(err);
             return;
@@ -95,7 +95,7 @@ test('setup', function (t) {
     vasync.pipeline({
         funcs: [
             function (_, next) {
-                getAvailableImage(function (err, availImg) {
+                getAvailableImage(function getAvailCb(err) {
                     if (err) {
                         next(err);
                         return;
@@ -249,7 +249,7 @@ test('sdcadm rollback --force --yes -f', function (t) {
 
         t.equal(stderr, '');
 
-        exec('vmadm list | grep papi', function (err2, stdout2, stderr2) {
+        exec('vmadm list | grep papi', function execCb(err2, stdout2) {
             t.ifError(err2);
 
             stdout2.split('\n').forEach(function (line) {
@@ -271,6 +271,11 @@ test('sdcadm rollback --force --yes -f', function (t) {
 
 
 test('teardown', function (t) {
+    if (!SUCCESSFULLY_UPDATED) {
+        t.comment('Update did not happened. Skipping teardown');
+        t.end();
+        return;
+    }
     var cmd = util.format('sdc-imgadm delete %s', AVAILABLE_VERSION);
     exec(cmd, function (err, stdout, stderr) {
         t.ifError(err, 'Execution error');
