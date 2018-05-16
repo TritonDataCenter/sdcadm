@@ -22,7 +22,6 @@ var UUID_RE = common.UUID_RE;
 
 var CURRENT_AGENTS_VERSION;
 var CURRENT_AGENTS_IMG;
-var LATEST_AGENTS_IMG;
 
 function getCurrentAgentsVersion(t, cb) {
     var latest = '/usbkey/extra/agents/latest';
@@ -60,20 +59,6 @@ function getCurrentAgentsImgManifest(t, cb) {
 }
 
 
-function getLatestAgentsImgManifest(t, cb) {
-    var command = 'updates-imgadm list name=agentsshar --latest --json';
-    exec(command, function (err, stdout, stderr) {
-        t.ifError(err, 'Execution error');
-        t.equal(stderr, '', 'Empty stderr');
-        var jsonDetails = common.parseJsonOut(stdout);
-        if (jsonDetails.length) {
-            LATEST_AGENTS_IMG = jsonDetails[0];
-        }
-        cb();
-    });
-}
-
-
 function checkHelp(t, subCmd, expectedStr) {
     var cmd = 'sdcadm experimental ' + subCmd + ' --help';
 
@@ -95,9 +80,6 @@ test('setup', function (t) {
             },
             function (_, next) {
                 getCurrentAgentsImgManifest(t, next);
-            },
-            function (_, next) {
-                getLatestAgentsImgManifest(t, next);
             }
         ]
     }, function () {

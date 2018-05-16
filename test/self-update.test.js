@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2016 Joyent, Inc.
+ * Copyright 2018 Joyent, Inc.
  */
 
 
@@ -15,7 +15,6 @@ var fs = require('fs');
 var assert = require('assert-plus');
 
 var CURRENT_VERSION = null;
-var CURRENT_BUILDSTAMP = null;
 var LATEST_UUID = null;
 
 function checkUpdateResults(t, err, stdout, stderr, moreStrings) {
@@ -27,7 +26,8 @@ function checkUpdateResults(t, err, stdout, stderr, moreStrings) {
     t.equal(stderr, '');
 
     if (stdout.indexOf('Already up-to-date') !== -1) {
-        return t.end();
+        t.end();
+        return;
     }
 
     var findStrings = [
@@ -61,7 +61,6 @@ function getSdcadmBuildstampVersion(t, cb) {
 
 test('setup', function (t) {
     getSdcadmBuildstampVersion(t, function (data) {
-        CURRENT_BUILDSTAMP = data;
         var updatesCmd = '/opt/smartdc/bin/updates-imgadm list ' +
             'tag.buildstamp=' + data + ' --latest -o uuid -H';
         exec(updatesCmd, function (err2, stdout, stderr) {

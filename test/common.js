@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2016, Joyent, Inc.
+ * Copyright 2018, Joyent, Inc.
  */
 
 var exec = require('child_process').exec;
@@ -42,7 +42,7 @@ function deepCopy(obj) {
 function parseJsonOut(output) {
     try {
         return JSON.parse(output);
-    } catch (e) {
+    } catch (_) {
         return null; // dodgy
     }
 }
@@ -85,7 +85,8 @@ function checkInsts(t, opts, cb) {
         func: function (item, next) {
 
             if (item.service === 'global' || item.instance === '-') {
-                return next();
+                next();
+                return;
             }
 
             var description = (item.alias !== '-') ?
@@ -102,7 +103,8 @@ function checkInsts(t, opts, cb) {
                 var instanceDetails = parseJsonOut(stdout2);
                 if (!instanceDetails) {
                     t.ok(false, 'failed to parse JSON for cmd ' + cmd2);
-                    return next();
+                    next();
+                    return;
                 }
 
                 if (item.service !== 'assets') {
@@ -111,7 +113,8 @@ function checkInsts(t, opts, cb) {
                 }
 
                 if (item.alias === '-') {
-                    return next();
+                    next();
+                    return;
                 }
 
                 var cmd = 'sdc-vmapi /vms/' + item.instance + ' | json -H';
@@ -121,7 +124,8 @@ function checkInsts(t, opts, cb) {
                     var vmDetails = parseJsonOut(stdout);
                     if (!vmDetails) {
                         t.ok(false, 'failed to parse JSON for cmd ' + cmd);
-                        return next();
+                        next();
+                        return;
                     }
 
                     t.equal(vmDetails.uuid,  item.instance,
@@ -147,7 +151,8 @@ function checkInsts(t, opts, cb) {
                             if (!imgInfo) {
                                 t.ok(false, 'failed to parse JSON for cmd ' +
                                         cmd3);
-                                return next();
+                                next();
+                                return;
                             }
 
                             t.equal(imgInfo.version, item.version,

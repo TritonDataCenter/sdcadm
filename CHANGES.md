@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.17.3
+
+- TRITON-348 Support for using eslint
+
 ## 1.17.2
 
 - TOOLS-1387 `sdcadm platform install` should fail early if there's not enough

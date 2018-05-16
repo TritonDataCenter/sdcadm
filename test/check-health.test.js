@@ -5,13 +5,12 @@
  */
 
 /*
- * Copyright 2016, Joyent, Inc.
+ * Copyright 2018, Joyent, Inc.
  */
 
 
 var test = require('tape').test;
 var exec = require('child_process').exec;
-var util = require('util');
 
 
 var common = require('./common');
@@ -53,7 +52,8 @@ test('setup', function (t) {
         var svcs = common.parseJsonOut(stdout);
         if (!svcs) {
             t.ok(false, 'failed to parse JSON for cmd ' + cmd);
-            return t.end();
+            t.end();
+            return;
         }
         svcs.forEach(function (svc) {
             serviceNamesFromUUID[svc.uuid] = svc.name;
@@ -65,7 +65,8 @@ test('setup', function (t) {
             var servers = common.parseJsonOut(stdout2);
             if (!servers) {
                 t.ok(false, 'failed to parse JSON for cmd ' + cmd2);
-                return t.end();
+                t.end();
+                return;
             }
             servers.forEach(function (server) {
                 serverHostnamesFromUUID[server.uuid] = server.hostname;
@@ -133,7 +134,8 @@ test('sdcadm check-health --json', function (t) {
         var details = common.parseJsonOut(stdout);
         if (!details) {
             t.ok(false, 'failed to parse JSON');
-            return t.end();
+            t.end();
+            return;
         }
 
         var healthDetails = {};
@@ -198,8 +200,8 @@ test('sdcadm check-health with disabled papi', function (t) {
         t.notEqual(stderr, 'Some instances appear unhealthy'.indexOf(stderr),
                    -1);
 
-        var unhealthyPapis = common.parseTextOut(stdout).
-            filter(function (inst) {
+        var unhealthyPapis = common.parseTextOut(stdout).filter(
+            function (inst) {
             return inst[1] === 'papi' && inst[4] === 'false';
         });
 

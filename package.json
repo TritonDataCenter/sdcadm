@@ -1,7 +1,7 @@
 {
   "name": "sdcadm",
   "description": "Administer a SmartDataCenter (SDC) standup",
-  "version": "1.17.2",
+  "version": "1.17.3",
   "author": "Joyent (joyent.com)",
   "private": true,
   "dependencies": {
@@ -34,7 +34,9 @@
     "wf-client": "0.3.0"
   },
   "devDependencies": {
-    "marked-man": "0.1.4"
+    "marked-man": "0.1.4",
+    "eslint": "4.13.1",
+    "eslint-plugin-joyent": "~2.0.0"
   },
   "engines": {
     "node": ">=0.10"

@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2016, Joyent, Inc.
+ * Copyright 2018, Joyent, Inc.
  */
 
 
@@ -63,7 +63,8 @@ function checkInstancesExist(t, instances, cb) {
                 var instanceDetails = common.parseJsonOut(stdout);
                 if (!instanceDetails) {
                     t.ok(false, 'failed to parse JSON for cmd ' + cmd);
-                    return next();
+                    next();
+                    return;
                 }
 
                 t.equal(instanceDetails.uuid, instance.uuid,
@@ -96,7 +97,8 @@ function checkServicesDetails(t, servicesDetails) {
                 svcUuid + ' service type');
 
             if (svcUuid === '-') {
-                return next();
+                next();
+                return;
             }
 
             var svcInfo = SERVICES_INFO[svcUuid];
@@ -105,7 +107,8 @@ function checkServicesDetails(t, servicesDetails) {
             t.equal(svcInfo.name, name, svcUuid + ' service name matches');
 
             if (imgUuid === '-') {
-                return next();
+                next();
+                return;
             }
 
             t.equal(svcInfo.params.image_uuid, imgUuid,
@@ -117,7 +120,8 @@ function checkServicesDetails(t, servicesDetails) {
                 t.ifError(err, svcUuid + ' service image exists');
 
                 if (type !== 'vm') {
-                    return next();
+                    next();
+                    return;
                 }
 
                 var cmd2 = 'sdc-sapi /instances?service_uuid=' +
@@ -129,7 +133,8 @@ function checkServicesDetails(t, servicesDetails) {
                     var instances = common.parseJsonOut(stdout2);
                     if (!instances) {
                         t.ok(false, 'failed to parse JSON for cmd ' + cmd2);
-                        return next();
+                        next();
+                        return;
                     }
 
                     instances.forEach(function (inst) {
@@ -166,7 +171,8 @@ test('setup', function (t) {
         var servicesInfo = common.parseJsonOut(stdout);
         if (!servicesInfo) {
             t.ok(false, 'failed to parse JSON to preload service info');
-            return t.end();
+            t.end();
+            return;
         }
 
         servicesInfo.forEach(function (svc) {
@@ -238,7 +244,8 @@ test('sdcadm services --json', function (t) {
         var details = common.parseJsonOut(stdout);
         if (!details) {
             t.ok(false, 'failed to parse JSON');
-            return t.end();
+            t.end();
+            return;
         }
 
         var svcDetails = {};
