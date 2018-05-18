@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.17.4
+
+- TOOLS-1977 Modify `sdcadm post-setup ha-binder` to move insts to different servers
+- TOOLS-1224 `sdcadm <subcommand> -h|--help` hits SAPI to get the sdc app: that's overkill
+
 ## 1.17.3
 
 - TRITON-348 Support for using eslint

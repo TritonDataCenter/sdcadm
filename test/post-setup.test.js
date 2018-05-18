@@ -320,50 +320,6 @@ test('sdcadm post-setup help dev-sample-data', function (t) {
 });
 
 
-test('sdcadm post-setup ha-binder', function (t) {
-    exec('sdcadm post-setup ha-binder', function (err, stdout, stderr) {
-        t.ok(err);
-
-        t.equal(stdout, '');
-        t.notEqual(stderr.indexOf('Must specify 1 servers'), -1);
-
-        t.end();
-    });
-});
-
-
-test('sdcadm post-setup ha-binder --members', function (t) {
-    exec('sdcadm post-setup ha-binder -m 4', function (err, stdout, stderr) {
-        t.ok(err);
-
-        t.equal(stdout, '');
-        t.notEqual(stderr.indexOf('Must specify 3 servers'), -1);
-
-        t.end();
-    });
-});
-
-
-test('sdcadm post-setup ha-binder --servers', function (t) {
-    var serverUuids = '';
-
-    exec('sdcadm post-setup ha-binder -s ' + serverUuids,
-         function (err, stdout, stderr) {
-             console.log(err);
-             console.log(stdout);
-             console.log(stderr);
-        // TODO
-        t.end();
-    });
-});
-
-
-test('sdcadm post-setup help ha-binder', function (t) {
-    checkHelp(t, 'post-setup ha-binder',
-        'HA setup for binder/zookeeper services using binder instances');
-});
-
-
 test('sdcadm post-setup ha-manatee', function (t) {
     exec('sdcadm post-setup ha-manatee', function (err, stdout, stderr) {
         t.ok(err);

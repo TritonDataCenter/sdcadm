@@ -391,32 +391,64 @@ into the same network for any CN.
 
 ### sdcadm post-setup ha-binder \[options\]
 
-Create a binder cluster, known as an ensemble, using the headnode's
-binder as the first member and leader of the cluster.
+Setup the binder service for high availability (HA).
 
-Given that the existing binder instance will be included into the
-ensemble, and we need an odd number of machines for better cluster
-reliability, we need to specify an additional number of new instances
-to be created, either 2 or 4, in order to complete a total of 3 or 5
-instances.
+The binder service provides internal DNS to Triton core services.
+It also holds a zookeeper (ZK) cluster used by some Triton core
+services. To best support ZK availability we want an odd number of
+binder instances. One, three, or five instances are supported.
 
-Remember that you need to specify the -s option as many times as
-different servers UUIDs you need to provide:
+Usage:
+     sdcadm post-setup ha-binder SERVER1 SERVER2 ...
 
-sdcadm post-setup ha-binder -s SERVER\_UUID1 -s SERVER\_UUID2
-
+Options:
 
 `-h, --help`
-    Show this help and exit.
+    Show this help.
+
+`--allow-delete`
+    Allow replacement/deletion of existing binder instances.
+
+`--dev-allow-repeat-servers`
+    For development, allow a binder cluster with
+    multiple instances on the same server.
 
 `-y, --yes`
     Answer yes to all confirmations.
 
-`-s ARG, --servers=ARG`
-    UUID for the target servers. At least m are required.
+"SERVER ..." should list one, three, or five setup servers (hostname
+or UUID) on which a binder instance is desired. Note that this
+*includes* existing binder instances, e.g. the "binder0" instance
+typically on the initial headnode.
 
-`-m INT, --members=INT`
-    Number of instances to create (2 or 4). Default: 2
+For backward compatibility,
+`sdcadm post-setup ha-binder -s SERVER2 -s SERVER3` is accepted
+(a) when there is only a single binder on the headnode and
+(b) to mean that two binder instances should be added for a total of
+three instances. The new calling form is preferred because it is
+idempotent.
+
+Examples:
+    # Ensure a 3-instance binder cluster on the given 3 servers.
+    sdcadm post-setup ha-binder headnode SERVER2 SERVER3
+
+    # Deprecated. Same result as preview example.
+    sdcadm post-setup ha-binder -s SERVER2 -s SERVER3
+
+At least one of the existing binder instances must remain unchanged
+during the process. In case the desired configuration does not
+include any of the existing instances, the recommended procedure is
+to complete the removal or replacement of all the desired instances
+in two steps, keeping at least one of the instances during the first
+run of the command. For example, say we want to "move" our binder
+instances from servers "headnode", "SERVER1" and "SERVER2" to the
+new servers "SERVER4", "SERVER5" and "new-headnode". We can proceed
+as follows:
+
+    # Replace all but the first instance:
+    sdcadm post-setup ha-binder headnode SERVER4 SERVER5
+    # Replace the first one while keeping the new instances:
+    sdcadm post-setup ha-binder new-headnode SERVER4 SERVER5
 
 ### sdcadm post-setup ha-manatee \[options\]
 
@@ -1093,4 +1125,4 @@ Enables/disables support for various NFS volumes features.
 
 ## COPYRIGHT
 
-sdcadm Copyright (c) 2017 Joyent Inc., All rights reserved.
+sdcadm Copyright (c) 2018 Joyent Inc., All rights reserved.

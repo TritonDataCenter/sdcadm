@@ -11,7 +11,7 @@ apisections:
 -->
 
 <!--
-    Copyright 2017 Joyent, Inc.
+    Copyright 2018 Joyent, Inc.
 -->
 
 # Triton post-setup with sdcadm
@@ -49,15 +49,13 @@ In case this is a setup already being used by non-administrator users, it's a
 good idea to put the DC in maintenance first
 (`sdcadm dc-maint start`). Then:
 
-    sdcadm post-setup ha-binder \
-        --servers=`CN1_UUID` \
-        --servers=`CN2_UUID`
+    sdcadm post-setup ha-binder headnode CN1_UUID CN2_UUID
 
 This command will create 2 more binder instances, one placed on the CN
 identified by CN1\_UUID, and the other CN identified by CN2\_UUID.
 
 If you need to create a cluster of 5 instances, you just need to pass a couple
-additional CN UUIDs to this command together with the `--members=4` argument.
+additional CN UUIDs to this command.
 
 Once the binder instances have been configured, and all of them have joined
 the *"cluster"*, manatee and moray will be restarted to begin using this
