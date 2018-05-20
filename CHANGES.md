@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.18.0
+
+- TRITON-391 Get rid of sdcadm history
+
 ## 1.17.4
 
 - TOOLS-1977 Modify `sdcadm post-setup ha-binder` to move insts to different servers
