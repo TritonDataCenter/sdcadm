@@ -25,11 +25,7 @@ test('sdcadm check-config --help', function (t) {
 });
 
 
-// Right now check-config is pretty much useless. Need to update it and take
-// a complete review of a proper test suite.
-// Need to fix https://jira.joyent.us/browse/TOOLS-1517 in order to avoid the
-// test failing.
-test.skip('sdcadm check-config', function (t) {
+test('sdcadm check-config', function (t) {
     exec('sdcadm check-config', function (err, stdout, stderr) {
         t.ifError(err);
 
