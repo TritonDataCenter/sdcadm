@@ -28,7 +28,7 @@ JSSTYLE_FLAGS	 = -f tools/jsstyle.conf
 CLEAN_FILES += ./node_modules ./build/sdcadm-*.sh ./build/sdcadm-*.imgmanifest ./build/shar-image ./man/man1/sdcadm.1 ./etc/sdcadm.completion
 
 
-NODE_PREBUILT_VERSION=v4.9.0
+NODE_PREBUILT_VERSION=v6.14.0
 ifeq ($(shell uname -s),SunOS)
 	NODE_PREBUILT_TAG=gz
 	# sdc-minimal-multiarch-lts 15.4.1
