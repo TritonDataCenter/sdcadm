@@ -189,6 +189,34 @@ test('sdcadm update --force-same-image', function (t) {
     });
 });
 
+// We've had several issues in the past regarding SAPI's moray client being
+// unable to recover from connection lost when we update sapi right after
+// non-HA moray. Let's add a test to check if we hit any more issues:
+test('update non-HA moray and SAPI consecutively', function (t) {
+    var cmd = 'sdcadm up moray sapi --force-same-image --yes';
+    exec(cmd, function (err, stdout, stderr) {
+        t.ifError(err, 'Execution error');
+        t.equal(stderr, '', 'Empty stderr');
+
+        var findStrings = [
+            'Updating moray',
+            'Provisioning Temporary moray',
+            'Reprovisioning VM',
+            'Destroying tmp VM',
+            'Updating sapi',
+            'Provisioning Temporary sapi',
+            'Reprovisioning sapi VM',
+            'Stop tmp VM',
+            'Updated successfully'
+        ];
+
+        findStrings.forEach(function (str) {
+            t.notEqual(stdout.indexOf(str), -1,
+                    util.format('check update string present %s', str));
+        });
+        t.end();
+    });
+});
 
 // As part of teardown, we'll not only rollback the updates, but also remove
 // the images we imported, since this is the only way to test the whole
