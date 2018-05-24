@@ -19,14 +19,29 @@ var util = require('util');
 
 var HEADNODE_UUID = '';
 var NUM_INSTS = 0;
+var CHANNEL = 'dev';
 
 function getNumInsts(cb) {
     shared.getNumInsts('amonredis', cb);
 }
 
+function getChannelForLatestLocalImg(cb) {
+    var cmd = 'updates-imgadm get ' +
+        '`sdc-sapi /services?name=amonredis|json -H [0].params.image_uuid`' +
+        ' -C \'*\' | json channels[0]';
+    exec(cmd, function execCb(err, stdout, stderr) {
+        if (err) {
+            cb(err);
+            return;
+        }
+        var latestLocalImgChannel = stdout.trim();
+        cb(null, latestLocalImgChannel);
+    });
+}
 
-function getLatestImgAvail(cb) {
-    var cmd = 'updates-imgadm list name=amonredis --latest --json';
+function getLatestImgAvail(channel, cb) {
+    var cmd = 'updates-imgadm list name=amonredis --latest --json -C ' +
+        channel;
     exec(cmd, function execCb(err, stdout, stderr) {
         if (err) {
             cb(err);
@@ -37,6 +52,10 @@ function getLatestImgAvail(cb) {
         cb(null, latestImgUuid);
     });
 }
+
+test('prepare', function (t) {
+    shared.prepare(t, {external_nics: true});
+});
 
 test('setup', function setupTest(t) {
     var cmd = 'sysinfo | json UUID';
@@ -50,8 +69,11 @@ test('setup', function setupTest(t) {
             t.ifError(err2, 'vmadm list error');
             t.ok(numInsts >= 1, 'at least one amonredis instance exists');
             NUM_INSTS = numInsts;
-
-            t.end();
+            getChannelForLatestLocalImg(function channelCb(err3, c) {
+                t.ifError(err3);
+                CHANNEL = c;
+                t.end();
+            });
         });
     });
 });
@@ -168,13 +190,16 @@ test('sdcadm create amonredis --dev-allow-multiple-instances ' +
 
 
 // Create test with latest available image:
-test('sdcadm create amonredis --dev-allow-multiple-instances' +
+// TODO: Skip this test until we have support for channels
+// in sdcadm create (TRITON-477)
+test.skip('sdcadm create amonredis --dev-allow-multiple-instances' +
      ' -y -s --image', function createWithLatestImg(t) {
     vasync.pipeline({
         arg: {},
         funcs: [
             function getLatestImg(ctx, next) {
-                getLatestImgAvail(function getImgCb(updatesErr, imageUuid) {
+                getLatestImgAvail(CHANNEL,
+                    function getImgCb(updatesErr, imageUuid) {
                     t.ifError(updatesErr, 'updates-imgadm list error');
                     ctx.image_uuid = imageUuid;
                     next();
@@ -183,7 +208,8 @@ test('sdcadm create amonredis --dev-allow-multiple-instances' +
             function createAmonRedis(ctx, next) {
                 var cmd = 'sdcadm create amonredis ' +
                           '--dev-allow-multiple-instances --yes -s ' +
-                          HEADNODE_UUID + ' --image=' + ctx.image_uuid;
+                          HEADNODE_UUID + ' --image=' + ctx.image_uuid +
+                    ' -C ' + CHANNEL;
                 exec(cmd, function execCb(err, stdout, stderr) {
                     t.ifError(err, 'Execution error');
                     t.equal(stderr, '', 'Empty stderr');

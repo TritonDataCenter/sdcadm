@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright 2016, Joyent, Inc.
+# Copyright 2018, Joyent, Inc.
 #
 
 #
@@ -138,7 +138,8 @@ for file in $test_files; do
     echo "# $test_file"
     PATH=$NODE_INSTALL/bin:$PATH $TAPE $file \
         | tee $RESULTS/$test_file.tap
-    if [[ "$?" != "0" ]]; then
+    retval=$?
+    if [[ "${retval}" != "0" ]]; then
         echo $file >> $FAILING_LIST
         [[ -n "$opt_stop_on_failure" ]] && break
     fi
@@ -179,4 +180,4 @@ if [[ ${failing_tests} -gt 0 ]]; then
 fi
 echo ""
 
-exit $failing_tests
+exit $fail

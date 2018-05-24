@@ -40,7 +40,7 @@ function getCurrentAgentsImgManifest(t, cb) {
     }
     var command;
     if (CURRENT_AGENTS_VERSION.match(UUID_RE)) {
-        command = 'updates-imgadm get ' + CURRENT_AGENTS_VERSION;
+        command = 'updates-imgadm get ' + CURRENT_AGENTS_VERSION + ' -C \'*\'';
     } else {
         command = 'updates-imgadm list version=~master' +
         CURRENT_AGENTS_VERSION + ' --json';

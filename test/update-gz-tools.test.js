@@ -17,7 +17,9 @@ var util = require('util');
 var shared = require('./shared');
 
 var CURRENT_GZ_TOOLS_VERSION = null;
+var CURRENT_GZ_TOOLS_CHANNEL;
 var LATEST_GZ_TOOLS_UUID = null;
+var SDCADM_CHANNEL;
 
 /*
  * Note that it's possible to get an empty string here on a clean setup
@@ -32,21 +34,65 @@ function getGzToolsVersion(t, cb) {
     });
 }
 
+function getGzToolsChannel(t, cb) {
+    if (CURRENT_GZ_TOOLS_VERSION === '') {
+        cb();
+        return;
+    }
+    var command = 'updates-imgadm get ' + CURRENT_GZ_TOOLS_VERSION +
+        ' -C \'*\' | json channels[0]';
+    exec(command, function (err, stdout, stderr) {
+        t.ifError(err, 'getGzToolsChannel error');
+        // It is possible that we have a gz-tools version already removed
+        // from updates-imgadm:
+        if (stderr && stderr.match('ResourceNotFound')) {
+            cb('');
+            return;
+        } else {
+            t.equal(stderr, '', 'getGzToolsChannel stderr');
+            t.ok(stdout, 'getGzToolsChannel stdout');
+            cb(stdout.trim());
+        }
+    });
+}
+
+function getSdcAdmChannel(t, cb) {
+    exec('sdcadm channel get', function (err, stdout, stderr) {
+        t.ifError(err);
+        t.equal(stderr, '');
+        if (stdout) {
+            SDCADM_CHANNEL = stdout.trim();
+        }
+        cb(SDCADM_CHANNEL);
+    });
+}
+
 test('prepare', function (t) {
     shared.prepare(t, {external_nics: true});
 });
 
 test('setup', function (t) {
-    getGzToolsVersion(t, function (data) {
+    getGzToolsVersion(t, function versionCb(data) {
         CURRENT_GZ_TOOLS_VERSION = data;
-        var updatesCmd = '/opt/smartdc/bin/updates-imgadm list ' +
-            'name=gz-tools --latest -o uuid -H';
-        exec(updatesCmd, function (err2, stdout, stderr) {
-            t.ifError(err2, 'Error listing gz-tools from updates-imgadm');
-            LATEST_GZ_TOOLS_UUID = stdout.trim();
-            t.ok(LATEST_GZ_TOOLS_UUID, 'Latest gz-tools uuid');
-            t.equal(stderr, '', 'empty stderr');
-            t.end();
+        getGzToolsChannel(t, function channelCb(channel) {
+            CURRENT_GZ_TOOLS_CHANNEL = channel;
+            getSdcAdmChannel(t, function sdcadmChCb() {
+                var updatesCmd = '/opt/smartdc/bin/updates-imgadm list ' +
+                    'name=gz-tools --latest -o uuid -H';
+                if (CURRENT_GZ_TOOLS_CHANNEL) {
+                    updatesCmd += ' -C ' + CURRENT_GZ_TOOLS_CHANNEL;
+                } else {
+                    updatesCmd += ' -C ' + SDCADM_CHANNEL;
+                }
+                exec(updatesCmd, function (err2, stdout, stderr) {
+                    t.ifError(err2,
+                        'Error listing gz-tools from updates-imgadm');
+                    LATEST_GZ_TOOLS_UUID = stdout.trim();
+                    t.ok(LATEST_GZ_TOOLS_UUID, 'Latest gz-tools uuid');
+                    t.equal(stderr, '', 'empty stderr');
+                    t.end();
+                });
+            });
         });
     });
 });
@@ -55,10 +101,11 @@ test('setup', function (t) {
 test('update-gz-tools --latest --just-download', function (t) {
     var cmd = 'sdcadm experimental update-gz-tools --latest ' +
         '--just-download --force-reinstall';
+    if (CURRENT_GZ_TOOLS_CHANNEL) {
+        cmd += ' -C ' + CURRENT_GZ_TOOLS_CHANNEL;
+    }
+
     exec(cmd, function (err, stdout, stderr) {
-        // FIXME: We need to either stop skipping tarball decompression
-        // when `justDownload` option is provided, or skip tarball files
-        // validation otherwise. TRITON-347
         t.ifError(err, 'Update gz-tools error');
         var findStrings = [
             'Downloading gz-tools',
@@ -108,6 +155,9 @@ test('keep --latest image', function (t) {
 test('update-gz-tools --latest --concurrency=3', function (t) {
     var cmd = 'sdcadm experimental update-gz-tools --latest ' +
         '--force-reinstall --concurrency=3';
+    if (CURRENT_GZ_TOOLS_CHANNEL) {
+        cmd += ' -C ' + CURRENT_GZ_TOOLS_CHANNEL;
+    }
     exec(cmd, function (err, stdout, stderr) {
         t.ifError(err, 'Update gz-tools error');
         var findStrings = [
@@ -136,6 +186,9 @@ test('update-gz-tools --latest --concurrency=3', function (t) {
 
 test('update-gz-tools --latest w/o --force-reinstall', function (t) {
     var cmd = 'sdcadm experimental update-gz-tools --latest';
+    if (CURRENT_GZ_TOOLS_CHANNEL) {
+        cmd += ' -C ' + CURRENT_GZ_TOOLS_CHANNEL;
+    }
     exec(cmd, function (err, stdout, stderr) {
         t.ifError(err, 'Update gz-tools error');
         var findStrings = [
@@ -156,6 +209,9 @@ test('update-gz-tools /path/to/installer', function (t) {
     var cmd = util.format('sdcadm experimental update-gz-tools ' +
         '/var/tmp/backup-gz-tools-%s.tgz ' +
         '--force-reinstall', LATEST_GZ_TOOLS_UUID);
+    if (CURRENT_GZ_TOOLS_CHANNEL) {
+        cmd += ' -C ' + CURRENT_GZ_TOOLS_CHANNEL;
+    }
     exec(cmd, function (err, stdout, stderr) {
         t.ifError(err, 'Update gz-tools error');
         var findStrings = [
@@ -180,13 +236,14 @@ test('update-gz-tools IMAGE-UUID', function (t) {
         t.end();
         return;
     }
-    if (CURRENT_GZ_TOOLS_VERSION === '') {
+    if (CURRENT_GZ_TOOLS_VERSION === '' || CURRENT_GZ_TOOLS_CHANNEL === '') {
         t.end();
         return;
     }
     var cmd = 'sdcadm experimental update-gz-tools ' +
         '--force-reinstall ' +
-        CURRENT_GZ_TOOLS_VERSION;
+        CURRENT_GZ_TOOLS_VERSION + ' -C ' +
+        CURRENT_GZ_TOOLS_CHANNEL;
     exec(cmd, function (err, stdout, stderr) {
         t.ifError(err, 'Update gz-tools error');
         console.log(stdout);
@@ -205,7 +262,7 @@ test('remove --latest image backup', function (t) {
         LATEST_GZ_TOOLS_UUID);
     exec(cmd, function (err, stdout, stderr) {
         t.ifError(err, 'Update gz-tools error');
-        console.log(stdout);
+        t.equal(stdout, '', 'Update gz.tools stdout');
         t.equal(stderr, '', 'Update gz.tools stderr');
         t.end();
     });

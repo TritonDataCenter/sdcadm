@@ -58,11 +58,26 @@ function getSdcadmBuildstampVersion(t, cb) {
     });
 }
 
+function getSdcadmChannel(t, cb) {
+    if (CURRENT_VERSION === '') {
+        cb();
+        return;
+    }
+    var command = 'updates-imgadm get ' + CURRENT_VERSION +
+        ' -C \'*\' | json channels[0]';
+    exec(command, function (err, stdout, stderr) {
+        t.ifError(err, 'getSdcadmChannel error');
+        t.equal(stderr, '', 'getSdcadmChannel stderr');
+        t.ok(stdout, 'getSdcadmChannel stdout');
+        cb(stdout.trim());
+    });
+}
+
 
 test('setup', function (t) {
     getSdcadmBuildstampVersion(t, function (data) {
         var updatesCmd = '/opt/smartdc/bin/updates-imgadm list ' +
-            'tag.buildstamp=' + data + ' --latest -o uuid -H';
+            'tag.buildstamp=' + data + ' --latest -o uuid -H -C \'*\'';
         exec(updatesCmd, function (err2, stdout, stderr) {
             t.ifError(err2);
             CURRENT_VERSION = stdout.trim();
@@ -117,7 +132,7 @@ test('sdcadm self-update --latest --channel=staging', function (t) {
 
 
 test('sdcadm self-update --latest', function (t) {
-    var cmd = 'sdcadm self-update --latest';
+    var cmd = 'sdcadm self-update --latest --channel=dev';
     exec(cmd, function (err, stdout, stderr) {
         checkUpdateResults(t, err, stdout, stderr, ['Using channel dev']);
     });
@@ -125,8 +140,12 @@ test('sdcadm self-update --latest', function (t) {
 
 
 test('sdcadm self-update IMAGE_UUID', function (t) {
-    var cmd = 'sdcadm self-update ' + CURRENT_VERSION;
-    exec(cmd, function (err, stdout, stderr) {
-        checkUpdateResults(t, err, stdout, stderr, ['Using channel dev']);
+    getSdcadmChannel(t, function (channel) {
+        var cmd = 'sdcadm self-update ' + CURRENT_VERSION + ' -C' + channel;
+        exec(cmd, function (err, stdout, stderr) {
+            checkUpdateResults(t, err, stdout, stderr,
+                ['Using channel ' + channel]);
+        });
     });
+
 });

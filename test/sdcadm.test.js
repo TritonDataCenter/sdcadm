@@ -41,7 +41,7 @@ test('sdcadm --help', function (t) {
 test('sdcadm --version', function (t) {
     exec('sdcadm --version', function (err, stdout, stderr) {
         t.ifError(err, 'no version error');
-        t.ok(stdout.match(/^sdcadm \d+\.\d+\.\d+ \(master-\d+T\d+Z-.+\)/));
+        t.ok(stdout.match(/^sdcadm \d+\.\d+\.\d+ \([\w-]+-\d+T\d+Z-.+\)/));
         t.equal(stderr, '');
 
         t.end();

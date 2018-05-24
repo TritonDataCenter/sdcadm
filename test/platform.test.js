@@ -201,11 +201,8 @@ test('sdcadm platform available', function (t) {
 
             t.deepEqual(titles, AVAIL_TITLES, 'check column titles');
         } else {
-            t.equal(platformsDetails.shift().join(' '),
-                'The latest platform image for "dev"' +
-                ' channel is already installed.',
-                'Up to date platform'
-            );
+            t.notEqual(platformsDetails.shift().join(' ')
+                .indexOf('already installed'), -1);
         }
 
         platformsDetails.forEach(function (p) {
