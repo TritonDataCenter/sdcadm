@@ -263,6 +263,13 @@ test('sdcadm platform usage VERSION -j', function (t) {
         t.equal(stderr, '');
 
         var usageDetails = common.parseJsonOut(stdout);
+        if (!usageDetails || !usageDetails.length) {
+            // If latest platform is not used at all, we will not have any
+            // output so cannot check titles:
+            t.comment('Skipping usage checks (latest platform not used)');
+            t.end();
+            return;
+        }
         usageDetails.forEach(function (d) {
             USAGE_TITLES.map(function (title) {
                 return title.toLowerCase();
