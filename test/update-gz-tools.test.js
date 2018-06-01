@@ -59,11 +59,30 @@ test('update-gz-tools --latest --just-download', function (t) {
         // FIXME: We need to either stop skipping tarball decompression
         // when `justDownload` option is provided, or skip tarball files
         // validation otherwise. TRITON-347
-        // t.ifError(err, 'Update gz-tools error');
-        console.log(err);
-        console.log(stdout);
-        console.log(stderr);
-        // t.equal(stderr, '', 'Update gz.tools stderr');
+        t.ifError(err, 'Update gz-tools error');
+        var findStrings = [
+            'Downloading gz-tools',
+            'Using channel',
+            'Updated gz-tools successfully'
+        ];
+
+        findStrings.forEach(function (str) {
+            t.notEqual(stdout.indexOf(str), -1,
+                util.format('check just-download string present %s', str));
+        });
+
+        var findNotStrings = [
+            'Decompressing gz-tools tarball',
+            'Validating gz-tools tarball files',
+            'Updating global zone scripts',
+            'Finding servers to update'
+        ];
+
+        findNotStrings.forEach(function (str) {
+            t.equal(stdout.indexOf(str), -1,
+                util.format('check just-download string not present %s', str));
+        });
+        t.equal(stderr, '', 'Update gz.tools stderr');
         getGzToolsVersion(t, function (data) {
             t.equal(CURRENT_GZ_TOOLS_VERSION, data,
                 'Expected gz-tools version');
@@ -91,7 +110,21 @@ test('update-gz-tools --latest --concurrency=3', function (t) {
         '--force-reinstall --concurrency=3';
     exec(cmd, function (err, stdout, stderr) {
         t.ifError(err, 'Update gz-tools error');
-        console.log(stdout);
+        var findStrings = [
+            'Using channel',
+            'Updated gz-tools successfully',
+            'Decompressing gz-tools tarball',
+            'Validating gz-tools tarball files',
+            'Updating global zone scripts',
+            'Finding servers to update'
+        ];
+        findStrings.forEach(function (str) {
+            t.notEqual(stdout.indexOf(str), -1,
+                util.format('check just-download string present %s', str));
+        });
+        // Already downloaded from previous '--just-download' invocation:
+        t.equal(stdout.indexOf('Downloading gz-tools'), -1,
+            'update gz-tools not present');
         t.equal(stderr, '', 'Update gz.tools stderr');
         getGzToolsVersion(t, function (data) {
             t.equal(LATEST_GZ_TOOLS_UUID, data,
@@ -105,7 +138,15 @@ test('update-gz-tools --latest w/o --force-reinstall', function (t) {
     var cmd = 'sdcadm experimental update-gz-tools --latest';
     exec(cmd, function (err, stdout, stderr) {
         t.ifError(err, 'Update gz-tools error');
-        console.log(stdout);
+        var findStrings = [
+            'Using channel',
+            'already installed',
+            'Please re-run with'
+        ];
+        findStrings.forEach(function (str) {
+            t.notEqual(stdout.indexOf(str), -1,
+                util.format('check just-download string present %s', str));
+        });
         t.equal(stderr, '', 'Update gz.tools stderr');
         t.end();
     });
@@ -117,7 +158,15 @@ test('update-gz-tools /path/to/installer', function (t) {
         '--force-reinstall', LATEST_GZ_TOOLS_UUID);
     exec(cmd, function (err, stdout, stderr) {
         t.ifError(err, 'Update gz-tools error');
-        console.log(stdout);
+        var findStrings = [
+            'Using gz-tools tarball file',
+            'Validating gz-tools tarball files',
+            'Decompressing gz-tools tarball'
+        ];
+        findStrings.forEach(function (str) {
+            t.notEqual(stdout.indexOf(str), -1,
+                util.format('check just-download string present %s', str));
+        });
         t.equal(stderr, '', 'Update gz.tools stderr');
         t.end();
     });

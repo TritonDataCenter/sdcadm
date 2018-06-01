@@ -12,7 +12,6 @@
 /*
  * PENDING TESTS:
  *
- * - Update more than one service at once
  * - Test --exclude
  * - Test channels
  */
