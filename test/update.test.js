@@ -91,7 +91,6 @@ test('sdcadm update --just-images', function (t) {
             t.ok(stdout.match(regex), 'check update regex present');
         });
 
-        // JSSTYLED
         var imgUuid = stdout.match(/Imported image (.+?)/)[0];
         PAPI_IMG_UUID = imgUuid;
 

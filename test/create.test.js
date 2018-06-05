@@ -145,7 +145,6 @@ test('sdcadm create amonredis --dev-allow-multiple-instances ' +
                     t.ifError(err2, 'vmadm list error');
 
                     t.equal(numInsts, NUM_INSTS + 1, 'Number of instances');
-                    // JSSTYLED
                     ctx.uuid = ctx.stdout.match(/Instance "(.+?)"/)[1];
                     next();
                 });
@@ -198,7 +197,6 @@ test('sdcadm create amonredis --dev-allow-multiple-instances' +
                 getNumInsts(function getNumInstCb(err, numInsts) {
                     t.ifError(err, 'vmadm list error');
                     t.equal(numInsts, NUM_INSTS + 1);
-                    // JSSTYLED
                     ctx.uuid = ctx.stdout.match(/Instance "(.+?)"/)[1];
                     next();
                 });

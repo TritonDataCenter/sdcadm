@@ -110,7 +110,6 @@ test('sdcadm dc-maint status (maintenance)', function (t) {
         t.ifError(err);
         t.equal(stderr, '');
 
-        // JSSTYLED
         var match = stdout.match(/DC maintenance ETA: (.+)/);
         t.ok(match);
 

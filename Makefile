@@ -20,11 +20,7 @@ DOC_FILES	 = index.md config.md update.md post-setup.md
 EXTRA_DOC_DEPS += deps/restdown-brand-remora/.git
 RESTDOWN_FLAGS   = --brand-dir=deps/restdown-brand-remora
 JS_FILES	:= $(shell find lib test -name '*.js' | grep -v '/tmp/')
-JSL_CONF_NODE	 = tools/jsl.node.conf
-# JSL_FILES_NODE	 = $(JS_FILES)
 ESLINT_FILES	= $(JS_FILES)
-JSSTYLE_FILES	 = $(JS_FILES)
-JSSTYLE_FLAGS	 = -f tools/jsstyle.conf
 CLEAN_FILES += ./node_modules ./build/sdcadm-*.sh ./build/sdcadm-*.imgmanifest ./build/shar-image ./man/man1/sdcadm.1 ./etc/sdcadm.completion
 
 
