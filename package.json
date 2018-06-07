@@ -36,7 +36,8 @@
   "devDependencies": {
     "marked-man": "0.1.4",
     "eslint": "4.13.1",
-    "eslint-plugin-joyent": "~2.0.0"
+    "eslint-plugin-joyent": "~2.0.0",
+    "zkstream": "0.10.1"
   },
   "engines": {
     "node": ">=0.10"
