@@ -16,7 +16,7 @@
  * - Test channels
  */
 
-
+var common = require('./common');
 var shared = require('./shared');
 
 var test = require('tape').test;
@@ -30,6 +30,8 @@ var util = require('util');
 var PLAN_PATH;
 
 var PAPI_IMG_UUID;
+
+var UUID_RE = common.UUID_RE;
 
 test('setup', function (t) {
     shared.prepare(t, {external_nics: true});
@@ -91,19 +93,25 @@ test('sdcadm update --just-images', function (t) {
             t.ok(stdout.match(regex), 'check update regex present');
         });
 
-        var imgUuid = stdout.match(/Imported image (.+?)/)[0];
-        PAPI_IMG_UUID = imgUuid;
+        var imgUuid = stdout.match(/Imported image (.+)/);
+        if (imgUuid && imgUuid[1].match(UUID_RE)) {
+            PAPI_IMG_UUID = imgUuid[1];
+        }
 
-        var cmd = 'sdc-imgapi /images/' + imgUuid + ' | json -H';
-        exec(cmd, function (err2, stdout2, stderr2) {
-            t.ifError(err2);
-            t.equal(stderr2, '');
+        if (PAPI_IMG_UUID) {
+            var cmd = 'sdc-imgapi /images/' + PAPI_IMG_UUID + ' | json -H';
+            exec(cmd, function (err2, stdout2, stderr2) {
+                t.ifError(err2);
+                t.equal(stderr2, '');
 
-            var img = JSON.parse(stdout2);
-            t.equal(img.name, 'papi');
+                var img = JSON.parse(stdout2);
+                t.equal(img.name, 'papi');
 
+                t.end();
+            });
+        } else {
             t.end();
-        });
+        }
     });
 });
 
@@ -121,9 +129,9 @@ test('sdcadm update', function (t) {
         }
 
         var findRegex = [
-            'Installing image .+ \\(papi',
-            'Reprovisioning papi VM',
-            'Wait \\(60s\\) for papi instance',
+            'Installing image',
+            'Reprovisioning VM',
+            'Waiting for papi instance',
             'Updated successfully'
         ];
 
@@ -135,17 +143,22 @@ test('sdcadm update', function (t) {
         t.ok(update);
         PLAN_PATH = '/var/sdcadm/updates/' + update + '/plan.json';
 
-        var papiUuid = stdout.match('papi instance (.+?) to come up')[1];
+        var instMatch = stdout.match('papi instance (.+?) to come up');
+        if (instMatch && instMatch[1].match(UUID_RE)) {
+            var papiUuid = instMatch[1];
 
-        var cmd = 'sdc-vmapi /vms/' + papiUuid + ' | json -H';
-        exec(cmd, function (err2, stdout2, stderr2) {
-            t.ifError(err2);
-            t.equal(stderr2, '');
+            var cmd = 'sdc-vmapi /vms/' + papiUuid + ' | json -H';
+            exec(cmd, function (err2, stdout2, stderr2) {
+                t.ifError(err2);
+                t.equal(stderr2, '');
 
-            var papi = JSON.parse(stdout2);
-            t.equal(papi.image_uuid, PAPI_IMG_UUID);
+                var papi = JSON.parse(stdout2);
+                t.equal(papi.image_uuid, PAPI_IMG_UUID);
+                t.end();
+            });
+        } else {
             t.end();
-        });
+        }
     });
 });
 
@@ -180,7 +193,7 @@ test('sdcadm update --force-same-image', function (t) {
 
         findStrings.forEach(function (str) {
             t.notEqual(stdout.indexOf(str), -1,
-                    util.format('check update string present %s', str));
+                    util.format('check update string present: %s', str));
         });
         t.end();
 
@@ -210,7 +223,7 @@ test('update non-HA moray and SAPI consecutively', function (t) {
 
         findStrings.forEach(function (str) {
             t.notEqual(stdout.indexOf(str), -1,
-                    util.format('check update string present %s', str));
+                    util.format('check update string present: %s', str));
         });
         t.end();
     });

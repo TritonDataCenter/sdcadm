@@ -78,11 +78,9 @@ test('update non-HA', function (t) {
     exec(command, function (err, stdout, stderr) {
         t.ifError(err, 'Execution error');
         t.equal(stderr, '', 'Empty stderr');
-
         var findStrings = [
             'avoid setting SAPI back to proto mode',
             'Verifying manatee current version',
-            'Checking manatee-adm version',
             'Reprovisioning "primary" manatee',
             'Waiting for manatee instance',
             'Wait for primary PostgreSQL',
