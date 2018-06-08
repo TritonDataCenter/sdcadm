@@ -11,7 +11,7 @@
 
 var test = require('tape').test;
 var exec = require('child_process').exec;
-
+var vasync = require('vasync');
 
 var common = require('./common');
 
@@ -213,7 +213,13 @@ test('sdcadm check-health with disabled papi', function (t) {
 
 
 test('sdcadm check-health -q with disabled papi', function (t) {
-    t.end();
+    exec('sdcadm check-health -q', function (err, stdout, stderr) {
+        t.equal(err && err.code, 1, 'errcode is 1');
+        t.equal('', stdout, 'empty stdout');
+        t.notEqual(stderr.indexOf('Some instances appear unhealthy'), -1,
+            'check-health stderr');
+        t.end();
+    });
 });
 
 
@@ -222,5 +228,48 @@ test('enable papi after health check', function (t) {
         t.ifError(err);
         t.equal(stderr, '');
         t.end();
+    });
+});
+
+// This test can cause everything to hang if we're not correctly taking care
+// of Cueball when Binder is down. (Note this assumes single binder instance
+// is running into the same global zone we're running the test from):
+test('check-health when binder is down', function (t) {
+    vasync.pipeline({
+        funcs: [
+            function disableBinder(_, next) {
+                exec('/usr/sbin/svcadm -z ' +
+                    '`/opt/smartdc/bin/sdc-vmname binder` disable binder',
+                    function disableBinderCb(err, stdout, stderr) {
+                        t.ifError(err);
+                        t.equal(stdout, '');
+                        t.equal(stderr, '');
+                        next();
+                    });
+            },
+            function checkHealth(_, next) {
+                exec('sdcadm check-health', function (err, stdout, stderr) {
+                    t.equal(err && err.code, 1, 'errcode is 1');
+                    t.equal(err.killed, false, 'process not killed');
+                    t.equal(stdout, '');
+                    t.notEqual(
+                        stderr.indexOf('Binder service seems to be down'), -1,
+                        'binder off stderr');
+                    next();
+                });
+            },
+            function enableBinder(_, next) {
+                exec('/usr/sbin/svcadm -z ' +
+                    '`/opt/smartdc/bin/sdc-vmname binder` enable binder',
+                    function enableBinderCb(err, stdout, stderr) {
+                        t.ifError(err);
+                        t.equal(stdout, '');
+                        t.equal(stderr, '');
+                        next();
+                    });
+            }
+        ]
+    }, function pipeCb(pipeErr) {
+        t.end(pipeErr);
     });
 });
