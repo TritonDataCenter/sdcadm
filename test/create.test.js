@@ -190,9 +190,7 @@ test('sdcadm create amonredis --dev-allow-multiple-instances ' +
 
 
 // Create test with latest available image:
-// TODO: Skip this test until we have support for channels
-// in sdcadm create (TRITON-477)
-test.skip('sdcadm create amonredis --dev-allow-multiple-instances' +
+test('sdcadm create amonredis --dev-allow-multiple-instances' +
      ' -y -s --image', function createWithLatestImg(t) {
     vasync.pipeline({
         arg: {},

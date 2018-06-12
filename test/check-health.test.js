@@ -248,7 +248,7 @@ test('check-health when binder is down', function (t) {
                     });
             },
             function checkHealth(_, next) {
-                exec('sdcadm check-health', function (err, stdout, stderr) {
+                exec('sdcadm check-health -H', function (err, stdout, stderr) {
                     t.equal(err && err.code, 1, 'errcode is 1');
                     t.equal(err.killed, false, 'process not killed');
                     t.equal(stdout, '');
