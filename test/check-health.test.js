@@ -172,7 +172,6 @@ test('sdcadm check-health --json', function (t) {
 test('sdcadm check-health -q', function (t) {
     exec('sdcadm check-health -q', function (err, stdout, stderr) {
         t.ifError(err);
-
         t.equal(stdout, '');
         t.equal(stderr, '');
 
@@ -216,8 +215,7 @@ test('sdcadm check-health -q with disabled papi', function (t) {
     exec('sdcadm check-health -q', function (err, stdout, stderr) {
         t.equal(err && err.code, 1, 'errcode is 1');
         t.equal('', stdout, 'empty stdout');
-        t.notEqual(stderr.indexOf('Some instances appear unhealthy'), -1,
-            'check-health stderr');
+        t.notEqual('', stderr, 'not empty stderr');
         t.end();
     });
 });
@@ -251,10 +249,29 @@ test('check-health when binder is down', function (t) {
                 exec('sdcadm check-health -H', function (err, stdout, stderr) {
                     t.equal(err && err.code, 1, 'errcode is 1');
                     t.equal(err.killed, false, 'process not killed');
-                    t.equal(stdout, '');
+                    t.notEqual(stdout, '', 'empty stdout');
                     t.notEqual(
                         stderr.indexOf('Binder service seems to be down'), -1,
                         'binder off stderr');
+                    next();
+                });
+            },
+            function checkHealthJson(_, next) {
+                exec('sdcadm check-health -j', function (err, stdout, stderr) {
+                    t.equal(err && err.code, 1, 'errcode is 1');
+                    t.equal(err.killed, false, 'process not killed');
+                    t.equal(stderr, '');
+                    var details = common.parseJsonOut(stdout);
+                    if (!details) {
+                        t.ok(false, 'failed to parse JSON');
+                        t.end();
+                        return;
+                    }
+                    var msg = details[0].health_errors[0].message;
+                    t.ok(msg, 'err msg');
+                    t.notEqual(
+                        msg.indexOf('Binder service seems to be down'), -1,
+                        'binder off err');
                     next();
                 });
             },
