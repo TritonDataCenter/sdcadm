@@ -10,6 +10,25 @@
 
 # sdcadm Changelog
 
+## 1.19.0
+
+- TOOLS-1896 `sdcadm update sapi` could avoid using a temporary instance
+- TOOLS-1776 `sdcadm health` can exit 0 when there are service errors
+- TRITON-477 `sdcadm create $SVC --image` does not support channels
+- TOOLS-1926 `sdcadm health` is stuck and won't exit
+- TRITON-417 sdcadm tests implicitly assume dev channel
+- TOOLS-1699 `sdcadm health -j` should always provide JSON even on exceptions
+- TOOLS-1569 sdcadm missing tests for ha-manatee
+- TRITON-458 Remove JSStyle and Javascriptlint from sdcadm
+- TRITON-347 `sdcadm exp update-gz-tools --just-download` should not decompress and validate files
+- TRITON-395 Drop sdcadm support for manatee v1.0
+- TRITON-455 sdcadm experimental doesn't load sdcApp when needed
+- TOOLS-1717 sdcadm should not load SDC Application from SAPI when not required
+- TOOLS-1345 `sdcadm update manatee` does not update more than one async
+- TRITON-398 upgrade sdcadm to use node v6
+- TRITON-325 sdcadm still aggressively gives up after updating non-HA moray
+- TOOLS-1517 `scdcam check-config` should not complain about missing docker/cns vars in SAPI
+
 ## 1.18.0
 
 - TRITON-391 Get rid of sdcadm history
