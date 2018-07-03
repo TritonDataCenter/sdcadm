@@ -215,9 +215,8 @@ test('update non-HA moray and SAPI consecutively', function (t) {
             'Reprovisioning VM',
             'Destroying tmp VM',
             'Updating sapi',
-            'Provisioning Temporary sapi',
-            'Reprovisioning sapi VM',
-            'Stop tmp VM',
+            'Verifying SAPI full mode',
+            'Waiting for sapi',
             'Updated successfully'
         ];
 
