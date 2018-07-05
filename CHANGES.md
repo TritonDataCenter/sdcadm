@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.19.1
+
+- TRITON-572 sdcadm post-setup cloudapi should let sapi determine instance networks
+
 ## 1.19.0
 
 - TOOLS-1896 `sdcadm update sapi` could avoid using a temporary instance
