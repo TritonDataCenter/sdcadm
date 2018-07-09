@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.20.0
+
+- TRITON-574 sdcadm platform assign is broken with rack aware networking
+
 ## 1.19.1
 
 - TRITON-572 sdcadm post-setup cloudapi should let sapi determine instance networks
