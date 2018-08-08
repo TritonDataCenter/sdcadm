@@ -10,8 +10,9 @@
 
 # sdcadm Changelog
 
-### 1.20.2 (not yet released)
+## 1.20.2
 
+- TOOLS-1963 `sdcadm create assets -s NEW-HEADNODE` should work
 - TOOLS-1962 `sdcadm create sdc -s NEW-HEADNODE` should work
 - TOOLS-1966 `sdcadm create -s dhcpd` should set `dhcpd_server` flag to admin Nic
 - TRITON-636 trouble with timeouts in `sdcadm health`
