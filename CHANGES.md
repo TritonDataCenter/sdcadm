@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+### 1.20.2 (not yet released)
+
+- TOOLS-1966 `sdcadm create -s dhcpd` should set `dhcpd_server` flag to admin Nic
+
 ## 1.20.1
 
 - TOOLS-1958 / TOOLS-1959 `sdcadm experimental update-agents` Uses a consistent
