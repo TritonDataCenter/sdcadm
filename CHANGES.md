@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.20.4
+
+- TRITON-689 improve `sdcadm post-setup cmon` to not require
+  `<server>.transitional_status` be defined on CNAPI server records.
+
 ## 1.20.3
 
 - TRITON-313 walk back sdcadm steps export sugar
