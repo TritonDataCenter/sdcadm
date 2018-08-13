@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.20.3
+
+- TRITON-313 walk back sdcadm steps export sugar
+
 ## 1.20.2
 
 - TOOLS-1963 `sdcadm create assets -s NEW-HEADNODE` should work

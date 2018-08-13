@@ -42,19 +42,15 @@ usage can be:
 
     // ...
     vasync.pipeline({arg: contextArg, funcs: [
-        steps.widgetDoACommonThing,
-        steps.widgetDoAnotherCommonThing,
+        steps.widget.doACommonThing,
+        steps.widget.doAnotherCommonThing,
         function aStepSpecificToHere(arg, next) {
             // ...
         },
-        steps.wuzzleFinishWithThisCommonThing
+        steps.wuzzle.finishWithThisCommonThing
     ]}, function (err) {
         // ...
     });
-
-Naming: Each step file is a "namespace". All exported functions should be
-prefixed with that namespace. Name the file 'like-this.js' with all its
-functions name `likeThisFoo` and `likeThisBarBling`.
 
 
 # TODO
