@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.21.0
+
+- TRITON-696 sdcadm want info subcommand, adds `sdcadm experimental info`
+
 ## 1.20.4
 
 - TRITON-689 improve `sdcadm post-setup cmon` to not require

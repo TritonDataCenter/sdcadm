@@ -38,6 +38,16 @@ The runtime `sdcadm` configuration is loaded as follows:
 
 Help on a specific sub-command.
 
+### sdcadm info \[options\]
+
+Show SDC datacenter and node information.
+
+`-h, --help`
+    Show this help.
+
+`-j, --json`
+    JSON Output.
+
 ### sdcadm self-update \[options\]
 
 Update "sdcadm" itself.
