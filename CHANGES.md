@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.21.1
+
+- TRITON-724 Fix a case where some sdcadm commands can exit with a `0` status
+  when there is an error to report.
+
 ## 1.21.0
 
 - TRITON-696 sdcadm want info subcommand, adds `sdcadm experimental info`
