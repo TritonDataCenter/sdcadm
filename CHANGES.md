@@ -10,6 +10,16 @@
 
 # sdcadm Changelog
 
+## 1.21.2
+
+- TRITON-619 Manatee upgrades broken due to SAPI not loading data from local
+  storage and instead keep trying to download it from moray, with problems due
+  to manatee being frozen during updates. This change modifies sdcadm behavior
+  to freeze manatee shard only during manatee primary's update and also forces
+  SAPI to load data from local storage by removing moray from DNS right after
+  freezing the shard, bringing it back as soon as manatee's primary is
+  operative again.
+
 ## 1.21.1
 
 - TRITON-724 Fix a case where some sdcadm commands can exit with a `0` status
