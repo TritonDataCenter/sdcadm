@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.21.4
+
+- TRITON-722 "sdcadm health" still assumes each CN will have an "admin" nictag
+
 ## 1.21.3
 
 - TRITON-723 Improve the output of unhealthy instances from `sdcadm health`.
