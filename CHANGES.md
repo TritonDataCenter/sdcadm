@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.21.3
+
+- TRITON-723 Improve the output of unhealthy instances from `sdcadm health`.
+
 ## 1.21.2
 
 - TRITON-619 Manatee upgrades broken due to SAPI not loading data from local
