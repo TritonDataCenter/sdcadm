@@ -8,7 +8,6 @@
  * Copyright 2018, Joyent, Inc.
  */
 
-
 var test = require('tape').test;
 var exec = require('child_process').exec;
 var vasync = require('vasync');
@@ -214,8 +213,8 @@ test('sdcadm check-health with disabled papi', function (t) {
 test('sdcadm check-health -q with disabled papi', function (t) {
     exec('sdcadm check-health -q', function (err, stdout, stderr) {
         t.equal(err && err.code, 1, 'errcode is 1');
-        t.equal('', stdout, 'empty stdout');
-        t.notEqual('', stderr, 'not empty stderr');
+        t.equal('', stderr, 'empty stderr');
+        t.notEqual('', stdout, 'not empty stdout');
         t.end();
     });
 });
@@ -251,8 +250,9 @@ test('check-health when binder is down', function (t) {
                     t.equal(err.killed, false, 'process not killed');
                     t.notEqual(stdout, '', 'empty stdout');
                     t.notEqual(
-                        stderr.indexOf('Binder service seems to be down'), -1,
+                        stdout.indexOf('Binder service seems to be down'), -1,
                         'binder off stderr');
+                    t.notEqual(stderr, '', 'empty stderr');
                     next();
                 });
             },
