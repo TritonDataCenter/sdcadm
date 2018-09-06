@@ -7,4 +7,5 @@
 /npm-debug.log
 /sdcadm-*.sh
 /tmp
+/etc/sdcadm.completion
 man/man1/sdcadm.1
