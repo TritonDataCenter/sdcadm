@@ -11,7 +11,7 @@ apisections: SDC Config
 -->
 
 <!--
-    Copyright (c) 2014, Joyent, Inc.
+    Copyright (c) 2018, Joyent, Inc.
 -->
 
 # SDC Config
@@ -52,7 +52,6 @@ configure Headnode global zone:
 - `utc_offset` [^1]: String containing the numeric value for the headnode UTC
   offset, (default `"0"`).
 - `agents_root` [^1]: Absolute path to agents directory.
-- `zonetracker_database_path` [^1]: Absolute path to zonetracker SQLite DB file.
 - `root_authorized_keys_file`[^1]: The name of the file to be used as SSH
   authorized keys source for `root` account.
 - `coal`: Is the current setup a COAL setup?
@@ -77,13 +76,6 @@ These settings are used by all services in your cloud for email messages
 The URL to upload service bundles, with the required user name and password.
 Usually, these variables shouldn't be modified at all: `sbapi_url`,
 `sbapi_http_user`, `sbapi_http_pass`.
-
-
-## Datasets API
-
-The URL to retrieve public Images, including the required user and password.
-In general, it shouldn't be modified: `dsapi_url`, `dsapi_http_user`,
-`dsapi_http_pass`.
 
 ## Datacenter details
 
@@ -173,7 +165,6 @@ configuration values required for the correct operation of the UFDS service:
 ## /etc/shadow config
 
 - `root_shadow`: entry from /etc/shadow for root 
-- `admin_shadow`: entry from /etc/shadow for the admin user
 
 ## NTP settings
 - `ntp_hosts`: Comma separated list of NTP hosts for the Headnode
@@ -185,12 +176,10 @@ configuration values required for the correct operation of the UFDS service:
 For every VM used to run one or more of the `SDC` services, we have a set of
 common variables sharing a common naming pattern:
 
-- `${SERVICE_NAME}_root_pw` 
 - `${SERVICE_NAME}_admin_ips`
 - `${SERVICE_NAME}_domain`
 
-Usually, the value for all the `${SERVICE_NAME}_root_pw` is the same, and the
-value for the `${SERVICE_NAME}_domain` matches the pattern
+Usually, the value for the `${SERVICE_NAME}_domain` matches the pattern
 `service_name.datacenter_name.dns_domain` and could be easily figured out from
 these values.
 
@@ -207,6 +196,42 @@ for most of the services, with similar contents to `${SERVICE_NAME}_domain`.
 Finally, `cnapi`, `fwapi` and `napi` also set the variable
 `${SERVICE_NAME}_client_url` pointing to the URL of their respective HTTP servers.
 
+
+### ADMIN_IPS variables usage
+
+All the `*_admin_ips` variables are used by sdc-headnode. Initially,
+these variables were intended only to assist during the setup process
+of a Triton headnode.
+
+Usage of all of them should be avoided by triton components as soon as
+we have a complete Triton setup. Anything not related to or required during
+setup should use domain names instead. For example, instead of
+`assets_admin_ip`, `assets.$datacenter_name.$dns_domain` should be used.
+
+The following is a list of usage of these variables from repositories
+different than `sdc-headnode` for later review:
+
+- `binder_admin_ips`: Used by `sdc-ufds`, `sdc-manatee`, `sdc-manta`, `sdcadm`
+- `manatee_admin_ips`: Not used but in `prompt-config.sh`
+- `moray_admin_ips`: Not used but in `prompt-config.sh`
+- `ufds_admin_ips`: Used by `sdcsso`, `piranha`, `sdcadm`, `sdc-amon`, `sdc-ufds`
+- `workflow_admin_ips`: Not used but in `prompt-config.sh`
+- `imgapi_admin_ips`: `node-sdc-clients(runtests)` only
+- `cnapi_admin_ips`: `node-sdc-clients(runtests)`, `sdc-cloud-analytics`, `sdc-amon`
+- `fwapi_admin_ips`: Not used but in `prompt-config.sh`
+- `sapi_admin_ips`: Only sdc-headnode, likely more important than the others.
+- `papi_admin_ips`: `node-sdc-clients(runtests)` only
+- `napi_admin_ips`: `node-sdc-clients(runtests)` only
+- `ca_admin_ips`: `node-sdc-clients(runtests)` only
+- `dhcpd_admin_ips`: Not used but in `prompt-config.sh`
+- `assets_admin_ips`: `sdc-cnapi`
+- `amon_admin_ips`: `sdc-vmapi`, `sdc-ufds`, `sdc-cloudapi`, `node-sdc-clients(runtests)`, `sdc-amon`
+- `mahi_admin_ips`: Not used but in `prompt-config.sh`
+- `vmapi_admin_ips`: `sdc-cloud-analytics`, `node-sdc-clients(runtests)`, `sdc-amon`, `sdc-vmapi` (docs)
+- `adminui_admin_ips`: `legacy-migrator`, `opstools`
+- `sdc_admin_ips`: Not used but in `prompt-config.sh`
+- `amonredis_admin_ips`: Not used but in `prompt-config.sh`
+- `rabbitmq_admin_ips`: Not used but in `prompt-config.sh`
 
 ## Other settings:
 
@@ -233,10 +258,20 @@ Finally, `cnapi`, `fwapi` and `napi` also set the variable
 - Why cloudapi's `cloudapi_domain` is missing?
 - Why `assets_pkg` and `sapi_pkg` are then only remaining `*_pkg` variables?
 - Are the following variables still in use?: `install_agents`, `initial_script`,
-  `utc_offset`, `agents_root`,`zonetracker_database_path`.
+  `utc_offset`, `agents_root`.
 - Why is `adminui_workers` a top level metadata value (SDC) instead of being
   just an `adminui` service value?.
 - Is any of the `${SERVICE_NAME}_client_url` other than `capi_client_url` used
   anywhere?.
+
+## Deprecated variables
+
+- As part of TRITON-742 `dsapi_url`, `dsapi_http_user` and `dsapi_http_pass`
+  were deprecated. These variables were used to access `Datasets API` now
+  replaced by `IMGAPI`.
+- As part of TRITON-739 all the `*_root_pw` variables and `zonetracker_database_path`
+  variables were deprecated.
+- TRITON-772 deprecates `admin_shadow` (entry from /etc/shadow for the admin user)
+
 
 [^1]: Variables not included into `/mnt/usbkey/config` file.
