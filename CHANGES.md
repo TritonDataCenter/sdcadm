@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.22.0
+
+- MANTA-3552 Add `sdcadm post-setup prometheus` to setup a core Triton
+  Prometheus service.
+
 ## 1.21.4
 
 - TRITON-722 "sdcadm health" still assumes each CN will have an "admin" nictag
