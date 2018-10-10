@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## XXX
+
+- KBMAPI support
+
 ## 1.24.9
 
 - TRITON-1300 Start improving CLI output with a `<cli>.ui` interface. So far
