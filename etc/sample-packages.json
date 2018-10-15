@@ -12,7 +12,9 @@
     "cpu_cap": 25,
     "billing_tag": "sample-128M",
     "default": false,
-    "v": 1
+    "v": 1,
+    "vcpus": 1
+
   },
   {
     "name": "sample-256M",
@@ -27,7 +29,9 @@
     "cpu_cap": 25,
     "billing_tag": "sample-256M",
     "default": false,
-    "v": 1
+    "v": 1,
+    "vcpus": 1
+
   },
   {
     "name": "sample-512M",
@@ -42,7 +46,9 @@
     "cpu_cap": 50,
     "billing_tag": "sample-512M",
     "default": false,
-    "v": 1
+    "v": 1,
+    "vcpus": 1
+
   },
   {
     "name": "sample-1G",
@@ -57,7 +63,8 @@
     "cpu_cap": 100,
     "billing_tag": "sample-1G",
     "default": true,
-    "v": 1
+    "v": 1,
+    "vcpus": 1
   },
   {
     "name": "sample-2G",
@@ -72,7 +79,8 @@
     "cpu_cap": 200,
     "billing_tag": "sample-2G",
     "default": false,
-    "v": 1
+    "v": 1,
+    "vcpus": 1
   },
   {
     "name": "sample-4G",
@@ -87,7 +95,8 @@
     "cpu_cap": 400,
     "billing_tag": "sample-4G",
     "default": false,
-    "v": 1
+    "v": 1,
+    "vcpus": 1
   },
   {
     "name": "sample-8G",
@@ -102,7 +111,8 @@
     "cpu_cap": 800,
     "billing_tag": "sample-8G",
     "default": false,
-    "v": 1
+    "v": 1,
+    "vcpus": 1
   },
   {
     "name": "sample-16G",
@@ -117,7 +127,8 @@
     "cpu_cap": 1600,
     "billing_tag": "sample-16G",
     "default": false,
-    "v": 1
+    "v": 1,
+    "vcpus": 1
   },
   {
     "name": "sample-32G",
@@ -132,7 +143,8 @@
     "cpu_cap": 3200,
     "billing_tag": "sample-32G",
     "default": false,
-    "v": 1
+    "v": 1,
+    "vcpus": 1
   },
   {
     "name": "sample-64G",
@@ -147,55 +159,7 @@
     "cpu_cap": 6400,
     "billing_tag": "sample-64G",
     "default": false,
-    "v": 1
-  },
-
-  {
-    "name": "sample-kvm-1G",
-    "version": "1.0.0",
-    "active": true,
-    "max_lwps": 4000,
-    "max_physical_memory": 1024,
-    "max_swap": 4096,
-    "quota": 25600,
-    "zfs_io_priority": 64,
-    "fss": 64,
-    "cpu_cap": 100,
-    "vcpus": 1,
-    "billing_tag": "sample-kvm-1G",
-    "default": true,
-    "v": 1
-  },
-  {
-    "name": "sample-kvm-2G",
-    "version": "1.0.0",
-    "active": true,
-    "max_lwps": 4000,
-    "max_physical_memory": 2048,
-    "max_swap": 8192,
-    "quota": 51200,
-    "zfs_io_priority": 128,
-    "fss": 128,
-    "cpu_cap": 200,
-    "vcpus": 1,
-    "billing_tag": "sample-kvm-2G",
-    "default": false,
-    "v": 1
-  },
-  {
-    "name": "sample-kvm-4G",
-    "version": "1.0.0",
-    "active": true,
-    "max_lwps": 4000,
-    "max_physical_memory": 4096,
-    "max_swap": 16384,
-    "quota": 102400,
-    "zfs_io_priority": 256,
-    "fss": 256,
-    "cpu_cap": 400,
-    "vcpus": 1,
-    "billing_tag": "sample-kvm-4G",
-    "default": false,
-    "v": 1
+    "v": 1,
+    "vcpus": 1
   }
 ]
