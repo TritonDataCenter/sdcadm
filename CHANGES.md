@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.25.0
+
+- TRITON-958 Made it possible to use sdcadm without Ur.
+
 ## 1.23.0
 
 - TRITON-889 Improvements to sdcadm's trace logging to file.
