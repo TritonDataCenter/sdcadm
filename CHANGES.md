@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.21.5
+
+- TOOLS-2110 sdcadm can crash when SAPI instance has undefined image
+
 ## 1.21.4
 
 - TRITON-722 "sdcadm health" still assumes each CN will have an "admin" nictag
