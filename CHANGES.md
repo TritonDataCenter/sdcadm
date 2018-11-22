@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.21.6
+
+- TOOLS-2114 sdcadm treats server as "unavailable" when it doesn't have a transitional_status
+
 ## 1.21.5
 
 - TOOLS-2110 sdcadm can crash when SAPI instance has undefined image
