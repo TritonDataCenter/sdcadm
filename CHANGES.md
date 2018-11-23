@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.22.0
+
+- TRITON-987 fabric setup broken by needless dependency on broken CA
+
 ## 1.21.6
 
 - TOOLS-2114 sdcadm treats server as "unavailable" when it doesn't have a transitional_status
