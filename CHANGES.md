@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.22.0
+
+- MANTA-3992 Add `sdcadm post-setup grafana` to setup a core Triton
+  Grafana service.
+
 ## 1.21.5
 
 - TOOLS-2110 sdcadm can crash when SAPI instance has undefined image
