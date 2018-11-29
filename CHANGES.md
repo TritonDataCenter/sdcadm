@@ -10,6 +10,12 @@
 
 # sdcadm Changelog
 
+## 1.23.0
+
+- TRITON-889 Improvements to sdcadm's trace logging to file.
+- TRITON-990 Change 'sdcadm check-health' and 'sdcadm check-config' to *no
+  longer* write a trace log to file.
+
 ## 1.22.0
 
 - TRITON-987 fabric setup broken by needless dependency on broken CA
