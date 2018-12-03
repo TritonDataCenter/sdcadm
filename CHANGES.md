@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.24.1
+
+- TOOLS-2117 sdcnode updates for November 2018 node.js security releases
+
 ## 1.24.0
 
 - TRITON-904 Needs some useful enhancements for "sdcadm experimental update-agents".

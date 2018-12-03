@@ -27,7 +27,7 @@ TAP_EXEC := ./node_modules/.bin/tap
 TEST_UNIT_JOBS ?= 4
 
 
-NODE_PREBUILT_VERSION=v6.14.0
+NODE_PREBUILT_VERSION=v6.15.1
 ifeq ($(shell uname -s),SunOS)
 	NODE_PREBUILT_TAG=gz
 	# sdc-minimal-multiarch-lts 15.4.1
