@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.24.0
+
+- TRITON-904 Needs some useful enhancements for "sdcadm experimental update-agents".
+
 ## 1.23.0
 
 - TRITON-889 Improvements to sdcadm's trace logging to file.
