@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright (c) 2018, Joyent, Inc.
+ * Copyright (c) 2019, Joyent, Inc.
  */
 
 
@@ -129,7 +129,7 @@ test('sdcadm experimental update-agents --force --latest --yes', function (t) {
         t.ok(stdout.match('Finding servers to update'));
         t.ok(stdout.match('This update will make the following changes'));
         t.ok(stdout.match('Starting agentsshar update'));
-        t.ok(stdout.match('Successfully updated agents'));
+        t.ok(stdout.match('(0 failures, 0 excluded)'));
         t.end();
     });
 });
@@ -150,7 +150,7 @@ test('sdcadm experimental update-agents <img uuid>', function (t) {
         t.ok(stdout.match('Finding servers to update'));
         t.ok(stdout.match('This update will make the following changes'));
         t.ok(stdout.match('Starting agentsshar update'));
-        t.ok(stdout.match('Successfully updated agents'));
+        t.ok(stdout.match('(0 failures, 0 excluded)'));
         t.end();
     });
 });

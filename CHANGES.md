@@ -5,10 +5,20 @@
 -->
 
 <!--
-    Copyright (c) 2018 Joyent, Inc.
+    Copyright (c) 2019 Joyent, Inc.
 -->
 
 # sdcadm Changelog
+
+## 1.24.3
+
+- TRITON-754 lib/sdcadm.js is not admin rack aware
+- TRITON-956 sdcadm procedures needs to be rack aware
+- TRITON-948 sdcadm check-config shouldnt depend on admin NIC being tagged as "admin"
+- TRITON-931 sdcadm admin IP functions need to be factored out
+- TRITON-953 sdcadm checkCoreVmInstancesResolvers() needs to be rack aware
+- TRITON-1004 sdcadm post-setup docker needs to be rack aware
+- TRITON-1063 sdcadm experimental tests need update post TRITON-904
 
 ## 1.24.2
 
