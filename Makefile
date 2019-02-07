@@ -5,7 +5,7 @@
 #
 
 #
-# Copyright 2018 Joyent, Inc.
+# Copyright (c) 2019, Joyent, Inc.
 #
 
 #
@@ -116,9 +116,10 @@ check:: check-version
 
 
 .PHONY: man
-man: man/man1/sdcadm.1.ronn
+man: man/man1/sdcadm.1.ronn | $(NODE_EXEC)
 	rm -f man/man1/sdcadm.1
-	./node_modules/.bin/marked-man --input man/man1/sdcadm.1.ronn \
+	$(NODE_EXEC) ./node_modules/.bin/marked-man \
+		--input man/man1/sdcadm.1.ronn \
 		--date `git log -1 --pretty=format:%cd --date=short` \
 		--output man/man1/sdcadm.1
 	chmod 444 man/man1/sdcadm.1

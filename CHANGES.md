@@ -5,10 +5,14 @@
 -->
 
 <!--
-    Copyright (c) 2019 Joyent, Inc.
+    Copyright (c) 2019, Joyent, Inc.
 -->
 
 # sdcadm Changelog
+
+## 1.24.4
+
+- TRITON-1178 sdcadm man page build expects node in $PATH
 
 ## 1.24.3
 
