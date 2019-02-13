@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.24.5
+
+- TRITON-954 sdcadm post-setup common-external-nics should be rack aware
+
 ## 1.24.4
 
 - TRITON-1178 sdcadm man page build expects node in $PATH
