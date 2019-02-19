@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.24.6
+
+- TRITON-1236 steps.servers.selectServers for convenient -s/-S opt handling,
+  add to 'sdcadm ex update-gz-tools'
+
 ## 1.24.5
 
 - TRITON-954 sdcadm post-setup common-external-nics should be rack aware
