@@ -26,7 +26,6 @@ CLEAN_FILES += ./node_modules ./build/sdcadm-*.sh ./build/sdcadm-*.imgmanifest .
 TAP_EXEC := ./node_modules/.bin/tap
 TEST_UNIT_JOBS ?= 4
 
-
 NODE_PREBUILT_VERSION=v6.15.1
 ifeq ($(shell uname -s),SunOS)
 	NODE_PREBUILT_TAG=gz
@@ -34,10 +33,12 @@ ifeq ($(shell uname -s),SunOS)
 	NODE_PREBUILT_IMAGE=18b094b0-eb01-11e5-80c1-175dac7ddf02
 endif
 
+ENGBLD_REQUIRE := $(shell git submodule update --init deps/eng)
+include ./deps/eng/tools/mk/Makefile.defs
+TOP ?= $(error Unable to access eng.git submodule Makefiles.)
 
-include ./tools/mk/Makefile.defs
 ifeq ($(shell uname -s),SunOS)
-	include ./tools/mk/Makefile.node_prebuilt.defs
+	include ./deps/eng/tools/mk/Makefile.node_prebuilt.defs
 else
 	# Good enough for non-SmartOS dev.
 	NPM=npm
@@ -83,15 +84,11 @@ release: all man completion shar
 
 .PHONY: publish
 publish: release
-	@if [[ -z "$(BITS_DIR)" ]]; then \
-		@echo "error: 'BITS_DIR' must be set for 'publish' target"; \
-		exit 1; \
-	fi
-	mkdir -p $(BITS_DIR)/$(NAME)
+	mkdir -p $(ENGBLD_BITS_DIR)/$(NAME)
 	cp \
 		$(TOP)/build/sdcadm-$(STAMP).sh \
 		$(TOP)/build/sdcadm-$(STAMP).imgmanifest \
-		$(BITS_DIR)/$(NAME)/
+		$(ENGBLD_BITS_DIR)/$(NAME)/
 
 .PHONY: dumpvar
 dumpvar:
@@ -129,8 +126,8 @@ completion:
 	rm -f etc/sdcadm.completion
 	./bin/sdcadm completion > etc/sdcadm.completion
 
-include ./tools/mk/Makefile.deps
+include ./deps/eng/tools/mk/Makefile.deps
 ifeq ($(shell uname -s),SunOS)
-	include ./tools/mk/Makefile.node_prebuilt.targ
+	include ./deps/eng/tools/mk/Makefile.node_prebuilt.targ
 endif
-include ./tools/mk/Makefile.targ
+include ./deps/eng/tools/mk/Makefile.targ

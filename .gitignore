@@ -1,4 +1,5 @@
 *.vim
+/bits
 /build
 /docs/*.html
 /docs/*.json
