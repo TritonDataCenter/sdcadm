@@ -115,7 +115,7 @@ test('update-gz-tools --latest --just-download', function (t) {
 
         findStrings.forEach(function (str) {
             t.notEqual(stdout.indexOf(str), -1,
-                util.format('check just-download string present %s', str));
+                util.format('check just-download string present \'%s\'', str));
         });
 
         var findNotStrings = [

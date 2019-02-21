@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2018 Joyent, Inc.
+ * Copyright 2019 Joyent, Inc.
  */
 
 
@@ -49,6 +49,13 @@ function parseInstancesOutput(t, output, expectedTitles) {
 
 
 function checkInstancesDetails(t, instancesDetails) {
+    // Prevent checking of mockcloud agent instances or mockloud itself:
+    instancesDetails = instancesDetails.filter(function removeMocks(inst) {
+        var svcName = inst[1];
+        var cnHostName = inst[2];
+        return (svcName !== 'mockcloud' && cnHostName.indexOf('VC') !== 0);
+    });
+
     instancesDetails = instancesDetails.map(function (item) {
         return ({
             instance: item[0],
@@ -132,7 +139,6 @@ test('sdcadm instances', function (t) {
         // global, so other tests can compare against
         INSTANCES_DETAILS = parseInstancesOutput(t, stdout);
         t.ok(INSTANCES_DETAILS.length > 0);
-
         checkInstancesDetails(t, common.deepCopy(INSTANCES_DETAILS));
     });
 });
@@ -248,7 +254,6 @@ test('dockerlogger insts of removed servers', function (t) {
     var svcCmd = 'sdc-sapi /services?name=dockerlogger|json -H';
     exec(svcCmd, function execCb(err, stdout, stderr) {
         t.ifError(err);
-        t.equal(stderr, '');
         var services = JSON.parse(stdout.trim());
         t.ok(Array.isArray(services));
         t.ok(services[0].uuid);
@@ -264,14 +269,11 @@ test('dockerlogger insts of removed servers', function (t) {
 
         exec(instCmd, function execCb2(err2, stdout2, stderr2) {
             t.ifError(err2);
-            t.equal(stderr2, '');
-
             // TOOLS-1492: Orphan server instances should not throw exceptions
             // and sdcadm should just ignore them:
             var listCmd = 'sdcadm insts svc=dockerlogger -j';
             exec(listCmd, function execCb3(err3, stdout3, stderr3) {
                 t.ifError(err3);
-                t.equal(stderr3, '');
 
                 var listOfInsts = JSON.parse(stdout.trim());
                 t.ok(Array.isArray(listOfInsts));
@@ -281,7 +283,6 @@ test('dockerlogger insts of removed servers', function (t) {
                     '-X DELETE';
                 exec(delCmd, function execCb4(err4, stdout4, stderr4) {
                     t.ifError(err4);
-                    t.equal(stderr4, '');
 
                     t.end();
                 });

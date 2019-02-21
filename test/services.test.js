@@ -5,13 +5,12 @@
  */
 
 /*
- * Copyright 2018, Joyent, Inc.
+ * Copyright 2019, Joyent, Inc.
  */
 
 
 var test = require('tape').test;
 var exec = require('child_process').exec;
-var util = require('util');
 
 var vasync = require('vasync');
 
@@ -91,7 +90,6 @@ function checkServicesDetails(t, servicesDetails) {
             var name     = serviceDetails[2];
             var imgUuid  = serviceDetails[3];
             var numInsts = +serviceDetails[4];
-            t.comment(util.format('checking service %s (%s)', name, svcUuid));
 
             t.notEqual(['vm', 'agent'].indexOf(type), -1,
                 svcUuid + ' service type');

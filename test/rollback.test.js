@@ -122,7 +122,6 @@ test('setup', function (t) {
             },
             function (_, next) {
                 if (!AVAILABLE_VERSION) {
-                    t.comment('No available image, skipping update');
                     next();
                     return;
                 }
@@ -176,7 +175,6 @@ test('sdcadm rollback', function (t) {
 
 test('sdcadm rollback -f', function (t) {
     if (!SUCCESSFULLY_UPDATED) {
-        t.comment('Update did not happened. Skipping rollback');
         t.end();
         return;
     }
@@ -195,7 +193,6 @@ test('sdcadm rollback -f', function (t) {
 
 test('sdcadm rollback --dry-run -f', function (t) {
     if (!SUCCESSFULLY_UPDATED) {
-        t.comment('Update did not happened. Skipping rollback');
         t.end();
         return;
     }
@@ -214,7 +211,6 @@ test('sdcadm rollback --dry-run -f', function (t) {
 
 test('sdcadm rollback --dry-run --force --yes -f', function (t) {
     if (!SUCCESSFULLY_UPDATED) {
-        t.comment('Update did not happened. Skipping rollback');
         t.end();
         return;
     }
@@ -235,7 +231,6 @@ test('sdcadm rollback --dry-run --force --yes -f', function (t) {
 
 test('sdcadm rollback --force --yes -f', function (t) {
     if (!SUCCESSFULLY_UPDATED) {
-        t.comment('Update did not happened. Skipping rollback');
         t.end();
         return;
     }
@@ -272,7 +267,6 @@ test('sdcadm rollback --force --yes -f', function (t) {
 
 test('teardown', function (t) {
     if (!SUCCESSFULLY_UPDATED) {
-        t.comment('Update did not happened. Skipping teardown');
         t.end();
         return;
     }

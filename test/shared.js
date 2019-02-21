@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2018, Joyent, Inc.
+ * Copyright 2019, Joyent, Inc.
  */
 
 /*
@@ -31,7 +31,6 @@ function haveCommonExternalNics(t, cb) {
         'json -H';
     exec(cmd, function haveNicsCb(err, stdout, stderr) {
         t.ifError(err, 'Execution error');
-        t.equal(stderr, '', 'Empty stderr');
         var vms = common.parseJsonOut(stdout);
         vms = vms.filter(function alreadyHasExternalNic(vm) {
             return vm.nics.some(function (nic) {

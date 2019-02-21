@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2018, Joyent, Inc.
+ * Copyright 2019, Joyent, Inc.
  */
 
 
@@ -235,7 +235,6 @@ test('sdcadm platform usage VERSION', function (t) {
         if (!usageDetails || !usageDetails.length) {
             // If latest platform is not used at all, we will not have any
             // output so cannot check titles:
-            t.comment('Skipping usage checks (latest platform not used)');
             t.end();
             return;
         }
@@ -263,7 +262,6 @@ test('sdcadm platform usage VERSION -j', function (t) {
         if (!usageDetails || !usageDetails.length) {
             // If latest platform is not used at all, we will not have any
             // output so cannot check titles:
-            t.comment('Skipping usage checks (latest platform not used)');
             t.end();
             return;
         }
@@ -333,7 +331,10 @@ test('sdcadm platform assign', function (t) {
         t.end();
         return;
     }
-    var _1stServer = CNAPI_SERVERS[0];
+    var _1stServer = CNAPI_SERVERS.filter(function skipMocks(s) {
+        return s.hostname.indexOf('VC') !== 0;
+    })[0];
+
     var currPlatform = _1stServer.boot_platform;
     var cmd = util.format('sdcadm platform assign %s %s',
             LATEST_AVAIL_PLATFORM.version, _1stServer.uuid);
@@ -373,7 +374,6 @@ test('sdcadm platform assign', function (t) {
                 exec(cmd2, function (err3, stdout3, stderr3) {
                     t.ifError(err3, 'Execution error');
                     t.equal(stderr3, '', 'Empty stderr');
-
 
                     t.notEqual(stdout3.indexOf('updating ' +
                                 _1stServer.hostname +

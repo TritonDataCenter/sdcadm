@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2018, Joyent, Inc.
+ * Copyright 2019, Joyent, Inc.
  */
 
 /*
@@ -40,7 +40,9 @@ function getServers(t, cb) {
         t.ifError(err, 'cnapi error');
         t.equal(stdout, '', 'empty stdout');
         var out = JSON.parse(stderr);
-        servers = out;
+        servers = out.filter(function skipMocks(s) {
+            return s.hostname.indexOf('VC') !== 0;
+        });
         cb();
     });
 }
