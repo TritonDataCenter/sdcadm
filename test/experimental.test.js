@@ -119,7 +119,7 @@ test('sdcadm experimental update-agents --just-download', function (t) {
 });
 
 
-test('sdcadm experimental update-agents -a --latest --yes', function (t) {
+test('sdcadm experimental update-agents --force --latest --yes', function (t) {
     var cmd = 'sdcadm experimental update-agents --latest --yes -a';
     exec(cmd, function (err, stdout, stderr) {
         t.ifError(err, 'Execution error');

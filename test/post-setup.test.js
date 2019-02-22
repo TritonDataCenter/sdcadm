@@ -5,12 +5,14 @@
  */
 
 /*
- * Copyright 2019, Joyent, Inc.
+ * Copyright 2018, Joyent, Inc.
  */
 
 /*
  * PENDING TESTS:
  *
+ * - Complete ha-manatee setup
+ * - Complete ha-bider setup
  * - post-setup fabrics
  * - post-setup underlay-nics
  */
@@ -315,6 +317,38 @@ test.skip('sdcadm post-setup dev-sample-data', function (t) {
 test('sdcadm post-setup help dev-sample-data', function (t) {
     checkHelp(t, 'post-setup dev-sample-data',
               'Add sample data suitable for *development and testing*.');
+});
+
+
+test('sdcadm post-setup ha-manatee', function (t) {
+    exec('sdcadm post-setup ha-manatee', function (err, stdout, stderr) {
+        t.ok(err);
+
+        t.equal(stdout, '');
+        t.notEqual(stderr.indexOf('Must specify 2 target servers'), -1);
+
+        t.end();
+    });
+});
+
+
+test('sdcadm post-setup ha-manatee --servers', function (t) {
+    var serverUuids = '';
+
+    exec('sdcadm post-setup ha-manatee -s' + serverUuids,
+         function (err, stdout, stderr) {
+             console.log(err);
+             console.log(stdout);
+             console.log(stderr);
+        // TODO
+        t.end();
+    });
+});
+
+
+test('sdcadm post-setup help ha-manatee', function (t) {
+    checkHelp(t, 'post-setup ha-manatee',
+              'Create 2nd and 3rd manatee instances');
 });
 
 

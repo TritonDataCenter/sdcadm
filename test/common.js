@@ -5,10 +5,11 @@
  */
 
 /*
- * Copyright 2019, Joyent, Inc.
+ * Copyright 2018, Joyent, Inc.
  */
 
 var exec = require('child_process').exec;
+var util = require('util');
 
 var vasync = require('vasync');
 
@@ -88,6 +89,14 @@ function checkInsts(t, opts, cb) {
                 return;
             }
 
+            var description = (item.alias !== '-') ?
+                util.format('%s (%s)', item.alias, item.instance) :
+                util.format('%s (%s)', item.instance, item.service);
+            t.comment(util.format('checking %s in %s',
+                description, item.hostname));
+
+
+
             var cmd2 = 'sdc-sapi /instances/' + item.instance + ' | json -H';
             exec(cmd2, function (err2, stdout2, stderr2) {
                 t.ifError(err2, 'no SAPI error');
@@ -111,6 +120,7 @@ function checkInsts(t, opts, cb) {
                 var cmd = 'sdc-vmapi /vms/' + item.instance + ' | json -H';
                 exec(cmd, function (err, stdout, stderr) {
                     t.ifError(err, 'no VMAPI error');
+
                     var vmDetails = parseJsonOut(stdout);
                     if (!vmDetails) {
                         t.ok(false, 'failed to parse JSON for cmd ' + cmd);
@@ -136,6 +146,7 @@ function checkInsts(t, opts, cb) {
 
                         exec(cmd3, function (err3, stdout3, stderr3) {
                             t.ifError(err3, 'IMGAPI call error');
+
                             var imgInfo = parseJsonOut(stdout3);
                             if (!imgInfo) {
                                 t.ok(false, 'failed to parse JSON for cmd ' +
