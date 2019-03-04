@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.24.7
+
+- TRITON-1276 sdcadm experimental update-gz-tools --latest --just-download dumps core
+- TRITON-1272 sdcadm test failures due to outdated tape version
+
 ## 1.24.6
 
 - TRITON-1236 steps.servers.selectServers for convenient -s/-S opt handling,
