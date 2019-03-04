@@ -108,7 +108,6 @@ test('update-gz-tools --latest --just-download', function (t) {
     exec(cmd, function (err, stdout, stderr) {
         t.ifError(err, 'Update gz-tools error');
         var findStrings = [
-            'Downloading gz-tools',
             'Using channel',
             'Updated gz-tools successfully'
         ];
@@ -117,6 +116,12 @@ test('update-gz-tools --latest --just-download', function (t) {
             t.notEqual(stdout.indexOf(str), -1,
                 util.format('check just-download string present %s', str));
         });
+
+        if (stdout.indexOf('Downloading gz-tools') === -1) {
+            t.notEqual(stdout.indexOf('from previous download'), -1,
+                util.format('check just-download string present %s',
+                    'from previous download'));
+        }
 
         var findNotStrings = [
             'Decompressing gz-tools tarball',

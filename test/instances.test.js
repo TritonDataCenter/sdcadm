@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2018 Joyent, Inc.
+ * Copyright 2019 Joyent, Inc.
  */
 
 
@@ -57,7 +57,17 @@ function checkInstancesDetails(t, instancesDetails) {
             version: item[3],
             alias: item[4]
         });
+    }).filter(function (inst) {
+        // Versions for these components are not the using the traditional
+        // branch-releasedate-gitsha approach, which will make the img version
+        // vs. inst version check fail
+        return [
+            'mockcloud',
+            'grafana',
+            'prometheus']
+        .indexOf(inst.service) === -1;
     });
+
 
     common.checkInsts(t, {
         inputs: instancesDetails,
