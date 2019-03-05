@@ -26,7 +26,7 @@ CLEAN_FILES += ./node_modules ./build/sdcadm-*.sh ./build/sdcadm-*.imgmanifest .
 TAP_EXEC := ./node_modules/.bin/tap
 TEST_UNIT_JOBS ?= 4
 
-NODE_PREBUILT_VERSION=v6.15.1
+NODE_PREBUILT_VERSION=v6.17.0
 ifeq ($(shell uname -s),SunOS)
 	NODE_PREBUILT_TAG=gz
 	# sdc-minimal-multiarch-lts 15.4.1
