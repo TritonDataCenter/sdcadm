@@ -5,10 +5,17 @@
 -->
 
 <!--
-    Copyright (c) 2019, Joyent, Inc.
+    Copyright 2019 Joyent, Inc.
 -->
 
 # sdcadm Changelog
+
+## 1.24.8
+
+- TRITON-1293 Correct the interpretation of whether a server is running from
+  a CNAPI server object (CNAPI `<server>.transitional_status` is an
+  implementation detail and not relevant for running status. This fixes a
+  potential failure in `sdcadm post-setup docker`.
 
 ## 1.24.7
 
