@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.24.9
+
+- TRITON-1300 Start improving CLI output with a `<cli>.ui` interface. So far
+  only `sdcadm experimental update-gz-tools` has been updated to use it.
+
 ## 1.24.8
 
 - TRITON-1293 Correct the interpretation of whether a server is running from
