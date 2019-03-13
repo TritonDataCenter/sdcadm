@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright (c) 2018 Joyent, Inc.
+ * Copyright 2019 Joyent, Inc.
  */
 'use strict';
 
@@ -25,6 +25,7 @@ const do_update_agents = require('../../../lib/cli/do_update_agents');
 const UpdateAgents = do_update_agents._UpdateAgents;
 const sha1Path = do_update_agents._sha1Path;
 const testutil = require('../testutil');
+const MockUI = require('../../../lib/cli/ui').MockUI;
 
 
 class StubImgApi {
@@ -55,6 +56,7 @@ function testCmd(opts) {
         agentsshar: 'latest',
         concurrency: 4,
         progress: tap.comment,
+        ui: new MockUI({write: tap.comment}),
         all: true
     };
     return new UpdateAgents(Object.assign({}, defaults, opts));

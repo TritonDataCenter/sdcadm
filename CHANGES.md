@@ -10,7 +10,13 @@
 
 # sdcadm Changelog
 
+## 1.24.10
+
+- TRITON-1307 Fix a few commands were broken in the TRITON-1300 change.
+
 ## 1.24.9
+
+(Bad release. Upgrade to 1.24.10. See TRITON-1307.)
 
 - TRITON-1300 Start improving CLI output with a `<cli>.ui` interface. So far
   only `sdcadm experimental update-gz-tools` has been updated to use it.
