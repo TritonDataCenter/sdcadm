@@ -14,7 +14,7 @@ var util = require('util');
 var vasync = require('vasync');
 
 var DEFAULT_VM_SERVICES = [
-    'adminui', 'amon', 'amonredis', 'assets', 'binder', 'ca', 'cnapi', 'dhcpd',
+    'adminui', 'amon', 'amonredis', 'assets', 'binder', 'cnapi', 'dhcpd',
     'fwapi', 'imgapi', 'mahi', 'manatee', 'moray', 'napi', 'papi', 'rabbitmq',
     'redis', 'sapi', 'sdc', 'ufds', 'vmapi', 'workflow'
 ];

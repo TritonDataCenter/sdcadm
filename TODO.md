@@ -31,28 +31,6 @@ Here-in random TODOs and scratchpad notes for sdcadm.
 - extra procedure on update: `sdc-amonadm update` (library equivalent) procedure
   after instance changes
 
-- Allow no-op updates (same image) and downgrades with a "force" flag
-  Want the confirmation to break out instances meaningfully, e.g.:
-
-        download 1 image (69 MiB):
-            image 6261c204-e75d-11e3-91fa-a311fd4ab601 (ca@master-20140529T180636Z-gf4e65ef)
-        update "ca" service (1 instance) to image 6261c204-e75d-11e3-91fa-a311fd4ab601 (ca@master-20140529T180636Z-gf4e65ef)
-
-        update "ca" service (2 instances) to image 6261c204-e75d-11e3-91fa-a311fd4ab601 (ca@master-20140529T180636Z-gf4e65ef)
-
-        update "vm-agent" service (300 instances) to image 6261c204-e75d-11e3-91fa-a311fd4ab601 (vm-agent@1.2.3):
-            289 instances will be updated from image $oldImageUuid1
-            1 instance will be updated from image $oldImageUuid2
-            10 instances already at image $imageUuid
-
-        update "vm-agent" service (300 instances) to image 6261c204-e75d-11e3-91fa-a311fd4ab601 (vm-agent@1.2.3):
-            300 instances forced downgrade from image $oldImageUuid1
-
-  What does that break-out example look like in code path? That
-  needs to be in the result of 'determineProcedures'. A -F will
-  translate to a `'allowNoopOrDowngrade':true` or similar, which
-  'determineProcedures' will handle.
-
 - a way to list available updates (with changelog support)
   Perhaps use this under the hood:
         update-imgadm changes $from-image-uuid $to-image-uuid
