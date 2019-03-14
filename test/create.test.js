@@ -83,7 +83,7 @@ test('sdcadm create --help', function sdcadmCreate(t) {
     exec('sdcadm create --help', function execCb(err, stdout, stderr) {
         t.ifError(err, 'Execution error');
 
-        t.notEqual(stdout.indexOf('sdcadm create <svc>'), -1);
+        t.notEqual(stdout.indexOf('sdcadm create SERVICE'), -1);
         t.equal(stderr, '', 'Empty stderr');
 
         t.end();
@@ -96,7 +96,7 @@ test('sdcadm create amonredis', function sdcadmCreateAmonredis(t) {
     exec('sdcadm create amonredis', function execCb(err, stdout, stderr) {
         t.ok(err, 'Execution error');
 
-        t.notEqual(stderr.indexOf('Must specify at least one server'), -1);
+        t.notEqual(stderr.indexOf('must specify at least one server'), -1);
 
         t.end();
     });
@@ -105,8 +105,9 @@ test('sdcadm create amonredis', function sdcadmCreateAmonredis(t) {
 
 // Check that --dev-allow-multiple-instances is mandatory to allow multiple
 // instances of non-HA services. We should err out without it.
-test('sdcadm create amonredis --dry-run --server', function createMultiple(t) {
-    var cmd = 'sdcadm create amonredis --dry-run --server=' + HEADNODE_UUID;
+test('sdcadm create amonredis --dry-run --servers=headnode',
+function createMultiple(t) {
+    var cmd = 'sdcadm create amonredis --dry-run --servers=' + HEADNODE_UUID;
 
     exec(cmd, function execCb(err, stdout, stderr) {
         t.ok(err, 'Execution error');
@@ -129,7 +130,8 @@ test('sdcadm create amonredis --dry-run ' +
     exec(cmd, function execCb(err, stdout, stderr) {
         t.ifError(err, 'Execution error');
 
-        t.notEqual(stdout.indexOf('Created successfully'), -1);
+        t.notEqual(stdout.indexOf('Completed successfully'), -1,
+            '"Completed successfully" is in stdout: ' + JSON.stringify(stdout));
         t.equal(stderr, '', 'Empty stderr');
 
         getNumInsts(function getNumInstCb(err2, numInsts) {
@@ -155,9 +157,8 @@ test('sdcadm create amonredis --dev-allow-multiple-instances ' +
                 exec(cmd, function execCb(err, stdout, stderr) {
                     t.ifError(err, 'Execution error');
                     t.equal(stderr, '', 'Empty stderr');
-                    console.log(stdout);
-                    t.notEqual(stdout.indexOf('Created successfully'), -1,
-                        'Created successfully');
+                    t.notEqual(stdout.indexOf('Completed successfully'), -1,
+                        'Completed successfully');
                     ctx.stdout = stdout;
                     next();
                 });
@@ -211,8 +212,7 @@ test('sdcadm create amonredis --dev-allow-multiple-instances' +
                 exec(cmd, function execCb(err, stdout, stderr) {
                     t.ifError(err, 'Execution error');
                     t.equal(stderr, '', 'Empty stderr');
-                    console.log(stdout);
-                    t.notEqual(stdout.indexOf('Created successfully'), -1);
+                    t.notEqual(stdout.indexOf('Completed successfully'), -1);
                     ctx.stdout = stdout;
                     next();
                 });

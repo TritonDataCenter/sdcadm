@@ -67,7 +67,7 @@ test('sdcadm help rollback', function (t) {
 
 
 test('sdcadm help create', function (t) {
-    checkHelp(t, 'create', 'sdcadm create <svc>');
+    checkHelp(t, 'create', 'sdcadm create SERVICE');
 });
 
 
