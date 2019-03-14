@@ -10,9 +10,11 @@
 
 # sdcadm Changelog
 
-## 1.24.10
+## 1.25.0
 
 - TRITON-1307 Fix a few commands were broken in the TRITON-1300 change.
+- TRITON-1305 Improvements to internal "Procedures" API. Convert
+  'sdcadm create'.
 
 ## 1.24.9
 
