@@ -22,7 +22,6 @@
         "mahi": "manta-authcache",
         "sdc": "sdc",
         "manta": "manta-deployment",
-        "ca": "ca",
         "sapi": "sapi",
         "cloudapi": "cloudapi",
         "napi": "napi",
@@ -57,7 +56,6 @@
         "fwapi": "20140618T014938Z",
         "papi": "20140618T113529Z",
         "redis": "20140618T035133Z",
-        "ca": "20140618T013643Z",
         "sapi": "20140618T034916Z",
         "workflow": "20140702T155100Z",
         "cnapi": "20140710T224122Z",
@@ -85,14 +83,6 @@
             "max_physical_memory": 1024,
             "max_locked_memory": 1024,
             "max_swap": 2048
-        },
-        "ca": {
-            "max_physical_memory": 4096,
-            "max_locked_memory": 4096,
-            "max_swap": 8192,
-            "zfs_io_priority": 20,
-            "cpu_cap": 400,
-            "package_name": "sdc_4096"
         }
     }
 }
