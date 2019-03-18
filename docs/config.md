@@ -222,7 +222,6 @@ different than `sdc-headnode` for later review:
 - `sapi_admin_ips`: Only sdc-headnode, likely more important than the others.
 - `papi_admin_ips`: `node-sdc-clients(runtests)` only
 - `napi_admin_ips`: `node-sdc-clients(runtests)` only
-- `ca_admin_ips`: `node-sdc-clients(runtests)` only
 - `dhcpd_admin_ips`: Not used but in `prompt-config.sh`
 - `assets_admin_ips`: `sdc-cnapi`
 - `amon_admin_ips`: `sdc-vmapi`, `sdc-ufds`, `sdc-cloudapi`, `node-sdc-clients(runtests)`, `sdc-amon`
