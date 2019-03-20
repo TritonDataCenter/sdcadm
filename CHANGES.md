@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.25.1
+
+- TRITON-1337 `sdcadm experimental fix-core-vm-resolvers` broken
+
 ## 1.25.0
 
 - TRITON-1307 Fix a few commands were broken in the TRITON-1300 change.
