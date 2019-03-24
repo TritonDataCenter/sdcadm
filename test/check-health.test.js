@@ -5,11 +5,12 @@
  */
 
 /*
- * Copyright 2018, Joyent, Inc.
+ * Copyright 2019, Joyent, Inc.
  */
 
 var test = require('tape').test;
 var exec = require('child_process').exec;
+var util = require('util');
 var vasync = require('vasync');
 
 var common = require('./common');
@@ -45,7 +46,7 @@ function checkHealthDetails(t, healthDetails) {
 // Preload Servers and SAPI services
 test('setup', function (t) {
     var cmd = 'sdc-sapi /services | json -H';
-    exec(cmd, function (err, stdout, stderr) {
+    exec(cmd, function sapiServicesCb(err, stdout, stderr) {
         t.ifError(err, 'No error preloading SAPI services');
 
         var svcs = common.parseJsonOut(stdout);
@@ -58,7 +59,7 @@ test('setup', function (t) {
             serviceNamesFromUUID[svc.uuid] = svc.name;
         });
         var cmd2 = 'sdc-cnapi /servers?setup=true|json -H';
-        exec(cmd2, function (err2, stdout2, stderr2) {
+        exec(cmd2, function cnapiServersCb(err2, stdout2, stderr2) {
             t.ifError(err2, 'No error preloading CNAPI servers');
 
             var servers = common.parseJsonOut(stdout2);
@@ -76,7 +77,7 @@ test('setup', function (t) {
 });
 
 test('sdcadm check-health --help', function (t) {
-    exec('sdcadm check-health --help', function (err, stdout, stderr) {
+    exec('sdcadm check-health --help', function helpCb(err, stdout, stderr) {
         t.ifError(err, 'exec error');
 
         t.ok(stdout.indexOf('sdcadm check-health [<options>]') !== -1);
@@ -88,7 +89,8 @@ test('sdcadm check-health --help', function (t) {
 
 
 test('sdcadm check-health', function (t) {
-    exec('sdcadm check-health', function (err, stdout, stderr) {
+    const cmd = 'sdcadm check-health -s headnode';
+    exec(cmd, function healthCb(err, stdout, stderr) {
         t.ifError(err, 'exec error');
         t.equal(stderr, '');
 
@@ -97,14 +99,21 @@ test('sdcadm check-health', function (t) {
             t.ok(found, svcName + ' in instances output');
         });
 
-        var healthDetails = common.parseTextOut(stdout);
+        let healthDetails = common.parseTextOut(stdout);
 
         var titles = healthDetails.shift();
         t.deepEqual(titles, HEALTH_TITLES, 'check column titles');
-
-        healthDetails.forEach(function (inst) {
-            t.equal(inst[4], 'true', inst[0] + ' instance is healthy');
+        // We're interested only into the initial list of instances, not
+        // the detailed explanation about each failure printed below the
+        // aforementioned list:
+        healthDetails = healthDetails.filter(function removeExpl(item) {
+            return common.UUID_RE.test(item[0]);
         });
+
+        for (let i = 0; i < healthDetails.length; i++) {
+            let inst = healthDetails[i];
+            t.equal(inst[4], 'true', inst[0] + ' instance is healthy');
+        }
 
         // global, so other tests can compare against
         HEALTH_DETAILS = healthDetails;
@@ -113,20 +122,9 @@ test('sdcadm check-health', function (t) {
 });
 
 
-test('sdcadm check-health -H', function (t) {
-    exec('sdcadm check-health -H', function (err, stdout, stderr) {
-        t.ifError(err);
-        t.equal(stderr, '');
-
-        t.equal(stdout.indexOf('INSTANCE'), -1);
-
-        t.end();
-    });
-});
-
-
 test('sdcadm check-health --json', function (t) {
-    exec('sdcadm check-health --json', function (err, stdout, stderr) {
+    const cmd = 'sdcadm check-health --json -s headnode';
+    exec(cmd, function healthJsonCb(err, stdout, stderr) {
         t.ifError(err);
         t.equal(stderr, '');
 
@@ -168,22 +166,12 @@ test('sdcadm check-health --json', function (t) {
 });
 
 
-test('sdcadm check-health -q', function (t) {
-    exec('sdcadm check-health -q', function (err, stdout, stderr) {
-        t.ifError(err);
-        t.equal(stdout, '');
-        t.equal(stderr, '');
-
-        t.end();
-    });
-});
-
-
 // TODO: this won't work on an HA standup
 // TODO: simply disabling an SMF service instance is one step in test, but we
 // need something more subtle yet brutal (like disabling manatee)
 test('disable papi for health check', function (t) {
-    exec('sdc-login papi svcadm disable papi', function (err, stdout, stderr) {
+    const cmd = 'sdc-login papi svcadm disable papi';
+    exec(cmd, function disablePapiCb(err, stdout, stderr) {
         t.ifError(err);
         t.equal(stderr, '');
         t.end();
@@ -192,7 +180,8 @@ test('disable papi for health check', function (t) {
 
 
 test('sdcadm check-health with disabled papi', function (t) {
-    exec('sdcadm check-health', function (err, stdout, stderr) {
+    exec('sdcadm check-health -s headnode',
+        function healthPapiOff(err, stdout, stderr) {
         t.equal(err && err.code, 1, 'errcode is 1');
 
         t.notEqual(stderr, 'Some instances appear unhealthy'.indexOf(stderr),
@@ -211,7 +200,8 @@ test('sdcadm check-health with disabled papi', function (t) {
 
 
 test('sdcadm check-health -q with disabled papi', function (t) {
-    exec('sdcadm check-health -q', function (err, stdout, stderr) {
+    exec('sdcadm check-health -q -s headnode',
+        function healthQuietCb(err, stdout, stderr) {
         t.equal(err && err.code, 1, 'errcode is 1');
         t.equal('', stderr, 'empty stderr');
         t.notEqual('', stdout, 'not empty stdout');
@@ -221,7 +211,8 @@ test('sdcadm check-health -q with disabled papi', function (t) {
 
 
 test('enable papi after health check', function (t) {
-    exec('sdc-login papi svcadm enable papi', function (err, stdout, stderr) {
+    const cmd = 'sdc-login papi svcadm enable papi';
+    exec(cmd, function enablePapiCb(err, stdout, stderr) {
         t.ifError(err);
         t.equal(stderr, '');
         t.end();
@@ -245,7 +236,8 @@ test('check-health when binder is down', function (t) {
                     });
             },
             function checkHealth(_, next) {
-                exec('sdcadm check-health -H', function (err, stdout, stderr) {
+                exec('sdcadm check-health -H -s headnode',
+                    function binderDisabledCb(err, stdout, stderr) {
                     t.equal(err && err.code, 1, 'errcode is 1');
                     t.equal(err.killed, false, 'process not killed');
                     t.notEqual(stdout, '', 'empty stdout');
@@ -257,7 +249,8 @@ test('check-health when binder is down', function (t) {
                 });
             },
             function checkHealthJson(_, next) {
-                exec('sdcadm check-health -j', function (err, stdout, stderr) {
+                exec('sdcadm check-health -j -s headnode',
+                    function binderDisabledJsonCb(err, stdout, stderr) {
                     t.equal(err && err.code, 1, 'errcode is 1');
                     t.equal(err.killed, false, 'process not killed');
                     t.equal(stderr, '');
@@ -289,4 +282,80 @@ test('check-health when binder is down', function (t) {
     }, function pipeCb(pipeErr) {
         t.end(pipeErr);
     });
+});
+
+test('teardown', function (t) {
+
+    function waitForPapi() {
+        const cmd = '/opt/smartdc/bin/sdc-papi /ping|json -H';
+        let counter = 0;
+        const limit = 36;
+        function _waitForPapi() {
+            counter += 1;
+            exec(cmd, function papiPingCb(err, stdout, stderr) {
+                if (err) {
+                    t.ifError(err);
+                    t.end();
+                    return;
+                }
+
+                let res;
+
+                if (!stderr) {
+                    res = JSON.parse(stdout.trim());
+                }
+
+                if (stderr || !res.backend || res.backend !== 'up') {
+                   if (counter < limit) {
+                      let info = stderr ? stderr :
+                           'Backend error: ' + res.backend_error;
+                      t.comment(util.format('Waiting for papi service (%s)',
+                          info));
+                      setTimeout(_waitForPapi, 5000);
+                   } else {
+                       t.fail('Timeout waiting for papi service');
+                       t.end();
+                       return;
+                   }
+                } else {
+                    t.pass('Done waiting for papi service');
+                    t.end();
+                    return;
+                }
+            });
+
+        }
+        _waitForPapi();
+    }
+
+    function waitForHealthy() {
+        const cmd = 'sdcadm check-health -q -s headnode';
+        let counter = 0;
+        const limit = 36;
+        function _waitForHealthy() {
+            counter += 1;
+            exec(cmd, function healthyCb(err, stdout, stderr) {
+                if (err) {
+                   if (counter < limit) {
+                      t.comment(util.format(
+                          'Waiting for health after check-health tests'));
+                      setTimeout(_waitForHealthy, 5000);
+                   } else {
+                       t.fail('Timeout waiting for health restored after' +
+                           ' check-health tests');
+                       t.end();
+                       return;
+                   }
+                } else {
+                    t.pass('Health restored after check-health tests');
+                    waitForPapi();
+                    return;
+                }
+            });
+
+        }
+        _waitForHealthy();
+    }
+
+    waitForHealthy();
 });
