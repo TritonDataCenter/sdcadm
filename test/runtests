@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright 2018, Joyent, Inc.
+# Copyright 2019, Joyent, Inc.
 #
 
 #
@@ -97,8 +97,7 @@ done
 
 
 if [[ "${TOP}" == '/opt/smartdc/sdcadm' ]]; then
-  echo "Copying test files to ${OUTPUT_DIR}"
-  DESTDIR=/var/tmp/sdcadmtest
+  echo "# Copying test files to ${OUTPUT_DIR}"
   rm -rf $OUTPUT_DIR
   mkdir -p $OUTPUT_DIR
   cp -PR \
@@ -109,7 +108,7 @@ if [[ "${TOP}" == '/opt/smartdc/sdcadm' ]]; then
       $TOP/etc \
       $TOP/package.json \
       $OUTPUT_DIR
-  sh $DESTDIR/test/runtests "${@}"
+  sh $OUTPUT_DIR/test/runtests "${@}"
   exit $?
 fi
 
@@ -147,37 +146,18 @@ done
 
 set -o errexit
 
+
+# Summarize results
 echo ""
-echo "# test output in $RESULTS:"
-cd $RESULTS
-ls *.tap
+echo "# Test output in $RESULTS:"
+ls -1 $RESULTS/*.tap | sed -e 's,^,#    ,'
 
-
-# Colored summary of results (borrowed from smartos-live.git/src/vm/run-tests).
-echo ""
-echo "# test results:"
-
-end_time=$(date +%s)
-elapsed=$((${end_time} - ${start_time}))
-
-tests=$(grep "^# tests [0-9]" $RESULTS/*.tap | cut -d ' ' -f3 | xargs | tr ' ' '+' | bc)
-passed=$(grep "^# pass  [0-9]" $RESULTS/*.tap | tr -s ' ' | cut -d ' ' -f3 | xargs | tr ' ' '+' | bc)
-[[ -z ${tests} ]] && tests=0
-[[ -z ${passed} ]] && passed=0
-fail=$((${tests} - ${passed}))
-failing_tests=$(cat ${FAILING_LIST} | wc -l)
-
-echo "# Completed in ${elapsed} seconds."
-echo -e "# \033[32mPASS: ${passed} / ${tests}\033[39m"
-if [[ ${fail} -gt 0 ]]; then
-    echo -e "# \033[31mFAIL: ${fail} / ${tests}\033[39m"
-fi
-
-if [[ ${failing_tests} -gt 0 ]]; then
+num_failing_test_files=$(cat ${FAILING_LIST} | wc -l)
+if [[ ${num_failing_test_files} -gt 0 ]]; then
     echo ""
-    echo -e "# \033[31mFAILING TESTS:\033[39m"
-    cat $FAILING_LIST | sed -e 's,^,#   ,'
+    echo "# Failing test files:"
+    cat $FAILING_LIST | sed -e 's,^,#    ,'
+    exit 1
+else
+    exit 0
 fi
-echo ""
-
-exit $fail
