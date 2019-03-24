@@ -10,6 +10,12 @@
 
 # sdcadm Changelog
 
+## 1.25.2
+
+- TRITON-1298 Added `sdcadm post-setup logarchiver`, including new
+  "AddServiceProcedure" procedure.
+- TRITON-1313 Random missing package failures running `sdcadm create` tests
+
 ## 1.25.1
 
 - TRITON-1337 `sdcadm experimental fix-core-vm-resolvers` broken
