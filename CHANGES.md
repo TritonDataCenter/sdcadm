@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.25.3
+
+- TRITON-1349 Subcommand `sdcadm post-setup kbmapi` using AddServiceProcedure
+
 ## 1.25.2
 
 - TRITON-1298 Added `sdcadm post-setup logarchiver`, including new
