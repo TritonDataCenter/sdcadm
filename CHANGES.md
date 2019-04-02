@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.27.0
+
+- TRITON-1625 Have `sdcadm post-setup prometheus` add prometheus zone IP to CNS allow\_transfer list
+- TRITON-1624 Change prometheus image name to "manta-prometheus" in sdcadm
+
 ## 1.26.0
 
 - MANTA-3552 Add `sdcadm post-setup prometheus` to setup a core Triton
