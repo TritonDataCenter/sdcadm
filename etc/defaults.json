@@ -46,7 +46,8 @@
         "dockerlogger": "dockerlogger",
         "volapi": "volapi",
         "logarchiver": "logarchiver",
-        "kbmapi": "kbmapi"
+        "kbmapi": "kbmapi",
+        "prometheus": "prometheus"
     },
     "svcMinImages": {
         "binder": "20140731T211135Z",

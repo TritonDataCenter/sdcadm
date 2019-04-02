@@ -41,3 +41,5 @@ for name in $toSync; do
     fi
 done
 rsync -av ${TOP}/tools/rotate-logs.sh $NODE:$BASEDIR/tools/ $extraOpts
+
+ssh $NODE "$BASEDIR/bin/sdcadm completion > $BASEDIR/etc/sdcadm.completion"

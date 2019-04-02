@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.26.0
+
+- MANTA-3552 Add `sdcadm post-setup prometheus` to setup a core Triton
+  Prometheus service.
+
 ## 1.25.3
 
 - TRITON-1349 Subcommand `sdcadm post-setup kbmapi` using AddServiceProcedure
