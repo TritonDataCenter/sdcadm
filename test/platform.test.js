@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2018, Joyent, Inc.
+ * Copyright 2019, Joyent, Inc.
  */
 
 
@@ -148,6 +148,8 @@ test('sdcadm platform list --json', function (t) {
         }
         t.equal(stderr, '');
 
+        var hn_has_boot = false;
+
         var platforms = common.parseJsonOut(stdout);
         t.ok(platforms.length >= 1);
         platforms.forEach(function (p) {
@@ -160,7 +162,15 @@ test('sdcadm platform list --json', function (t) {
             if (p.latest) {
                 LATEST_PLATFORM = p;
             }
+
+            p.boot_platform.forEach(function (bp) {
+                if (bp.hostname === 'headnode') {
+                    hn_has_boot = true;
+                }
+            });
         });
+
+        t.ok(hn_has_boot, 'HN has boot_platform set');
 
         t.end();
     });
