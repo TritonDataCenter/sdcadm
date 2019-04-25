@@ -47,7 +47,8 @@
         "volapi": "volapi",
         "logarchiver": "logarchiver",
         "kbmapi": "kbmapi",
-        "prometheus": "prometheus"
+        "prometheus": "prometheus",
+        "firewall-logger-agent": "firewall-logger-agent"
     },
     "svcMinImages": {
         "binder": "20140731T211135Z",
