@@ -47,7 +47,8 @@
         "volapi": "volapi",
         "logarchiver": "logarchiver",
         "kbmapi": "kbmapi",
-        "prometheus": "manta-prometheus"
+        "prometheus": "manta-prometheus",
+        "grafana": "grafana"
     },
     "svcMinImages": {
         "binder": "20140731T211135Z",

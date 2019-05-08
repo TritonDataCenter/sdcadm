@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.29.0
+
+- MANTA-3992 Add `sdcadm post-setup grafana` to setup a core Triton
+  Grafana service.
+- TRITON-1656 Want new EnsureNicOnServiceInstances procedure in sdcadm
 
 ## 1.28.0
 
