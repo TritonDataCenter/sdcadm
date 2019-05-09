@@ -161,5 +161,68 @@
     "default": false,
     "v": 1,
     "vcpus": 1
+  },
+  {
+    "name": "sample-bhyve-flexible-1G",
+    "version": "1.0.0",
+    "active": true,
+    "max_lwps": 4000,
+    "max_physical_memory": 1024,
+    "max_swap": 4096,
+    "quota": 24576,
+    "zfs_io_priority": 64,
+    "fss": 64,
+    "cpu_cap": 100,
+    "billing_tag": "sample-1G-bhyve",
+    "default": true,
+    "v": 1,
+    "vcpus": 1,
+    "brand": "bhyve",
+    "flexible_disk": true
+  },
+  {
+    "name": "sample-bhyve-reserved-snapshots-space",
+    "version": "1.0.0",
+    "active": true,
+    "max_lwps": 4000,
+    "max_physical_memory": 1024,
+    "max_swap": 4096,
+    "quota": 40960,
+    "zfs_io_priority": 64,
+    "fss": 64,
+    "cpu_cap": 100,
+    "billing_tag": "sample-1G-bhyve",
+    "default": true,
+    "v": 1,
+    "vcpus": 1,
+    "brand": "bhyve",
+    "flexible_disk": true,
+    "disks": [
+            { },
+            { "size": 10240 }
+    ]
+  },
+  {
+    "name": "sample-bhyve-three-disks",
+    "version": "1.0.0",
+    "active": true,
+    "max_lwps": 4000,
+    "max_physical_memory": 1024,
+    "max_swap": 4096,
+    "quota": 24576,
+    "zfs_io_priority": 64,
+    "fss": 64,
+    "cpu_cap": 100,
+    "billing_tag": "sample-1G-bhyve",
+    "default": true,
+    "v": 1,
+    "vcpus": 1,
+    "brand": "bhyve",
+    "flexible_disk": true,
+    "disks": [
+        { },
+        { "size": 6144 },
+        { "size": "remaining"}
+    ]
   }
 ]
