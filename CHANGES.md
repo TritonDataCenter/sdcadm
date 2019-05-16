@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.27.1
+
+- TRITON-1670 sdcadm AddAllowTransferProcedure uses incorrect parameter name when listing service
+
 ## 1.27.0
 
 - TRITON-1625 Have `sdcadm post-setup prometheus` add prometheus zone IP to CNS allow\_transfer list
