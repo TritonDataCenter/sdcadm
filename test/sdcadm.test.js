@@ -9,8 +9,9 @@
  */
 
 
-var test = require('tape').test;
 var exec = require('child_process').exec;
+var format = require('util').format;
+var test = require('tape').test;
 
 
 test('sdcadm', function (t) {
@@ -41,7 +42,9 @@ test('sdcadm --help', function (t) {
 test('sdcadm --version', function (t) {
     exec('sdcadm --version', function (err, stdout, stderr) {
         t.ifError(err, 'no version error');
-        t.ok(stdout.match(/^sdcadm \d+\.\d+\.\d+ \([\w-]+-\d+T\d+Z-.+\)/));
+        var verRe = /^sdcadm \d+\.\d+\.\d+ \(.+-\d+T\d+Z-g[0-9a-f]{7}\)$/;
+        t.ok(verRe.test(stdout.trim()),
+            format('version should match %s: %j', verRe, stdout.trim()));
         t.equal(stderr, '');
 
         t.end();
