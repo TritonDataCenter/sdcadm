@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.27.2
+
+- TRITON-1706 'sdcadm post-setup dev-sample-data' will now ensure that sample
+  images are public.
+
 ## 1.27.1
 
 - TRITON-1670 sdcadm AddAllowTransferProcedure uses incorrect parameter name when listing service
