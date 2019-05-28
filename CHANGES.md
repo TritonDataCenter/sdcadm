@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.27.3
+
+- TRITON-1707 `sdcadm post-setup prometheus` breaks if CNS allow\_transfer
+  metadata does not exist yet
+
 ## 1.27.2
 
 - TRITON-1706 'sdcadm post-setup dev-sample-data' will now ensure that sample
