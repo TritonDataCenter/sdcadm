@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+
+## 1.28.0
+
+- TRITON-1700 update sdcadm to use 64 bit node (18.4)
+
 ## 1.27.3
 
 - TRITON-1707 `sdcadm post-setup prometheus` breaks if CNS allow\_transfer
