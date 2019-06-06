@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.29.1
+
+- TRITON-1730 Want `sdcadm post-setup common-external-nics` to not prompt for
+  confirmation
+
 ## 1.29.0
 
 - MANTA-3992 Add `sdcadm post-setup grafana` to setup a core Triton
