@@ -48,7 +48,8 @@
         "logarchiver": "logarchiver",
         "kbmapi": "kbmapi",
         "prometheus": "manta-prometheus",
-        "grafana": "grafana"
+        "grafana": "grafana",
+        "firewall-logger-agent": "firewall-logger-agent"
     },
     "svcMinImages": {
         "binder": "20140731T211135Z",

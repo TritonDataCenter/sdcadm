@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.30.0
+
+- TRITON-1319 need firewall-logger agent (`sdcadm post-setup firewall-logger-agent`)
+
 ## 1.29.1
 
 - TRITON-1730 Want `sdcadm post-setup common-external-nics` to not prompt for
