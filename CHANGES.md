@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.30.1
+
+- TRITON-1744 Fix a crash in `sdcadm experimental remove-ca` if a given CNAPI
+  server record does not have an "agents" field.
 - TRITON-1748 Ensure 'sdcadm experimental remove-ca' does trace logging to file.
 
 ## 1.30.0
