@@ -10,6 +10,8 @@
 
 # sdcadm Changelog
 
+- TRITON-1748 Ensure 'sdcadm experimental remove-ca' does trace logging to file.
+
 ## 1.30.0
 
 - TRITON-1319 need firewall-logger agent (`sdcadm post-setup firewall-logger-agent`)
@@ -688,7 +690,7 @@ external nic for IMGAPI
 
 ## 1.3.8
 
-- Add `sdcadm experimental install-platform` and `sdcadm expertimental assign-platform`
+- Add `sdcadm experimental install-platform` and `sdcadm experimental assign-platform`
 
 ## 1.3.7
 
