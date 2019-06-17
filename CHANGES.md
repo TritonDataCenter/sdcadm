@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.30.2
+
+- TRITON-1696 sdcadm should verify that triton_cns_enabled is set for the admin
+  user before deploying prometheus
+
 ## 1.30.1
 
 - TRITON-1744 Fix a crash in `sdcadm experimental remove-ca` if a given CNAPI
