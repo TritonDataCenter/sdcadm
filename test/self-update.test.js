@@ -5,9 +5,13 @@
  */
 
 /*
- * Copyright 2018 Joyent, Inc.
+ * Copyright 2019 Joyent, Inc.
  */
 
+/*
+ * NB: these tests require the sdcadm version under test to be available
+ * from updates.joyent.com (via a jenkins build).
+ */
 
 var test = require('tape').test;
 var exec = require('child_process').exec;
@@ -16,6 +20,8 @@ var assert = require('assert-plus');
 
 var CURRENT_VERSION = null;
 var LATEST_UUID = null;
+
+const UPDATES_URL = 'https://updates.joyent.com/';
 
 function checkUpdateResults(t, err, stdout, stderr, moreStrings) {
     if (moreStrings) {
@@ -139,13 +145,31 @@ test('sdcadm self-update --latest', function (t) {
 });
 
 
+test('sdcadm self-update -S ... --latest', function (t) {
+    var cmd = 'sdcadm self-update -S ' + UPDATES_URL +
+        '--latest --channel=dev';
+    exec(cmd, function (err, stdout, stderr) {
+        checkUpdateResults(t, err, stdout, stderr, ['Using channel dev']);
+    });
+});
+
 test('sdcadm self-update IMAGE_UUID', function (t) {
     getSdcadmChannel(t, function (channel) {
-        var cmd = 'sdcadm self-update ' + CURRENT_VERSION + ' -C' + channel;
+        var cmd = 'sdcadm self-update ' + CURRENT_VERSION + ' -C ' + channel;
         exec(cmd, function (err, stdout, stderr) {
             checkUpdateResults(t, err, stdout, stderr,
                 ['Using channel ' + channel]);
         });
     });
+});
 
+test('sdcadm self-update -S ... IMAGE_UUID', function (t) {
+    getSdcadmChannel(t, function (channel) {
+        var cmd = 'sdcadm self-update -S ' + UPDATES_URL +
+            ' -C ' + channel + CURRENT_VERSION;
+        exec(cmd, function (err, stdout, stderr) {
+            checkUpdateResults(t, err, stdout, stderr,
+                ['Using channel ' + channel]);
+        });
+    });
 });

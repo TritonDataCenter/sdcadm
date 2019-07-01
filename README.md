@@ -84,11 +84,11 @@ with the `runtests` command. For example, to run the tests in sdcadm.test.js:
 
     /opt/smartdc/sdcadm/test/runtests -f sdcadm.test.js
 
-
 ### Unit Tests
 
 `sdcadm` includes some unit tests. At this time the coverage is significantly
-less than the integration tests.  Unit tests can be run with:
+less than the integration tests.  You must still run them on a headnode.  Unit
+tests can be run with:
 
     make test-unit
 
