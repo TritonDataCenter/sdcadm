@@ -5,7 +5,7 @@
 -->
 
 <!--
-    Copyright 2017 Joyent, Inc.
+    Copyright 2019 Joyent, Inc.
 -->
 
 # sdcadm
@@ -48,6 +48,17 @@ The [sdcadm man page](man/man1/sdcadm.1.ronn) provides reference for every
 sdcadm subcommand.
 
 # Developer notes
+
+## Updating sdcadm
+
+To update to bits you've built locally (with `make publish`), cover over
+`bits/sdcadm` to your headnode, import them into your `imgapi` instance,
+then use the `-S` flag to `sdcadm self-update`:
+
+    sdc-imgadm import -c none \
+      -f /tmp/sdcadm-mybranch-20190701T145750Z-gfcba035.sh
+      -m /tmp/sdcadm-mybranch-20190701T145750Z-gfcba035.imgmanifest
+    sdcadm self-update -S http://imgapi.mydc.example.com/ --latest
 
 ## Testing sdcadm
 
