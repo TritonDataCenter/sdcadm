@@ -147,7 +147,7 @@ test('sdcadm self-update --latest', function (t) {
 
 test('sdcadm self-update -S ... --latest', function (t) {
     var cmd = 'sdcadm self-update -S ' + UPDATES_URL +
-        '--latest --channel=dev';
+        ' --latest --channel=dev';
     exec(cmd, function (err, stdout, stderr) {
         checkUpdateResults(t, err, stdout, stderr, ['Using channel dev']);
     });
@@ -166,7 +166,7 @@ test('sdcadm self-update IMAGE_UUID', function (t) {
 test('sdcadm self-update -S ... IMAGE_UUID', function (t) {
     getSdcadmChannel(t, function (channel) {
         var cmd = 'sdcadm self-update -S ' + UPDATES_URL +
-            ' -C ' + channel + CURRENT_VERSION;
+            ' -C ' + channel + ' ' + CURRENT_VERSION;
         exec(cmd, function (err, stdout, stderr) {
             checkUpdateResults(t, err, stdout, stderr,
                 ['Using channel ' + channel]);
