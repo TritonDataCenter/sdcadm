@@ -51,8 +51,8 @@ sdcadm subcommand.
 
 ## Updating sdcadm
 
-To update to bits you've built locally (with `make publish`), cover over
-`bits/sdcadm` to your headnode, import them into your `imgapi` instance,
+To update to bits you've built locally (with `make publish`), copy over
+`bits/sdcadm/` to your headnode, import them into your `imgapi` instance,
 then use the `-S` flag to `sdcadm self-update`:
 
     sdc-imgadm import -c none \
@@ -67,7 +67,9 @@ Tests will muck around with the sdc setup, doing terrible and unholy things to
 your data.
 
 Note that tests are expected to run on a fresh setup, since the test suite
-will go through all the `post-setup` subcommands.
+will go through all the `post-setup` subcommands. The installed sdcadm version
+must also be available on `https://updates.joyent.com/` for the `self-update`
+tests to pass.
 
 In order to run sdcadm tests, you'll first need to signal to the tests that
 you really do want them to run:
