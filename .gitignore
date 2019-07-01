@@ -10,3 +10,4 @@
 /tmp
 /etc/sdcadm.completion
 man/man1/sdcadm.1
+package-lock.json
