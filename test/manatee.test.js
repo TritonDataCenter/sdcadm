@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2018, Joyent, Inc.
+ * Copyright 2019 Joyent, Inc.
  */
 
 /*
@@ -33,6 +33,9 @@ var instances = [];
 // Used to restore pre-HA manatee setup when possible:
 var zkHost;
 var zkInitialStateRaw;
+
+// Allow to skip ha-manatee setup
+const SKIP_HA = process.env.NO_MANATEE_HA;
 
 function getServers(t, cb) {
     var cmd = 'sdc-cnapi /servers?setup=true|json -H -j';
@@ -68,7 +71,7 @@ test('setup', function (t) {
 });
 
 test('get initial zk-state', function (t) {
-    if (instances.length > 1) {
+    if (instances.length > 1 || SKIP_HA) {
         t.end();
         return;
     }
@@ -167,7 +170,6 @@ test('update non-HA', function (t) {
         });
         t.end();
     });
-
 });
 
 
@@ -194,7 +196,7 @@ test('post-setup w/o servers', function (t) {
 
 test('post-setup OK', function (t) {
     // Skip of not into ONWM initially
-    if (instances.length > 1) {
+    if (instances.length > 1 || SKIP_HA) {
         t.end();
         return;
     }
@@ -225,6 +227,10 @@ test('post-setup OK', function (t) {
 });
 
 test('update HA', function (t) {
+    if (SKIP_HA) {
+        t.end();
+        return;
+    }
     var command = 'sdcadm up manatee -y --force-same-image';
     exec(command, function (err, stdout, stderr) {
         t.ifError(err, 'Execution error');
@@ -250,7 +256,7 @@ test('update HA', function (t) {
 });
 
 test('teardown', function (t) {
-    if (instances.length > 1) {
+    if (instances.length > 1 || SKIP_HA) {
         t.end();
         return;
     }

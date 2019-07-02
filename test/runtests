@@ -135,7 +135,7 @@ set +o errexit
 for file in $test_files; do
     test_file=$(basename $file)
     echo "# $test_file"
-    PATH=$NODE_INSTALL/bin:$PATH $TAPE $file \
+    NO_MANATEE_HA=1 PATH=$NODE_INSTALL/bin:$PATH $TAPE $file \
         | tee $RESULTS/$test_file.tap
     retval=$?
     if [[ "${retval}" != "0" ]]; then
