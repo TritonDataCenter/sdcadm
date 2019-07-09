@@ -573,10 +573,11 @@ Create the "cns" service and a first instance.
 
 ### sdcadm post-setup dev-headnode-prov
 
-Make the headnode provisionable, for development and testing.
+Make the headnode provisionable, for development and testing. This allows
+a Manta deployment to co-exist with standard Triton provisioning.
 
-This is done via `ALLOC_FILTER_HEADNODE` and `ALLOC_FILTER_MIN_RESOURCES`
-SAPI configuration of the CNAPI service. See
+This is done via `ALLOC_FILTER_CAPNESS`, `ALLOC_FILTER_HEADNODE`,
+and `ALLOC_FILTER_MIN_RESOURCES` SAPI parameters of the CNAPI service. See
 [SAPI configuration](https://github.com/joyent/sdc-cnapi/blob/master/docs/index.md#sapi-configuration )
 
 ### sdcadm platform \[options\] COMMAND \[args...\]
@@ -1135,4 +1136,4 @@ Enables/disables support for various NFS volumes features.
 
 ## COPYRIGHT
 
-sdcadm Copyright (c) 2018 Joyent Inc., All rights reserved.
+sdcadm Copyright 2019 Joyent, Inc.
