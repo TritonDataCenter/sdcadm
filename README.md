@@ -5,7 +5,7 @@
 -->
 
 <!--
-    Copyright 2017 Joyent, Inc.
+    Copyright 2019 Joyent, Inc.
 -->
 
 # sdcadm
@@ -49,6 +49,17 @@ sdcadm subcommand.
 
 # Developer notes
 
+## Updating sdcadm
+
+To update to bits you've built locally (with `make publish`), copy over
+`bits/sdcadm/` to your headnode, import them into your `imgapi` instance,
+then use the `-S` flag to `sdcadm self-update`:
+
+    sdc-imgadm import -c none \
+      -f /tmp/sdcadm-mybranch-20190701T145750Z-gfcba035.sh
+      -m /tmp/sdcadm-mybranch-20190701T145750Z-gfcba035.imgmanifest
+    sdcadm self-update -S http://imgapi.mydc.example.com/ --latest
+
 ## Testing sdcadm
 
 This should only be done by developers, and only in dev or test environments.
@@ -56,7 +67,9 @@ Tests will muck around with the sdc setup, doing terrible and unholy things to
 your data.
 
 Note that tests are expected to run on a fresh setup, since the test suite
-will go through all the `post-setup` subcommands.
+will go through all the `post-setup` subcommands. The installed sdcadm version
+must also be available on `https://updates.joyent.com/` for the `self-update`
+tests to pass.
 
 In order to run sdcadm tests, you'll first need to signal to the tests that
 you really do want them to run:
@@ -73,11 +86,11 @@ with the `runtests` command. For example, to run the tests in sdcadm.test.js:
 
     /opt/smartdc/sdcadm/test/runtests -f sdcadm.test.js
 
-
 ### Unit Tests
 
 `sdcadm` includes some unit tests. At this time the coverage is significantly
-less than the integration tests.  Unit tests can be run with:
+less than the integration tests.  You must still run them on a headnode.  Unit
+tests can be run with:
 
     make test-unit
 
