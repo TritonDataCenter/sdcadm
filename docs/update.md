@@ -124,7 +124,6 @@ There are some optional services that are not part of the agentsshar. If they
 are installed in your Triton deployment, you'll need to download their images
 and update them separately:
 
-    sdcadm experimental update cmon-agent --just-images    # if cmon is installed
     sdcadm experimental update dockerlogger --just-images    # if docker is installed
 
 If you choose not to pre-download the images to be used for the update, the
@@ -200,7 +199,6 @@ If the agentsshar is already up to date, the grep will return nothing.
 Once you are ready to update the agents, execute the following command:
 
     sdcadm experimental update-agents --latest --all --yes
-    sdcadm experimental update cmon-agent --all    # if cmon is installed
     sdcadm experimental update dockerlogger --all    # if docker is installed
 
 ### Step 2: Update other and gz-tools
