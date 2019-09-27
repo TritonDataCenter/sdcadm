@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.30.3
+
+- TRITON-1907 output the correct command to install the docker service
+
 ## 1.30.2
 
 - TRITON-1696 sdcadm should verify that triton_cns_enabled is set for the admin
