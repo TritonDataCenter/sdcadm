@@ -11,8 +11,8 @@
 # sdcadm
 
 This repository is part of the Joyent Triton project. See the [contribution
-guidelines](https://github.com/joyent/triton/blob/master/CONTRIBUTING.md) --
-*Triton does not use GitHub PRs* -- and general documentation at the main
+guidelines](https://github.com/joyent/triton/blob/master/CONTRIBUTING.md)
+and general documentation at the main
 [Triton project](https://github.com/joyent/triton) page.
 
 `sdcadm` is a tool that lives in the Triton headnode's GZ, for
