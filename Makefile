@@ -71,12 +71,14 @@ test:
 
 .PHONY: test-unit
 test-unit: | $(TAP_EXEC) $(BUILD)
-	$(TAP_EXEC) --jobs=$(TEST_UNIT_JOBS) --output-file=$(BUILD)/test.unit.tap \
+	$(NODE) $(TAP_EXEC) --jobs=$(TEST_UNIT_JOBS) \
+		--output-file=$(BUILD)/test.unit.tap \
 		test/unit/**/*.test.js
 
 .PHONY: test-coverage-unit
 test-coverage-unit: | $(TAP_EXEC) $(BUILD)
-	$(TAP_EXEC) --jobs=$(TEST_UNIT_JOBS) --output-file=$(BUILD)/test.unit.tap \
+	$(NODE) $(TAP_EXEC) --jobs=$(TEST_UNIT_JOBS) \
+		--output-file=$(BUILD)/test.unit.tap \
 		--coverage test/unit/**/*.test.js
 
 .PHONY: release
