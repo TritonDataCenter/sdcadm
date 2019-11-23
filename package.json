@@ -1,7 +1,7 @@
 {
   "name": "sdcadm",
   "description": "Administer a Triton Data Center",
-  "version": "1.30.3",
+  "version": "1.30.4",
   "author": "Joyent (joyent.com)",
   "private": true,
   "dependencies": {
