@@ -10,6 +10,13 @@
 
 # sdcadm Changelog
 
+## 1.30.4
+
+- TRITON-1991 Internal refactoring of finding an image when adding a service.
+  (This drops the undocumented support for specifying the string "default"
+  to the `-C, --channel` option of `sdcadm post-setup
+  {grafana,logarchiver,kbmapi,firewall-logger-agent,prometheus}`.)
+
 ## 1.30.3
 
 - TRITON-1907 output the correct command to install the docker service
