@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.31.0
+
+- TRITON-2001 Improve 'sdcadm up manta' to (re-)create the manta deployment
+  symlinks in the GZ (e.g. /opt/smartdc/bin/manta-adm).
+
 ## 1.30.4
 
 - TRITON-1991 Internal refactoring of finding an image when adding a service.
