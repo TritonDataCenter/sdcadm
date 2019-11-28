@@ -10,6 +10,13 @@
 
 # sdcadm Changelog
 
+## 1.32.0
+
+- TRITON-1980 Add support for multiple valid image names for a service
+  and update binder, mahi, moray, and prometheus to support both the
+  "manta-" and "mantav2-" prefixed names in preparation of coming mantav2
+  images.
+
 ## 1.31.0
 
 - TRITON-2001 Improve 'sdcadm up manta' to (re-)create the manta deployment
