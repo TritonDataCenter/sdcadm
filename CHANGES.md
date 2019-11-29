@@ -10,6 +10,17 @@
 
 # sdcadm Changelog
 
+## 1.33.0
+
+- TRITON-1979, TRITON-1981: Add `sdcadm post-setup manta` to be used to create
+  the manta deployment zone. This will become the first step to deploying a
+  Manta on Triton (https://joyent.github.io/manta/#deploying-manta) and will
+  replace the old `/usbkey/scripts/setup_manta_zone.sh`.
+
+  By default this will create a manta deployment zone suitable for a "mantav2".
+  See https://github.com/joyent/manta/blob/master/docs/mantav2.md for details
+  on mantav1 vs. mantav2.
+
 ## 1.32.0
 
 - TRITON-1980 Add support for multiple valid image names for a service

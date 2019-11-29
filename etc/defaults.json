@@ -21,7 +21,6 @@
         "binder": ["mantav2-nameservice", "manta-nameservice"],
         "mahi": ["mantav2-authcache", "manta-authcache"],
         "sdc": ["sdc"],
-        "manta": ["manta-deployment"],
         "sapi": ["sapi"],
         "cloudapi": ["cloudapi"],
         "napi": ["napi"],
