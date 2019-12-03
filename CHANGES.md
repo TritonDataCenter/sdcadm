@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.33.1
+
+- MANTA-4817 sdcadm's detection of current mantav from
+  $mantaApp.metadata.MANTAV is broken
+
 ## 1.33.0
 
 - TRITON-1979, TRITON-1981: Add `sdcadm post-setup manta` to be used to create
