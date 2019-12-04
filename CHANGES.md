@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.33.2
+
+- TRITON-2009 EnsureMantaDeploymentGzLinksProcedure() breaks updating setups
+  w/o manta instances
+
 ## 1.33.1
 
 - MANTA-4817 sdcadm's detection of current mantav from
