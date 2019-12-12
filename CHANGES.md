@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.33.3
+
+- TRITON-2016 sdcadm insts and sdcadm up fail if the dockerlogger image isn't
+  in IMGAPI.
+
 ## 1.33.2
 
 - TRITON-2009 EnsureMantaDeploymentGzLinksProcedure() breaks updating setups
