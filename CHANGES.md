@@ -5,10 +5,20 @@
 -->
 
 <!--
-    Copyright 2019 Joyent, Inc.
+    Copyright 2020 Joyent, Inc.
 -->
 
 # sdcadm Changelog
+
+## 1.33.4
+
+- TRITON-2039 Fix a bug where `sdcadm up --all` would error out with:
+
+        $ sdcadm up --all -y
+        ...
+        sdcadm up: error: no "manta" instance was found
+
+  if the DC has a "manta" SAPI service, but not instance of that service.
 
 ## 1.33.3
 
