@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.33.5
+
+- TRITON-2040 Fix a bug where `sdcadm post-setup manta` would not result in
+  the created manta0 VM having an external NIC (required for it to function).
+
 ## 1.33.4
 
 - TRITON-2039 Fix a bug where `sdcadm up --all` would error out with:
