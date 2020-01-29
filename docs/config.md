@@ -214,7 +214,7 @@ different than `sdc-headnode` for later review:
 - `binder_admin_ips`: Used by `sdc-ufds`, `sdc-manatee`, `sdc-manta`, `sdcadm`
 - `manatee_admin_ips`: Not used but in `prompt-config.sh`
 - `moray_admin_ips`: Not used but in `prompt-config.sh`
-- `ufds_admin_ips`: Used by `sdcsso`, `piranha`, `sdcadm`, `sdc-amon`, `sdc-ufds`
+- `ufds_admin_ips`: Used by `piranha`, `sdcadm`, `sdc-amon`, `sdc-ufds`
 - `workflow_admin_ips`: Not used but in `prompt-config.sh`
 - `imgapi_admin_ips`: `node-sdc-clients(runtests)` only
 - `cnapi_admin_ips`: `node-sdc-clients(runtests)`, `sdc-cloud-analytics`, `sdc-amon`
