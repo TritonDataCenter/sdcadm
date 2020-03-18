@@ -40,7 +40,8 @@
     "eslint-plugin-joyent": "~2.0.0",
     "mock-fs": "4.5.x",
     "tap": "^12.5.2",
-    "zkstream": "0.11.2"
+    "zkstream": "0.11.2",
+    "mockery": "^2.1.0"
   },
   "engines": {
     "node": ">=4.x"
