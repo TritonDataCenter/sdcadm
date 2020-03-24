@@ -14,6 +14,9 @@
  * Mocking stuff, to be moved into its own file
  */
 
+const EventEmitter = require('events').EventEmitter;
+const util = require('util');
+
 const mockery = require('mockery');
 const tabula = require('tabula');
 
@@ -49,6 +52,20 @@ Mock.prototype._handle = function (name, args, cb) {
     return cb(err, res);
 };
 
+// We don't need anything but exit code for platform testing:
+function MockSpawn(command, args, opts) {
+    this.command = command;
+    this.args = args;
+    this.opts = opts;
+
+    EventEmitter.call(this);
+    process.nextTick(() => {
+        this.emit('exit', 0);
+    });
+}
+
+util.inherits(MockSpawn, EventEmitter);
+
 function Mocks() {
     this.mocks = Mocks.createMocks();
 
@@ -79,7 +96,8 @@ function Mocks() {
 
     mockery.registerMock('sdc-clients', this.mocks.sdcClients);
     mockery.registerMock('./common', this.mocks.common);
-    // mockery.registerMock('fs', Mocks.mocks.fs);
+    mockery.registerMock('child_process', this.mocks.cp);
+    mockery.registerMock('fs', this.mocks.fs);
 }
 
 Mocks.createMocks = function () {
@@ -93,7 +111,11 @@ Mocks.createMocks = function () {
         }, cb);
     };
 
-    mocks.napi.listNics = function (params, cb) {
+    mocks.napi.listNics = function (params, opts, cb) {
+        if (typeof (opts) === 'function') {
+            cb = opts;
+            opts = {};
+        }
         return this._handle('listNetworkPools', {
             params: params
         }, cb);
@@ -108,7 +130,11 @@ Mocks.createMocks = function () {
         }, cb);
     };
 
-    mocks.cnapi.setBootParams = function (uuid, params, cb) {
+    mocks.cnapi.setBootParams = function (uuid, params, opts, cb) {
+        if (typeof (opts) === 'function') {
+            cb = opts;
+            opts = {};
+        }
         return this._handle('setBootParams', {
             uuid: uuid,
             params: params
@@ -141,6 +167,19 @@ Mocks.createMocks = function () {
     mocks.imgapi.listImages = function (filters, cb) {
         return this._handle('listImages', {
             filters: filters
+        }, cb);
+    };
+
+    mocks.imgapi.getImage = function (uuid, cb) {
+        return this._handle('getImage', {
+            uuid: uuid
+        }, cb);
+    };
+
+    mocks.imgapi.getImageFile = function (uuid, filepath, cb) {
+        return this._handle('getImageFile', {
+            uuid: uuid,
+            filepath: filepath
         }, cb);
     };
 
@@ -179,6 +218,25 @@ Mocks.createMocks = function () {
     };
 
     mocks.common.sortArrayOfObjects = tabula.sortArrayOfObjects;
+    mocks.common.indent = console.log;
+    mocks.common.promptYesNo = function (_opts, cb) {
+        cb();
+    };
+
+    mocks.cp = {
+        spawn: function (cmd, args, opts) {
+            return (new MockSpawn(cmd, args, opts));
+        }
+    };
+
+    mocks.fs = {
+        unlink: function (_filepath, cb) {
+            return cb(null);
+        },
+        existsSync: function (_filepath) {
+            return false;
+        }
+    };
 
     return mocks;
 };
@@ -191,7 +249,6 @@ const testutil = require('../testutil');
 const tap = require('tap');
 const log = testutil.createBunyanLogger(tap);
 
-// const MockUI = require('../../../lib/cli/ui').MockUI;
 
 // Note this is *intentionally* a list of platforms containing some possible
 // 'errors', like Platform Versions which lack any OS and should be ignored.
@@ -305,6 +362,66 @@ const SERVER_LIST = [
         current_platform: '20200310T072029Z',
         boot_platform: '20200313T161129Z',
         headnode: false
+    }
+];
+
+const CNAPI_IMG = {
+    'v': 2,
+    'uuid': '7a0429e7-de28-45ea-9e17-afd048ec0da8',
+    'owner': '930896af-bf8c-48d4-885c-6573a94b1853',
+    'name': 'cnapi',
+    'version': 'master-20200310T190435Z-g4869d31',
+    'published_at': '2020-03-10T19:08:26.567Z'
+};
+
+// We really need the macs only.
+const SERVERS_NICS = [
+    {
+        'belongs_to_type': 'server',
+        'belongs_to_uuid': '564d7287-6210-cfdc-9cf9-c3600aec8187',
+        'mac': '00:0c:29:ec:81:87',
+        'ip': '10.99.99.40',
+        'mtu': 1500,
+        'netmask': '255.255.255.0',
+        'nic_tag': 'admin',
+        'resolvers': [
+          '10.99.99.11'
+        ],
+        'vlan_id': 0,
+        'nic_tags_provided': [
+          'admin'
+        ]
+    },
+    {
+        'belongs_to_type': 'server',
+        'belongs_to_uuid': '564d98bb-68c2-7688-1b89-cbe1ad480216',
+        'mac': '00:0c:29:48:02:16',
+        'ip': '10.99.99.37',
+        'netmask': '255.255.255.0',
+        'nic_tag': 'admin',
+        'resolvers': [
+          '10.99.99.11'
+        ],
+        'vlan_id': 0,
+        'nic_tags_provided': [
+          'admin'
+        ]
+    },
+    {
+        'belongs_to_type': 'server',
+        'belongs_to_uuid': '564d99da-f14e-94aa-d8b9-18e5c9d50ba6',
+        'mac': '00:50:56:34:60:4c',
+        'primary': false,
+        'ip': '10.99.99.7',
+        'netmask': '255.255.255.0',
+        'nic_tag': 'admin',
+        'resolvers': [
+          '10.99.99.11'
+        ],
+        'vlan_id': 0,
+        'nic_tags_provided': [
+          'admin'
+        ]
     }
 ];
 
@@ -543,6 +660,421 @@ tap.test('Platform available test', function (suite) {
             t.ok(Array.isArray(platforms), 'Updates platforms array');
             t.equal(1, platforms.length, 'Expected one platform avail');
             t.equal('smartos', platforms[0].os, 'Expected smartos');
+            t.end();
+        });
+    });
+
+    suite.test('teardown', function (t) {
+        mockery.disable();
+        t.end();
+    });
+
+    suite.end();
+});
+
+
+tap.test('Platform assign test', function (suite) {
+    mockery.deregisterAll();
+    const myMocks = new Mocks();
+    const top = {
+        sdcadm: {
+            log: log,
+            cnapi: myMocks.mocks.cnapi,
+            napi: myMocks.mocks.napi,
+            ensureSdcApp: function (_opts, cb) {
+                top.sdcadm.sdcApp = {};
+                cb();
+            },
+            updates: myMocks.mocks.imgapi,
+            getImgsForSvcVms: function (_opts, cb) {
+                myMocks.mocks.imgapi.getImage(CNAPI_IMG.uuid,
+                    function (err, img) {
+                    if (err) {
+                        cb(err);
+                        return;
+                    }
+
+                    cb(null, {
+                        imgs: [img]
+                    });
+                });
+            }
+        },
+        log: log,
+        progress: tap.comment
+    };
+
+    const Platform = require('../../../lib/platform').Platform;
+    const platf = new Platform(top);
+
+    myMocks.mocks.cnapi.VALUES = {
+        listPlatforms: [],
+        getBootParams: [],
+        setBootParams: [],
+        listServers: [],
+        commandExecute: []
+    };
+
+    myMocks.mocks.common.VALUES = {
+        execFilePlus: [],
+        mountUsbKey: [],
+        unmountUsbKey: [],
+        isUsbKeyMounted: []
+    };
+
+    myMocks.mocks.imgapi.VALUES = {
+        listImages: [],
+        getImage: []
+    };
+
+    myMocks.mocks.napi.VALUES = {
+        listNetworkPools: [ { res: [] }, { res: [] } ],
+        listNics: []
+    };
+
+    suite.test('Get CNAPI version test', function (t) {
+        myMocks.mocks.imgapi.VALUES.getImage.push({
+            res: jsprim.deepCopy(CNAPI_IMG)
+        });
+        platf.getCNAPIVersion(function (err, version) {
+            t.ifError(err, 'Get CNAPI version error');
+            t.equal(version, '20200310', 'CNAPI version');
+            t.end();
+        });
+    });
+
+    suite.test('Assign latest platform to all servers test', function (t) {
+        myMocks.mocks.cnapi.VALUES.listPlatforms.push(
+            { res: jsprim.deepCopy(PLATFORMS_LIST) },
+            { res: jsprim.deepCopy(PLATFORMS_LIST) },
+            { res: jsprim.deepCopy(PLATFORMS_LIST) },
+            { res: jsprim.deepCopy(PLATFORMS_LIST) }
+        );
+        myMocks.mocks.cnapi.VALUES.listServers.push(
+            { res: jsprim.deepCopy(SERVER_LIST) },
+            { res: jsprim.deepCopy(SERVER_LIST).map(function (s) {
+                if (s.hostname === 'linuxcn') {
+                    s.boot_platform = '20200313T161129Z';
+                } else {
+                    s.boot_platform = '20200317T114808Z';
+                }
+                return s;
+            }) }
+        );
+        myMocks.mocks.cnapi.VALUES.setBootParams.push(
+            { res: {} },
+            { res: {} },
+            { res: {} },
+            { res: {} }
+        );
+        myMocks.mocks.cnapi.VALUES.commandExecute.push(
+            { res: ['==> Mounting USB key',
+                    '/mnt/usbkey',
+                    '==> Updating Loader configuration',
+                    '==> Updating cnapi',
+                    '==> Unmounting USB Key',
+                    '==> Done!' ].join('\n') },
+            { res: 'Done!' }
+        );
+        myMocks.mocks.napi.VALUES.listNics.push(
+            { res: jsprim.deepCopy(SERVERS_NICS) }
+        );
+        myMocks.mocks.imgapi.VALUES.getImage.push({
+            res: jsprim.deepCopy(CNAPI_IMG)
+        });
+
+        myMocks.mocks.cnapi.VALUES.getBootParams.push(
+            { res: jsprim.deepCopy(DEFAULT_BOOT_PARAMS) },
+            { res: jsprim.deepCopy(DEFAULT_BOOT_PARAMS) }
+        );
+
+        myMocks.mocks.common.VALUES.execFilePlus.push(
+            { res: '\n' }
+        );
+        platf.assign({
+            all: true,
+            platform: 'latest'
+        }, function (err) {
+            t.ifError(err, 'assign platform error');
+            t.end();
+        });
+    });
+
+    suite.test('Assign wrong OS platform to setup server', function (t) {
+        myMocks.mocks.cnapi.VALUES.listPlatforms.push(
+            { res: jsprim.deepCopy(PLATFORMS_LIST) }
+        );
+        myMocks.mocks.cnapi.VALUES.listServers.push(
+            { res: jsprim.deepCopy(SERVER_LIST) }
+        );
+        platf.assign({
+            platform: '20200317T114808Z',
+            server: ['564d7287-6210-cfdc-9cf9-c3600aec8187']
+        }, function (err) {
+            t.ok(err, 'expected error');
+            t.ok(err.message, 'expected error message');
+            t.ok(/operating system/i.test(err.message),
+                'expected message contains OS');
+            t.ok(/factory reset/i.test(err.message),
+                'expected message contains factory reset');
+            t.end();
+        });
+    });
+
+    suite.test('teardown', function (t) {
+        mockery.disable();
+        t.end();
+    });
+
+    suite.end();
+});
+
+
+tap.test('Platform usage', function (suite) {
+    mockery.deregisterAll();
+    const myMocks = new Mocks();
+    const top = {
+        sdcadm: {
+            log: log,
+            cnapi: myMocks.mocks.cnapi,
+            napi: myMocks.mocks.napi,
+            ensureSdcApp: function (_opts, cb) {
+                top.sdcadm.sdcApp = {};
+                cb();
+            },
+            updates: myMocks.mocks.imgapi,
+            getImgsForSvcVms: function (_opts, cb) {
+                myMocks.mocks.imgapi.getImage(CNAPI_IMG.uuid,
+                    function (err, img) {
+                    if (err) {
+                        cb(err);
+                        return;
+                    }
+
+                    cb(null, {
+                        imgs: [img]
+                    });
+                });
+            }
+        },
+        log: log,
+        progress: tap.comment
+    };
+
+    const Platform = require('../../../lib/platform').Platform;
+    const platf = new Platform(top);
+
+    myMocks.mocks.cnapi.VALUES = {
+        listPlatforms: [],
+        listServers: []
+    };
+
+    suite.test('Platform Usage', function (t) {
+        myMocks.mocks.cnapi.VALUES.listPlatforms.push(
+            { res: jsprim.deepCopy(PLATFORMS_LIST) }
+        );
+        myMocks.mocks.cnapi.VALUES.listServers.push(
+            { res: jsprim.deepCopy(SERVER_LIST) }
+        );
+
+        platf.usage('20200304T133736Z', function (err, usageRows) {
+            t.ifError(err, 'platform usage error');
+            t.ok(Array.isArray(usageRows), 'Expected array of servers');
+            t.equal(2, usageRows.length, 'Expected 2 servers');
+            t.end();
+        });
+    });
+
+    suite.test('teardown', function (t) {
+        mockery.disable();
+        t.end();
+    });
+
+    suite.end();
+});
+
+
+tap.test('Platform remove', function (suite) {
+    mockery.deregisterAll();
+    const myMocks = new Mocks();
+    const top = {
+        sdcadm: {
+            log: log,
+            cnapi: myMocks.mocks.cnapi,
+            getImgsForSvcVms: function (_opts, cb) {
+                myMocks.mocks.imgapi.getImage(CNAPI_IMG.uuid,
+                    function (err, img) {
+                    if (err) {
+                        cb(err);
+                        return;
+                    }
+
+                    cb(null, {
+                        imgs: [img]
+                    });
+                });
+            }
+        },
+        log: log,
+        progress: tap.comment
+    };
+
+    const Platform = require('../../../lib/platform').Platform;
+    const platf = new Platform(top);
+
+    myMocks.mocks.cnapi.VALUES = {
+        listPlatforms: [],
+        getBootParams: [],
+        listServers: []
+    };
+
+    myMocks.mocks.common.VALUES = {
+        execFilePlus: [],
+        mountUsbKey: [],
+        unmountUsbKey: [],
+        isUsbKeyMounted: []
+    };
+
+    myMocks.mocks.imgapi.VALUES = {
+        listImages: [],
+        getImage: [],
+        getImageFile: []
+    };
+
+    suite.test('remove', function (t) {
+        myMocks.mocks.common.VALUES.isUsbKeyMounted.push(
+            { err: null, res: false }
+        );
+        myMocks.mocks.common.VALUES.mountUsbKey.push(
+            { err: null, res: true }
+        );
+        myMocks.mocks.common.VALUES.unmountUsbKey.push(
+            { err: null, res: true }
+        );
+        myMocks.mocks.common.VALUES.execFilePlus.push(
+            { res: '\n' },
+            { res: '\n' }
+        );
+        myMocks.mocks.imgapi.VALUES.getImage.push({
+            res: jsprim.deepCopy(CNAPI_IMG)
+        });
+
+        platf.remove({
+            cleanup_cache: true,
+            yes: true,
+            remove: ['20200317T114808Z']
+        }, function (err) {
+            t.ifError(err, 'platform remove error');
+            t.end();
+        });
+    });
+    suite.test('teardown', function (t) {
+        mockery.disable();
+        t.end();
+    });
+    suite.end();
+});
+
+tap.test('Platform install', function (suite) {
+    mockery.deregisterAll();
+    const myMocks = new Mocks();
+    const top = {
+        sdcadm: {
+            log: log,
+            cnapi: myMocks.mocks.cnapi,
+            napi: myMocks.mocks.napi,
+            ensureSdcApp: function (_opts, cb) {
+                top.sdcadm.sdcApp = {};
+                cb();
+            },
+            updates: myMocks.mocks.imgapi,
+            getImgsForSvcVms: function (_opts, cb) {
+                myMocks.mocks.imgapi.getImage(CNAPI_IMG.uuid,
+                    function (err, img) {
+                    if (err) {
+                        cb(err);
+                        return;
+                    }
+
+                    cb(null, {
+                        imgs: [img]
+                    });
+                });
+            },
+            getDefaultChannel: function (cb) {
+                cb(null, 'dev');
+            }
+        },
+        log: log,
+        progress: tap.comment
+    };
+
+    const Platform = require('../../../lib/platform').Platform;
+    const platf = new Platform(top);
+
+    myMocks.mocks.cnapi.VALUES = {
+        listPlatforms: [],
+        getBootParams: [],
+        listServers: []
+    };
+
+    myMocks.mocks.imgapi.VALUES = {
+        listImages: [],
+        getImage: [],
+        getImageFile: []
+    };
+
+    myMocks.mocks.common.VALUES = {
+        execFilePlus: [],
+        mountUsbKey: [],
+        unmountUsbKey: [],
+        isUsbKeyMounted: []
+    };
+
+    suite.test('Platform install', function (t) {
+        myMocks.mocks.cnapi.VALUES.listPlatforms.push(
+            { res: jsprim.deepCopy(PLATFORMS_LIST) },
+            { res: jsprim.deepCopy(PLATFORMS_LIST) }
+        );
+        myMocks.mocks.cnapi.VALUES.listServers.push(
+            { res: jsprim.deepCopy(SERVER_LIST) }
+        );
+        myMocks.mocks.cnapi.VALUES.getBootParams.push(
+            { res: jsprim.deepCopy(DEFAULT_BOOT_PARAMS) },
+            { res: jsprim.deepCopy(DEFAULT_BOOT_PARAMS) }
+        );
+        myMocks.mocks.imgapi.VALUES.listImages.push(
+            { res: IMGADM_LIST_SMARTOS }
+        );
+        myMocks.mocks.imgapi.VALUES.getImageFile.push(
+            { res: {} }
+        );
+        myMocks.mocks.common.VALUES.execFilePlus.push(
+            { res: '           178884278           310814720' +
+                '  42.4% /var/tmp/platform-master-20200324T020911Z.tar' },
+            { res: [ 'Filesystem           1024-blocks        Used   ' +
+                'Available Capacity  Mounted on',
+                '/dev/dsk/c1d0s2          3604862     3110440      ' +
+                '494422    87%    /mnt/usbkey' ].join('\n') }
+        );
+        myMocks.mocks.common.VALUES.isUsbKeyMounted.push(
+            { err: null, res: false }
+        );
+        myMocks.mocks.common.VALUES.mountUsbKey.push(
+            { err: null, res: true }
+        );
+        myMocks.mocks.common.VALUES.unmountUsbKey.push(
+            { err: null, res: true }
+        );
+
+        myMocks.mocks.imgapi.VALUES.getImage.push({
+            res: jsprim.deepCopy(CNAPI_IMG)
+        });
+
+        platf.install({
+            image: 'latest'
+        }, function (err) {
+            t.ifError(err, 'Install platform error');
             t.end();
         });
     });
