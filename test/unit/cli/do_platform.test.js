@@ -347,21 +347,24 @@ const SERVER_LIST = [
         hostname: 'headnode',
         current_platform: '20200304T133736Z',
         boot_platform: '20200313T113022Z',
-        headnode: true
+        headnode: true,
+        setup: true
     },
     {
         uuid: '564d98bb-68c2-7688-1b89-cbe1ad480216',
         hostname: 'smartoscn',
         current_platform: '20200304T133736Z',
         boot_platform: '20200313T113022Z',
-        headnode: false
+        headnode: false,
+        setup: true
     },
     {
         uuid: '564d7287-6210-cfdc-9cf9-c3600aec8187',
         hostname: 'linuxcn',
         current_platform: '20200310T072029Z',
         boot_platform: '20200313T161129Z',
-        headnode: false
+        headnode: false,
+        setup: true
     }
 ];
 
@@ -442,6 +445,7 @@ tap.test('Platform list test', function (suite) {
     myMocks.mocks.cnapi.VALUES = {
         listPlatforms: [],
         getBootParams: [],
+        setBootParams: [],
         listServers: []
     };
 
@@ -479,6 +483,22 @@ tap.test('Platform list test', function (suite) {
             t.ifError(err, 'error getting default boot platform');
             t.equal(defPlatf, DEFAULT_BOOT_PARAMS.platform,
                 'default boot params platform');
+            t.end();
+        });
+    });
+
+    suite.test('setDefaultBootPlatform', function (t) {
+        myMocks.mocks.cnapi.VALUES.getBootParams.push(
+            { res: jsprim.deepCopy(DEFAULT_BOOT_PARAMS) }
+        );
+        myMocks.mocks.cnapi.VALUES.listPlatforms.push(
+            { res: jsprim.deepCopy(PLATFORMS_LIST) }
+        );
+        myMocks.mocks.cnapi.VALUES.setBootParams.push(
+            { res: {} }
+        );
+        platf.setDefaultBootPlatform('20200313T161129Z', function (err) {
+            t.ifError(err, 'Set linux as deafault boot platform error');
             t.end();
         });
     });
@@ -817,6 +837,58 @@ tap.test('Platform assign test', function (suite) {
                 'expected message contains OS');
             t.ok(/factory reset/i.test(err.message),
                 'expected message contains factory reset');
+            t.end();
+        });
+    });
+
+    suite.test('Assign a different OS PI to unsetup server', function (t) {
+        myMocks.mocks.cnapi.VALUES.listPlatforms.push(
+            { res: jsprim.deepCopy(PLATFORMS_LIST) }
+        );
+        myMocks.mocks.cnapi.VALUES.listServers.push(
+            { res: jsprim.deepCopy(SERVER_LIST).concat({
+                uuid: '564d96c2-9e7f-0468-b7e4-8ecbbdb41590',
+                hostname: '00-0c-29-b4-15-90',
+                setup: false,
+                current_platform: '20200304T133736Z',
+                boot_platform: '20200313T113022Z',
+                headnode: false
+            }) }
+        );
+        myMocks.mocks.cnapi.VALUES.setBootParams.push(
+            { res: {} }
+        );
+        myMocks.mocks.napi.VALUES.listNetworkPools.push(
+            { res: [] }, { res: [] }
+        );
+        myMocks.mocks.cnapi.VALUES.commandExecute.push(
+            { res: 'Done!' }
+        );
+        myMocks.mocks.cnapi.VALUES.listServers.push(
+            { res: [ {
+                uuid: '564d96c2-9e7f-0468-b7e4-8ecbbdb41590',
+                hostname: '00-0c-29-b4-15-90',
+                setup: false,
+                current_platform: '20200304T133736Z',
+                boot_platform: '20200313T161129Z',
+                headnode: false
+            } ] }
+        );
+        myMocks.mocks.imgapi.VALUES.getImage.push({
+            res: jsprim.deepCopy(CNAPI_IMG)
+        });
+        myMocks.mocks.cnapi.VALUES.getBootParams.push(
+            { res: jsprim.deepCopy(DEFAULT_BOOT_PARAMS) },
+            { res: jsprim.deepCopy(DEFAULT_BOOT_PARAMS) }
+        );
+        myMocks.mocks.common.VALUES.execFilePlus.push(
+            { res: '\n' }
+        );
+        platf.assign({
+            platform: '20200313T161129Z',
+            server: ['564d96c2-9e7f-0468-b7e4-8ecbbdb41590']
+        }, function (err) {
+            t.ifError(err, 'Unexpected platform assign error');
             t.end();
         });
     });
