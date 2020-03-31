@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.33.6
+
+- TRITON-2098 Fix a bug where `sdcadm platform` commands no longer worked.
+
 ## 1.33.5
 
 - TRITON-2040 Fix a bug where `sdcadm post-setup manta` would not result in
