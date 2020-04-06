@@ -10,6 +10,12 @@
 
 # sdcadm Changelog
 
+## 1.34.0
+
+- MANTA-4811 'sdcadm post-setup manta' now supports migrating from a mantav1
+  to a mantav2. See the following for full migration docs:
+  https://github.com/joyent/manta/blob/master/docs/operator-guide/mantav2-migration.md
+
 ## 1.33.6
 
 - TRITON-2098 Fix a bug where `sdcadm platform` commands no longer worked.
