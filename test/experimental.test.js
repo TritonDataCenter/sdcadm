@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright (c) 2019, Joyent, Inc.
+ * Copyright 2020 Joyent, Inc.
  */
 
 
@@ -166,6 +166,7 @@ test('sdcadm experimental update-other', function (t) {
     var mahiDomain = '';
     var papiDomain = '';
     var sapiUrl    = '';
+    var uuid       = '';
 
     vasync.pipeline({
         funcs: [
@@ -195,17 +196,20 @@ test('sdcadm experimental update-other', function (t) {
                     mahiDomain = sdc.metadata.MAHI_SERVICE;
                     papiDomain = sdc.metadata.PAPI_SERVICE;
                     sapiUrl    = sdc.metadata['sapi-url'];
+                    uuid       = sdc.uuid;
 
                     t.ok(mahiDomain);
                     t.ok(papiDomain);
                     t.ok(sapiUrl);
+                    t.ok(uuid);
 
                     next();
                 });
             },
 
             function checkServices(_, next) {
-                var cmd = 'sdc-sapi /services | json -H';
+                var cmd = 'sdc-sapi /services?application_uuid=' + uuid +
+                    ' | json -H';
                 exec(cmd, function (err, stdout, stderr) {
                     t.ifError(err, 'SAPI error');
                     t.equal(stderr, '', 'Empty stderr');
