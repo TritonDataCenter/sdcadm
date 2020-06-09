@@ -10,6 +10,11 @@
 
 # sdcadm Changelog
 
+## 1.35.0
+
+- MANTA-5293 add GZ link to 'manta-hotpatch-rebalancer-agent' tool in the
+  manta-deployment zone (when updating or deploying the 'manta' service).
+
 ## 1.34.0
 
 - MANTA-4811 'sdcadm post-setup manta' now supports migrating from a mantav1
