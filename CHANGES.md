@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.35.1
+
+- TRITON-2148 Fix the '-s, --server' option for "sdcadm post-setup grafana".
+
 ## 1.35.0
 
 - MANTA-5293 add GZ link to 'manta-hotpatch-rebalancer-agent' tool in the
