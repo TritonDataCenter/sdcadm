@@ -5,10 +5,14 @@
 -->
 
 <!--
-    Copyright 2020 Joyent, Inc.
+    Copyright 2021 Joyent, Inc.
 -->
 
 # sdcadm Changelog
+
+## 1.35.2
+
+- TRITON-2194 provisionTmpVm should include metadata object
 
 ## 1.35.1
 
