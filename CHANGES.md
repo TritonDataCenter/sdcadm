@@ -10,6 +10,12 @@
 
 # sdcadm Changelog
 
+## 1.36.0
+
+- TRITON-2228 Linux CN minimum viable product
+- TRITON-2214 Z version bump in bind-obj-methods transient dependency broke several builds
+- sdcadm#80 platform install --latest should not force linux on users
+
 ## 1.35.2
 
 - TRITON-2194 provisionTmpVm should include metadata object
