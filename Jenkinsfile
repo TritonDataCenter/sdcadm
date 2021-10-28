@@ -35,17 +35,21 @@ pipeline {
         // avoid bundling devDependencies
         stage('re-clean') {
             steps {
-                sh('git clean -fdx')
+                sh('''
+git clean -fdx
+git reset --hard
+                ''')
             }
         }
         stage('build image and upload') {
-            steps { 
+            steps {
                 sh('''
 set -o errexit
 set -o pipefail
 
 export ENGBLD_BITS_UPLOAD_IMGAPI=true
-make print-BRANCH print-STAMP all release publish bits-upload''')
+make print-BRANCH print-STAMP all release publish bits-upload
+                ''')
             }
         }
     }
