@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.36.1
+
+- TRITON-2266 cloudapi should be core
+
 ## 1.36.0
 
 - TRITON-2228 Linux CN minimum viable product
