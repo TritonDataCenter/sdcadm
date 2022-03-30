@@ -12,7 +12,7 @@
     "cmdln": "4.4.0",
     "cueball": "2.4.0",
     "extsprintf": "^1.3.0",
-    "joyent-schemas": "git+https://github.com/joyent/schemas.git#385e6eb",
+    "joyent-schemas": "git+https://github.com/joyent/schemas.git#3ca3a09",
     "jsprim": "1.2.2",
     "kthxbai": "~0.4.0",
     "mkdirp": "0.3.5",
