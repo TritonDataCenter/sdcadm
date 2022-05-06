@@ -10,7 +10,7 @@
 
 /*
  * NB: these tests require the sdcadm version under test to be available
- * from updates.joyent.com (via a jenkins build).
+ * from updates.tritondatacenter.com (via a jenkins build).
  */
 
 var test = require('tape').test;
@@ -22,7 +22,7 @@ var CURRENT_VERSION = null;
 var LATEST_UUID = null;
 
 const UPDATES_URL = process.env.UPDATES_IMGADM_URL ||
-    'https://updates.joyent.com/';
+    'https://updates.tritondatacenter.com/';
 
 function checkUpdateResults(t, err, stdout, stderr, moreStrings) {
     if (moreStrings) {

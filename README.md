@@ -68,8 +68,8 @@ your data.
 
 Note that tests are expected to run on a fresh setup, since the test suite
 will go through all the `post-setup` subcommands. The installed sdcadm version
-must also be available on `https://updates.joyent.com/` for the `self-update`
-tests to pass.
+must also be available on `https://updates.tritondatacenter.com/` for the
+`self-update` tests to pass.
 
 In order to run sdcadm tests, you'll first need to signal to the tests that
 you really do want them to run:
