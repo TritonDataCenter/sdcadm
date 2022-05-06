@@ -10,6 +10,10 @@
 
 # sdcadm Changelog
 
+## 1.37.0
+
+- TRITON-2304 New image server names
+
 ## 1.36.1
 
 - TRITON-2266 cloudapi should be core
