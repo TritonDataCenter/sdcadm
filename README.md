@@ -6,6 +6,8 @@
 
 <!--
     Copyright 2019 Joyent, Inc.
+    Copyright 2022 MNX Cloud, Inc.
+
 -->
 
 # sdcadm

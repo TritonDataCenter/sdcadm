@@ -1136,4 +1136,4 @@ Enables/disables support for various NFS volumes features.
 
 ## COPYRIGHT
 
-sdcadm Copyright 2019 Joyent, Inc.
+sdcadm  Copyright 2022 MNX Cloud, Inc.
