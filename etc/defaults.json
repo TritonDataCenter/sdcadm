@@ -1,5 +1,5 @@
 {
-    "updatesServerUrl": "https://updates.joyent.com",
+    "updatesServerUrl": "https://updates.tritondatacenter.com",
     "vmMinPlatform": "20130606T000000Z",
     "imgNamesFromSvcName": {
         "assets": ["assets"],

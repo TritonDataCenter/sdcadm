@@ -52,9 +52,9 @@ Show SDC datacenter and node information.
 
 Update "sdcadm" itself.
 
-Find the given `sdcadm` image in updates.joyent.com, download it, and install.
-Latest version of sdcadm can be installed by providing the `--latest` option
-instead of an image UUID.
+Find the given `sdcadm` image in updates.tritondatacenter.com, download it, and
+install. Latest version of sdcadm can be installed by providing the `--latest`
+option instead of an image UUID.
 
 It's recommended to run `sdcadm self-update --latest` before performing any
 sdcadm upgrade operation, especially because there could be critical bugfixes
@@ -378,7 +378,7 @@ By default no SDC core zones are given external nics in initial
 setup. Typically it is most useful to have those for the adminui
 instance (to be able to access the operator portal in your browser)
 and for the imgapi instance (to enable it to reach out to
-updates.joyent.com and images.joyent.com for images). IMGAPI
+updates.tritondatacenter.com and images.smartos.org for images). IMGAPI
 instances are always firewalled such that only outbound connections
 are allowed.
 
@@ -1136,4 +1136,4 @@ Enables/disables support for various NFS volumes features.
 
 ## COPYRIGHT
 
-sdcadm Copyright 2019 Joyent, Inc.
+sdcadm  Copyright 2022 MNX Cloud, Inc.

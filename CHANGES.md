@@ -6,9 +6,14 @@
 
 <!--
     Copyright 2021 Joyent, Inc.
+    Copyright 2022 MNX Cloud, Inc.
 -->
 
 # sdcadm Changelog
+
+## 1.37.0
+
+- TRITON-2304 New image server names
 
 ## 1.36.1
 
