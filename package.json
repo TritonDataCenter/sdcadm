@@ -1,8 +1,8 @@
 {
   "name": "sdcadm",
   "description": "Administer a Triton Data Center",
-  "version": "1.37.0",
-  "author": "Joyent (joyent.com)",
+  "version": "1.38.0",
+  "author": "MNX Cloud (mnx.io)",
   "private": true,
   "dependencies": {
     "assert-plus": "^1.0.0",
@@ -12,7 +12,7 @@
     "cmdln": "4.4.0",
     "cueball": "2.4.0",
     "extsprintf": "^1.3.0",
-    "joyent-schemas": "git+https://github.com/joyent/schemas.git#3ca3a09",
+    "joyent-schemas": "git+https://github.com/TritonDataCenter/schemas.git#3ca3a09",
     "jsprim": "1.2.2",
     "kthxbai": "~0.4.0",
     "mkdirp": "0.3.5",
