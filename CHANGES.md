@@ -11,6 +11,10 @@
 
 # sdcadm Changelog
 
+## 1.38.0
+
+- TRITON-2349 Enable provisioning of instances past instance10
+
 ## 1.37.0
 
 - TRITON-2304 New image server names
