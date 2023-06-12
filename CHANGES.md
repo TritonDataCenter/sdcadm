@@ -6,10 +6,15 @@
 
 <!--
     Copyright 2021 Joyent, Inc.
-    Copyright 2022 MNX Cloud, Inc.
+    Copyright 2023 MNX Cloud, Inc.
 -->
 
 # sdcadm Changelog
+
+## 1.39.0
+
+- LINUXCN-23 Account for node.config location on LinuxCN
+
 
 ## 1.38.0
 

@@ -1,7 +1,7 @@
 {
   "name": "sdcadm",
   "description": "Administer a Triton Data Center",
-  "version": "1.38.0",
+  "version": "1.39.0",
   "author": "MNX Cloud (mnx.io)",
   "private": true,
   "dependencies": {
