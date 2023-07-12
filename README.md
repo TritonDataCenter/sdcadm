@@ -6,16 +6,16 @@
 
 <!--
     Copyright 2019 Joyent, Inc.
-    Copyright 2022 MNX Cloud, Inc.
+    Copyright 2023 MNX Cloud, Inc.
 
 -->
 
 # sdcadm
 
-This repository is part of the Joyent Triton project. See the [contribution
-guidelines](https://github.com/joyent/triton/blob/master/CONTRIBUTING.md)
+This repository is part of the Triton DataCenter project. See the [contribution
+guidelines](https://github.com/TritonDataCenter/triton/blob/master/CONTRIBUTING.md)
 and general documentation at the main
-[Triton project](https://github.com/joyent/triton) page.
+[Triton project](https://github.com/TritonDataCenter/triton) page.
 
 `sdcadm` is a tool that lives in the Triton headnode's GZ, for
 handling post-setup (i.e. setup steps after initial headnode setup),
@@ -28,14 +28,14 @@ Please see the [index](./docs/index.md) for more details.
 # Current status
 
 While `sdcadm` is still under significant development, and is far from complete,
-it is currently the recommended way to update SDC. Signs of incompleteness are
-that sub-commands of `sdcadm experimental ...` are required as part of the upgrade
-process.
+it is currently the recommended way to update Triton. Signs of incompleteness
+are that sub-commands of `sdcadm experimental ...` are required as part of the
+upgrade process.
 
 # Triton post-setup with sdcadm
 
-The document [post-setup](docs/post-setup.md) details the required steps in order to
-configure Triton DataCenter for practical usage, like HA setup and the
+The document [post-setup](docs/post-setup.md) details the required steps in
+order to configure Triton DataCenter for practical usage, like HA setup and the
 addition of services not installed by default.
 
 # Manage Triton upgrades with sdcadm
