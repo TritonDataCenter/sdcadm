@@ -578,7 +578,7 @@ a Manta deployment to co-exist with standard Triton provisioning.
 
 This is done via `ALLOC_FILTER_CAPNESS`, `ALLOC_FILTER_HEADNODE`,
 and `ALLOC_FILTER_MIN_RESOURCES` SAPI parameters of the CNAPI service. See
-[SAPI configuration](https://github.com/joyent/sdc-cnapi/blob/master/docs/index.md#sapi-configuration )
+[SAPI configuration](https://github.com/TritonDataCenter/sdc-cnapi/blob/master/docs/index.md#sapi-configuration )
 
 ### sdcadm platform \[options\] COMMAND \[args...\]
 
@@ -1136,4 +1136,4 @@ Enables/disables support for various NFS volumes features.
 
 ## COPYRIGHT
 
-sdcadm  Copyright 2022 MNX Cloud, Inc.
+sdcadm  Copyright 2024 MNX Cloud, Inc.

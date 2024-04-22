@@ -6,7 +6,7 @@
 
 <!--
     Copyright 2021 Joyent, Inc.
-    Copyright 2023 MNX Cloud, Inc.
+    Copyright 2024 MNX Cloud, Inc.
 -->
 
 # sdcadm Changelog
@@ -51,7 +51,7 @@
 
 - MANTA-4811 'sdcadm post-setup manta' now supports migrating from a mantav1
   to a mantav2. See the following for full migration docs:
-  https://github.com/joyent/manta/blob/master/docs/operator-guide/mantav2-migration.md
+  https://github.com/TritonDataCenter/manta/blob/master/docs/operator-guide/mantav2-migration.md
 
 ## 1.33.6
 
@@ -95,8 +95,8 @@
   replace the old `/usbkey/scripts/setup_manta_zone.sh`.
 
   By default this will create a manta deployment zone suitable for a "mantav2".
-  See https://github.com/joyent/manta/blob/master/docs/mantav2.md for details
-  on mantav1 vs. mantav2.
+  See https://github.com/TritonDataCenter/manta/blob/master/docs/mantav2.md for
+  details on mantav1 vs. mantav2.
 
 ## 1.32.0
 
@@ -153,7 +153,7 @@
 
 ## 1.27.3
 
-- TRITON-1707 `sdcadm post-setup prometheus` breaks if CNS allow\_transfer
+- TRITON-1707 `sdcadm post-setup prometheus` breaks if CNS `allow_transfer`
   metadata does not exist yet
 
 ## 1.27.2
@@ -463,7 +463,7 @@
 
 ## 1.14.1
 
-- joyent/sdcadm#28 Allow 'sdcadm create portolan --skip-ha-check' to work.
+- TritonDataCenter/sdcadm#28 Allow 'sdcadm create portolan --skip-ha-check' to work.
 
 ## 1.14.0
 
@@ -663,11 +663,11 @@
 
 ## 1.7.2
 
-- Implemented changes from https://github.com/joyent/rfd/tree/master/rfd/0009:
+- Implemented changes from https://github.com/TritonDataCenter/rfd/tree/master/rfd/0009:
   Replaced `sdcadm experimental fabrics` + `sdcadm experimental portolan` with
   `sdcadm post-setup fabrics`. Dropped support for `--coal` option and added
   documentation about how to setup fabrics in CoaL to SDC's developers guide
-  (https://github.com/joyent/sdc/blob/master/docs/developer-guide/coal-post-setup-fabrics.md).
+  (https://github.com/TritonDataCenter/sdc/blob/master/docs/developer-guide/coal-post-setup-fabrics.md).
 - Get `sdcadm experimental default-fabric` out of experimental, i.e. now is
   `sdcadm default-fabric`.
 

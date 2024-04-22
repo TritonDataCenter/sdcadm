@@ -7,6 +7,7 @@
 
 #
 # Copyright (c) 2015, Joyent, Inc.
+# Copyright 2024 MNX Cloud, Inc.
 #
 
 #
@@ -31,7 +32,7 @@ function setup_logadm {
 
     # Move the smf_logs entry to run last (after the entries we just added) so
     # that the default '-C' (from
-    # https://github.com/joyent/smartos-live/blob/master/overlay/generic/etc/logadm.conf)
+    # https://github.com/TritonDataCenter/smartos-live/blob/master/overlay/generic/etc/logadm.conf)
     # doesn't defeat our attempts to rotate out of "/var/svc/log".
     /usr/sbin/logadm -r smf_logs
     /usr/sbin/logadm -w smf_logs -C 8 -c -s 1m '/var/svc/log/*.log'
