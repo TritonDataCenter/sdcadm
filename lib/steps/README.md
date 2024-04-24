@@ -15,7 +15,7 @@ chunks of work for "sdcadm up ...". However those are heavier weight. Each
 up of a number of steps.
 
 For a good inspiration see
-<https://github.com/joyent/sdcadm/blob/10a60ff62dbc4960855f6b8950084dd5654aee54/lib/procedures/update-stateless-services-v1.js#L58-L103>. This is the "procedure" for updating a set of
+<https://github.com/TritonDataCenter/sdcadm/blob/10a60ff62dbc4960855f6b8950084dd5654aee54/lib/procedures/update-stateless-services-v1.js#L58-L103>. This is the "procedure" for updating a set of
 the "stateless" SDC services like vmapi, cnapi, papi.  That code is
 fairly tight because it just orders a list of steps to run for each
 service, where each step is defined elsewhere.

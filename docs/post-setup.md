@@ -2,7 +2,7 @@
 title: Triton post-setup with sdcadm
 markdown2extras: tables, code-friendly, cuddled-lists, link-patterns
 markdown2linkpatternsfile: link-patterns.txt
-apisections: 
+apisections:
 ---
 <!--
     This Source Code Form is subject to the terms of the Mozilla Public
@@ -12,6 +12,7 @@ apisections:
 
 <!--
     Copyright 2018 Joyent, Inc.
+    Copyright 2024 MNX Cloud, Inc.
 -->
 
 # Triton post-setup with sdcadm
@@ -125,8 +126,8 @@ command:
 
 where `conf` is a required configuration file. In order to understand the
 format of this configuration file there is detailed information about
-[fabrics setup in CoaL](https://github.com/joyent/triton/blob/master/docs/developer-guide/coal-post-setup-fabrics.md) and general purpose information on fabrics from the
-[Triton networking and fabric operations guide](https://docs.joyent.com/private-cloud/networks/sdn).
+[fabrics setup in CoaL](https://github.com/TritonDataCenter/triton/blob/master/docs/developer-guide/coal-post-setup-fabrics.md) and general purpose information on fabrics from the
+[Triton networking and fabric operations guide](https://docs.tritondatacenter.com/private-cloud/networks/sdn).
 
 ### Create portolan HA instances
 
