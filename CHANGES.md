@@ -7,9 +7,14 @@
 <!--
     Copyright 2021 Joyent, Inc.
     Copyright 2024 MNX Cloud, Inc.
+    Copyright 2025 Edgecast Cloud LLC.
 -->
 
 # sdcadm Changelog
+
+## 1.39.1
+
+- TRITON-2395 update-gz-tools should update disk-booting iPXE too
 
 ## 1.39.0
 
