@@ -1,8 +1,8 @@
 {
   "name": "sdcadm",
   "description": "Administer a Triton Data Center",
-  "version": "1.39.0",
-  "author": "MNX Cloud (mnx.io)",
+  "version": "1.39.1",
+  "author": "Edgecast Cloud (edgecast.io)",
   "private": true,
   "dependencies": {
     "assert-plus": "^1.0.0",
