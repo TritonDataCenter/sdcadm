@@ -7,6 +7,7 @@
 <!--
     Copyright 2021 Joyent, Inc.
     Copyright 2024 MNX Cloud, Inc.
+    Copyright 2025 Edgecast Cloud LLC.
 -->
 
 # sdcadm Changelog
