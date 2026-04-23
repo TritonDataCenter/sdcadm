@@ -7,10 +7,17 @@
 <!--
     Copyright 2021 Joyent, Inc.
     Copyright 2024 MNX Cloud, Inc.
-    Copyright 2025 Edgecast Cloud LLC.
+    Copyright 2026 Edgecast Cloud LLC.
 -->
 
 # sdcadm Changelog
+
+## 1.39.2
+
+- Add `sdcadm experimental get-tritonadm` to download and install the
+  `tritonadm` companion tool from the updates channel. Short-circuits
+  when the candidate image UUID matches the uuid recorded in
+  `/opt/triton/tritonadm/etc/version`.
 
 ## 1.39.1
 

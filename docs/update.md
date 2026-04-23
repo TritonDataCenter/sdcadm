@@ -88,6 +88,22 @@ image version (referencing git branch, date and git SHA). For example:
     [root@headnode (coal) ~]# sdcadm --version
     sdcadm 1.24.1 (release-20181220-20181220T050440Z-g382c6f1)
 
+#### (Experimental) Install tritonadm
+
+`tritonadm` is a companion tool distributed independently of sdcadm via
+the same updates channel. To fetch and install the latest image:
+
+    sdcadm experimental get-tritonadm --latest
+
+Or install a specific image UUID:
+
+    sdcadm experimental get-tritonadm IMAGE_UUID
+
+The command compares the candidate image UUID against the uuid recorded
+in `/opt/triton/tritonadm/etc/version` and short-circuits with "Already
+up-to-date" when they match. This command is experimental and subject
+to change.
+
 ### Step 4: (Optional) Download Triton images
 
 To reduce the downtime during upgrade, it's recommended to pre-download all
