@@ -23,7 +23,7 @@
     "read": "1.0.5",
     "restify-clients": "1.4.0",
     "sdc-clients": "13.0.3",
-    "semver": "5.4.1",
+    "semver": "5.7.2",
     "strsplit": "1.0.0",
     "tabula": "1.9.0",
     "tape": "4.10.1",
